@@ -105,14 +105,6 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
         setGyroAngle(new Rotation2d());
     }
 
-    public double getAverageAbsoluteValueVelocity() {
-        double averageVelocity = 0;
-        for (var module : modules) {
-            averageVelocity += Math.abs(module.getDriveVelocity());
-        }
-        return averageVelocity / 4;
-    }
-
     private void updateOdometry() {
         SwerveModuleState[] moduleStates = new SwerveModuleState[modules.length];
 
