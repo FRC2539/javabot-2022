@@ -1,14 +1,16 @@
 package frc.robot;
 
-import frc.robot.controller.ThrustmasterJoystick;
-import frc.robot.controller.Axis;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
+import frc.robot.common.controller.Axis;
+import frc.robot.common.controller.ThrustmasterJoystick;
+import frc.robot.common.controller.LogitechController;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
     private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(Constants.LEFT_DRIVE_CONTROLLER);
     private final ThrustmasterJoystick rightDriveController = new ThrustmasterJoystick(Constants.RIGHT_DRIVE_CONTROLLER);
+    private final LogitechController operatorController = new LogitechController(Constants.OPERATOR_CONTROLLER);
     
     private final SwerveDriveSubsystem drivetrainSubsystem = new SwerveDriveSubsystem();
 

@@ -2,8 +2,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.common.controller.Axis;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.controller.Axis;
 
 public class DriveCommand extends CommandBase {
     private SwerveDriveSubsystem drivetrainSubsystem;
@@ -23,12 +23,12 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(false), strafe.get(false), rotation.get(false)));
+        drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(false), strafe.get(false), rotation.get(false)), true);
     }
 
     @Override
     public void end(boolean interrupted) {
-        drivetrainSubsystem.drive(new ChassisSpeeds());
+        drivetrainSubsystem.drive(new ChassisSpeeds(), true);
     }
 
 }

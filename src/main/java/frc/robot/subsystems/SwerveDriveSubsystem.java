@@ -9,8 +9,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableEntry;
+
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.Constants;
+import frc.robot.common.control.SwerveDriveSignal;
 
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
     private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
@@ -29,8 +32,11 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
 
     private Pose2d pose = new Pose2d();
     private ChassisSpeeds velocity = new ChassisSpeeds();
-    private ChassisSpeeds driveSignal = null;
+    private SwerveDriveSignal driveSignal = null;
 
+    private NetworkTableEntry vx;
+    private NetworkTableEntry vy;
+    private NetworkTableEntry omega;
 
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
@@ -65,6 +71,10 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
         );
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
+
+        vx = getEntry("VX");
+        vy = getEntry("VY");
+        omega = getEntry("Omega");
     }
 
     public Pose2d getPose() {
@@ -87,13 +97,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
         return gyroscope.getAngle();
     }
 
-    public void drive(ChassisSpeeds velocity) {
-            driveSignal = velocity;
+    public void drive(ChassisSpeeds velocity, boolean isFieldOriented) {
+        driveSignal = new SwerveDriveSignal(velocity, isFieldOriented);
     }
 
     public void resetPose(Pose2d pose) {
-            this.pose = pose;
-            swerveOdometry.resetPosition(pose, getGyroRotation2d());
+        this.pose = pose;
+        swerveOdometry.resetPosition(pose, getGyroRotation2d());
     }
 
     public void setGyroAngle(Rotation2d angle) {
@@ -118,13 +128,19 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
         this.pose = swerveOdometry.update(getGyroRotation2d(), moduleStates);
     }
 
-    private void updateModules(ChassisSpeeds driveSignal) {
+    private void updateModules(SwerveDriveSignal driveSignal) {
         ChassisSpeeds chassisVelocity;
         if (driveSignal == null) {
             chassisVelocity = new ChassisSpeeds();
-        } else {
+        } else if (driveSignal.isFieldOriented()) {
             chassisVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond, getGyroRotation2d());
+        } else {
+            chassisVelocity = new ChassisSpeeds(driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
         }
+
+        vx.setValue(chassisVelocity.vxMetersPerSecond);
+        vy.setValue(chassisVelocity.vyMetersPerSecond);
+        omega.setValue(chassisVelocity.omegaRadiansPerSecond);
 
         SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, 1);
@@ -134,15 +150,12 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
         }
     }
 
-    public void update() {
-        updateOdometry();
-
-        ChassisSpeeds driveSignal = this.driveSignal;
-
-        updateModules(driveSignal);
-    }
-
     @Override
     public void periodic() {
+        updateOdometry();
+
+        SwerveDriveSignal driveSignal = this.driveSignal;
+
+        updateModules(driveSignal);
     }
 }
