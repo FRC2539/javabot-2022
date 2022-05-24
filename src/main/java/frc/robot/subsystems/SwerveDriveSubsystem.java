@@ -10,12 +10,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import frc.robot.common.util.UpdatePeriodic;
 
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.Constants;
 import frc.robot.common.control.SwerveDriveSignal;
 
-public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
+public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements UpdatePeriodic {
     private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             new Translation2d(0.427799754, 0.427799754), // Front left
             new Translation2d(0.427799754, -0.427799754), // Front right
@@ -151,11 +152,16 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem {
     }
 
     @Override
-    public void periodic() {
+    public void update() {
         updateOdometry();
 
         SwerveDriveSignal driveSignal = this.driveSignal;
 
         updateModules(driveSignal);
+    }
+
+    @Override
+    public void periodic() {
+        // Update misc network tables values
     }
 }

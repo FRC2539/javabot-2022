@@ -37,4 +37,8 @@ public class RobotContainer {
     private Axis getDriveRotationAxis() {
         return rightDriveController.getXAxis();
     }
+
+    public SwerveDriveSubsystem getSwerveDriveSubsystem() {
+        return drivetrainSubsystem;
+    }
 }
