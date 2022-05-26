@@ -24,4 +24,6 @@ public class Constants {
     public static final int LEFT_DRIVE_CONTROLLER = 0;
     public static final int RIGHT_DRIVE_CONTROLLER = 1;
     public static final int OPERATOR_CONTROLLER = 2;
+
+    public static final String CANIVORE_NAME = "CANivore";
 }
