@@ -2,20 +2,25 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.UpdateManager;
 
 public class Robot extends TimesliceRobot {
-	private static double robotPeriodicAllocation = 0.002;
-	private static double controllerPeriod = 0.005;
+	private RobotContainer robotContainer = new RobotContainer();
+
+	// Create an object to manage the timeslices for the subsystems
+	private UpdateManager updateManager = new UpdateManager(this);
 
 	public Robot() {
-		super(robotPeriodicAllocation, controllerPeriod);
+		super(Constants.ROBOT_PERIODIC_ALLOCATION, Constants.CONTROLLER_PERIOD);
 	}
-
-	private RobotContainer robotContainer = new RobotContainer();
 
 	@Override
 	public void robotInit() {
-		this.schedule(() -> robotContainer.getSwerveDriveSubsystem().update(), 0.0015);
+		scheduleUpdateFunctions();
+	}
+
+	private void scheduleUpdateFunctions() {
+		updateManager.schedule(robotContainer.getSwerveDriveSubsystem(), Constants.DRIVETRAIN_PERIOD);
 	}
 
 	@Override
@@ -25,6 +30,7 @@ public class Robot extends TimesliceRobot {
 
 	@Override
 	public void autonomousInit() {
+		robotContainer.getAutonomousCommand().schedule();
 	}
 
 	@Override
