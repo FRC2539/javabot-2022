@@ -7,6 +7,7 @@ import frc.robot.common.controller.Axis;
 import frc.robot.common.controller.ThrustmasterJoystick;
 import frc.robot.common.controller.LogitechController;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ShooterSubsystem.ShooterAngle;
 import frc.robot.util.AutonomousManager;
 
 public class RobotContainer {
@@ -15,6 +16,7 @@ public class RobotContainer {
     private final LogitechController operatorController = new LogitechController(Constants.OPERATOR_CONTROLLER);
     
     private final SwerveDriveSubsystem drivetrainSubsystem = new SwerveDriveSubsystem();
+    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private AutonomousManager autonomousManager;
 
@@ -24,11 +26,16 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(drivetrainSubsystem);
         CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
 
+        CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
+
         configureControllerLayout();
     }
 
     private void configureControllerLayout() {
         leftDriveController.getLeftTopLeft().whenPressed(() -> drivetrainSubsystem.resetGyroAngle());
+
+        leftDriveController.getLeftThumb().whenPressed(() -> shooterSubsystem.setShooterAngle(ShooterAngle.CLOSE_SHOT), shooterSubsystem);
+        leftDriveController.getRightThumb().whenPressed(() -> shooterSubsystem.setShooterAngle(ShooterAngle.FAR_SHOT), shooterSubsystem);
     }
 
     public Command getAutonomousCommand() {
@@ -49,5 +56,9 @@ public class RobotContainer {
 
     public SwerveDriveSubsystem getSwerveDriveSubsystem() {
         return drivetrainSubsystem;
+    }
+
+    public ShooterSubsystem getShooterSubsystem() {
+        return shooterSubsystem;
     }
 }

@@ -31,4 +31,12 @@ public class Constants {
 	public static final double CONTROLLER_PERIOD = 0.005;
 
 	public static final double DRIVETRAIN_PERIOD = 0.0015;
+	public static final double SHOOTER_PERIOD = 0.0008;
+
+    public static final int PCM_ID = 17;
+
+    public static final int SHOOTER_SOLENOID_FORWARD_CHANNEL = 4;
+    public static final int SHOOTER_SOLENOID_REVERSE_CHANNEL = 5;
+    public static final int SHOOTER_REAR_MOTOR_PORT = 8;
+    public static final int SHOOTER_FRONT_MOTOR_PORT = 9;
 }

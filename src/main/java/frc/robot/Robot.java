@@ -21,6 +21,7 @@ public class Robot extends TimesliceRobot {
 
 	private void scheduleUpdateFunctions() {
 		updateManager.schedule(robotContainer.getSwerveDriveSubsystem(), Constants.DRIVETRAIN_PERIOD);
+		updateManager.schedule(robotContainer.getShooterSubsystem(), Constants.SHOOTER_PERIOD);
 	}
 
 	@Override
