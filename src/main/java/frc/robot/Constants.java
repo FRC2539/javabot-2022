@@ -32,6 +32,7 @@ public class Constants {
 
 	public static final double DRIVETRAIN_PERIOD = 0.0015;
 	public static final double SHOOTER_PERIOD = 0.0008;
+    public static final double BALLTRACK_PERIOD = 0.0007;
 
     public static final int PCM_ID = 17;
 
@@ -41,4 +42,14 @@ public class Constants {
     public static final int SHOOTER_FRONT_MOTOR_PORT = 9;
 
     public static final int LED_CONTROLLER_PWM_ID = 9;
+
+    public static final int BALLTRACK_INTAKE_MOTOR_PORT = 10;
+    public static final int BALLTRACK_CONVEYOR_MOTOR_PORT = 11;
+    public static final int BALLTRACK_CHAMBER_MOTOR_PORT = 12;
+
+    public static final int BALLTRACK_CONVEYOR_SENSOR_PORT = 0;
+    public static final int BALLTRACK_CHAMBER_SENSOR_PORT = 1;
+
+    public static final int BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL = 0;
+    public static final int BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL = 1;
 }

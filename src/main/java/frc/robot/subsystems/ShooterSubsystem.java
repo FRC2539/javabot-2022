@@ -128,7 +128,7 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         setShooter(fenderLowGoalShooterState);
     }
 
-    public void setFenderHightGoalShot() {
+    public void setFenderHighGoalShot() {
         setShooter(fenderHighGoalShooterState);
     }
 

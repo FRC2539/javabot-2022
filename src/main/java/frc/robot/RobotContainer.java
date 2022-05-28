@@ -17,6 +17,7 @@ public class RobotContainer {
     private final SwerveDriveSubsystem drivetrainSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final LightsSubsystem lightsSubsystem = new LightsSubsystem();
+    private final BalltrackSubsystem balltrackSubsystem = new BalltrackSubsystem(shooterSubsystem);
 
     private AutonomousManager autonomousManager;
 
@@ -26,6 +27,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(drivetrainSubsystem);
         CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
         CommandScheduler.getInstance().registerSubsystem(lightsSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(balltrackSubsystem);
         
         CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
         CommandScheduler.getInstance().setDefaultCommand(lightsSubsystem, new DefaultLightsCommand(lightsSubsystem));
@@ -36,8 +38,10 @@ public class RobotContainer {
     private void configureControllerLayout() {
         leftDriveController.getLeftTopLeft().whenPressed(() -> drivetrainSubsystem.resetGyroAngle());
 
-        leftDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, () -> shooterSubsystem.setFenderHightGoalShot()));
-        rightDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, () -> shooterSubsystem.setFenderLowGoalShot()));
+        leftDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderHighGoalShot()));
+        rightDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderLowGoalShot()));
+
+        rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem));
     }
 
     public Command getAutonomousCommand() {
@@ -66,5 +70,9 @@ public class RobotContainer {
 
     public LightsSubsystem getLightsSubsystem() {
         return lightsSubsystem;
+    }
+
+    public BalltrackSubsystem getBalltrackSubsystem() {
+        return balltrackSubsystem;
     }
 }
