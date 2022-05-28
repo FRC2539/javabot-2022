@@ -34,6 +34,18 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
     private final double SHOOTER_RPM_ERROR = 40;
 
+    private final ShooterState rejectShooterState = new ShooterState(1000, 800, ShooterAngle.DISABLED);
+
+    private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
+    private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
+
+    private final ShooterState farShotStartState = new ShooterState(2400, 1800, 0.8);
+    private final ShooterState farShotEndState = new ShooterState(4160, 3120, 3);
+
+    private NetworkTableEntry customRearShooterRPMEntry;
+    private NetworkTableEntry customFrontShooterRPMEntry;
+    private NetworkTableEntry customShooterAngleEntry;
+
     private NetworkTableEntry rearShooterRPMEntry;
     private NetworkTableEntry frontShooterRPMEntry;
 
@@ -57,6 +69,14 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
         rearShooterRPMEntry = getEntry("Shooter RPM");
         frontShooterRPMEntry = getEntry("Shooter RPM2");
+
+        customRearShooterRPMEntry = getEntry("Custom Rear RPM");
+        customFrontShooterRPMEntry = getEntry("Custom Front RPM");
+        customShooterAngleEntry = getEntry("Far Shot");
+
+        customRearShooterRPMEntry.setDouble(0);
+        customFrontShooterRPMEntry.setDouble(0);
+        customShooterAngleEntry.setBoolean(true);
     }
 
     public void setShooter(ShooterState shooterState) {
@@ -84,6 +104,33 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
     private double getMotorRPM(WPI_TalonFX motor) {
         return talonUnitsToRPM(motor.getSensorCollection().getIntegratedSensorVelocity());
+    }
+
+    public void stopShooter() {
+        rearShooterMotor.stopMotor();
+        frontShooterMotor.stopMotor();
+    }
+
+    public void setRejectShot() {
+        // No need to change the shooter angle to reject a ball
+        setShooterRPMs(rejectShooterState.rearShooterRPM, rejectShooterState.frontShooterRPM);
+    }
+
+    public void setFenderLowGoalShot() {
+        setShooter(fenderLowGoalShooterState);
+    }
+
+    public void setFenderHightGoalShot() {
+        setShooter(fenderHighGoalShooterState);
+    }
+
+    public void setFarShot(double distance) {
+        setShooter(farShotStartState.interpolateWithDistance(farShotEndState, distance));
+    }
+
+    public void setCustomShot() {
+        setShooterRPMs(customRearShooterRPMEntry.getDouble(0), customFrontShooterRPMEntry.getDouble(0));
+        setShooterAngle(customShooterAngleEntry.getBoolean(true) ? ShooterAngle.FAR_SHOT : ShooterAngle.CLOSE_SHOT);
     }
 
     @Override

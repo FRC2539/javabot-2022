@@ -34,8 +34,8 @@ public class RobotContainer {
     private void configureControllerLayout() {
         leftDriveController.getLeftTopLeft().whenPressed(() -> drivetrainSubsystem.resetGyroAngle());
 
-        leftDriveController.getLeftThumb().whenPressed(() -> shooterSubsystem.setShooterAngle(ShooterAngle.CLOSE_SHOT), shooterSubsystem);
-        leftDriveController.getRightThumb().whenPressed(() -> shooterSubsystem.setShooterAngle(ShooterAngle.FAR_SHOT), shooterSubsystem);
+        leftDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, () -> shooterSubsystem.setFenderHightGoalShot()));
+        rightDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, () -> shooterSubsystem.setFenderLowGoalShot()));
     }
 
     public Command getAutonomousCommand() {
