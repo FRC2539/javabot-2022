@@ -10,6 +10,8 @@ public class SimpleShootCommand extends CommandBase {
     public SimpleShootCommand(ShooterSubsystem shooterSubsystem, Runnable setShooterStateRunnable) {
         this.shooterSubsystem = shooterSubsystem;
         this.setShooterStateRunnable = setShooterStateRunnable;
+
+        addRequirements(shooterSubsystem);
     } 
 
     @Override

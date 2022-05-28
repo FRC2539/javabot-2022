@@ -39,4 +39,6 @@ public class Constants {
     public static final int SHOOTER_SOLENOID_REVERSE_CHANNEL = 5;
     public static final int SHOOTER_REAR_MOTOR_PORT = 8;
     public static final int SHOOTER_FRONT_MOTOR_PORT = 9;
+
+    public static final int LED_CONTROLLER_PWM_ID = 9;
 }

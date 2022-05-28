@@ -7,7 +7,6 @@ import frc.robot.common.controller.Axis;
 import frc.robot.common.controller.ThrustmasterJoystick;
 import frc.robot.common.controller.LogitechController;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.ShooterSubsystem.ShooterAngle;
 import frc.robot.util.AutonomousManager;
 
 public class RobotContainer {
@@ -17,6 +16,7 @@ public class RobotContainer {
     
     private final SwerveDriveSubsystem drivetrainSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final LightsSubsystem lightsSubsystem = new LightsSubsystem();
 
     private AutonomousManager autonomousManager;
 
@@ -24,9 +24,11 @@ public class RobotContainer {
         autonomousManager = new AutonomousManager();
 
         CommandScheduler.getInstance().registerSubsystem(drivetrainSubsystem);
-        CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
-
         CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(lightsSubsystem);
+        
+        CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
+        CommandScheduler.getInstance().setDefaultCommand(lightsSubsystem, new DefaultLightsCommand(lightsSubsystem));
 
         configureControllerLayout();
     }
