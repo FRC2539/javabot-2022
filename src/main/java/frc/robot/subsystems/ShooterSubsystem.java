@@ -22,8 +22,8 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
     private ShooterAngle targetShooterAngle = ShooterAngle.DISABLED;
 
-    private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(Constants.SHOOTER_REAR_MOTOR_PORT, "CANivore");
-    private WPI_TalonFX frontShooterMotor = new WPI_TalonFX(Constants.SHOOTER_FRONT_MOTOR_PORT, "CANivore");
+    private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(Constants.SHOOTER_REAR_MOTOR_PORT, Constants.CANIVORE_NAME);
+    private WPI_TalonFX frontShooterMotor = new WPI_TalonFX(Constants.SHOOTER_FRONT_MOTOR_PORT, Constants.CANIVORE_NAME);
 
     private final double SHOOTER_F = 0.05;
     private final double SHOOTER_P = 0.13;
@@ -94,16 +94,24 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     }
 
     public boolean isShooterAtVelocity() {
-        return MathUtils.equalsWithinError(getMotorTargetRPM(rearShooterMotor), getMotorRPM(rearShooterMotor), SHOOTER_RPM_ERROR)
-                && MathUtils.equalsWithinError(getMotorTargetRPM(frontShooterMotor), getMotorRPM(frontShooterMotor), SHOOTER_RPM_ERROR);
+        return MathUtils.equalsWithinError(getMotorTargetRPM(rearShooterMotor), getRearMotorRPM(), SHOOTER_RPM_ERROR)
+                && MathUtils.equalsWithinError(getMotorTargetRPM(frontShooterMotor), getFrontMotorRPM(), SHOOTER_RPM_ERROR);
     }
 
     private double getMotorTargetRPM(WPI_TalonFX motor) {
         return talonUnitsToRPM(motor.getClosedLoopTarget());
     }
 
+    private double getRearMotorRPM() {
+        return getMotorRPM(rearShooterMotor);
+    }
+
+    private double getFrontMotorRPM() {
+        return getMotorRPM(frontShooterMotor);
+    }
+
     private double getMotorRPM(WPI_TalonFX motor) {
-        return talonUnitsToRPM(motor.getSensorCollection().getIntegratedSensorVelocity());
+        return talonUnitsToRPM(motor.getSelectedSensorVelocity());
     }
 
     public void stopShooter() {
@@ -140,10 +148,10 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
                 shooterAngleSolenoid.set(DoubleSolenoid.Value.kOff);
                 break;
             case CLOSE_SHOT:
-                shooterAngleSolenoid.set(DoubleSolenoid.Value.kForward);
+                shooterAngleSolenoid.set(DoubleSolenoid.Value.kReverse);
                 break;
             case FAR_SHOT:
-                shooterAngleSolenoid.set(DoubleSolenoid.Value.kReverse);
+                shooterAngleSolenoid.set(DoubleSolenoid.Value.kForward);
                 break;
         }
     }

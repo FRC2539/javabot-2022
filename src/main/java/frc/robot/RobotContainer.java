@@ -63,4 +63,8 @@ public class RobotContainer {
     public ShooterSubsystem getShooterSubsystem() {
         return shooterSubsystem;
     }
+
+    public LightsSubsystem getLightsSubsystem() {
+        return lightsSubsystem;
+    }
 }

@@ -4,7 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 public abstract class Axis {
-	public static final double DEADBAND = 0.025;
+	public static final double DEADBAND = 0.05;
 
 	private boolean inverted = false;
 	private double scale = 1.0;
