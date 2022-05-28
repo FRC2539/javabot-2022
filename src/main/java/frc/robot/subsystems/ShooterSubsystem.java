@@ -1,12 +1,17 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Constants;
+import frc.robot.common.MathUtils;
+import frc.robot.common.control.ShooterState;
 import frc.robot.util.Updatable;
 
 public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
@@ -15,19 +20,22 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
                                                                             Constants.SHOOTER_SOLENOID_FORWARD_CHANNEL,
                                                                             Constants.SHOOTER_SOLENOID_REVERSE_CHANNEL);
 
-    private ShooterAngle targetShooterAngle = ShooterAngle.NOT_SET;
+    private ShooterAngle targetShooterAngle = ShooterAngle.DISABLED;
 
-    private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(Constants.SHOOTER_REAR_MOTOR_PORT);
-    private WPI_TalonFX frontShooterMotor = new WPI_TalonFX(Constants.SHOOTER_FRONT_MOTOR_PORT);
-
-    private double rearShooterRPM = 0;
-    private double frontShooterRPM = 0;
+    private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(Constants.SHOOTER_REAR_MOTOR_PORT, "CANivore");
+    private WPI_TalonFX frontShooterMotor = new WPI_TalonFX(Constants.SHOOTER_FRONT_MOTOR_PORT, "CANivore");
 
     private final double SHOOTER_F = 0.05;
     private final double SHOOTER_P = 0.13;
     private final double SHOOTER_I = 0;
     private final double SHOOTER_D = 0.05;
 
+    private final double SHOOTER_MOTOR_GEAR_RATIO = 1.5;
+
+    private final double SHOOTER_RPM_ERROR = 40;
+
+    private NetworkTableEntry rearShooterRPMEntry;
+    private NetworkTableEntry frontShooterRPMEntry;
 
     public ShooterSubsystem() {
         super("Shooter");
@@ -41,30 +49,47 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
         rearShooterMotor.configAllSettings(shooterConfiguration);
         frontShooterMotor.configAllSettings(shooterConfiguration);
+
+        rearShooterMotor.setNeutralMode(NeutralMode.Coast);
+        frontShooterMotor.setNeutralMode(NeutralMode.Coast);
+
+        frontShooterMotor.setInverted(true);
+
+        rearShooterRPMEntry = getEntry("Shooter RPM");
+        frontShooterRPMEntry = getEntry("Shooter RPM2");
     }
 
-    @Override
-    public void update() {
-        updateShooterAngle();
-        updateShooterRPMs();
+    public void setShooter(ShooterState shooterState) {
+        setShooterAngle(shooterState.angle);
+        setShooterRPMs(shooterState.rearShooterRPM, shooterState.frontShooterRPM);
     }
 
     public void setShooterRPMs(double rearShooterRPM, double frontShooterRPM) {
-        this.rearShooterRPM = rearShooterRPM;
-        this.frontShooterRPM = frontShooterRPM;
+        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM));
+        frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM));
     }
 
     public void setShooterAngle(ShooterAngle angle) {
         targetShooterAngle = angle;
     }
 
-    private void updateShooterRPMs() {
-
+    public boolean isShooterAtVelocity() {
+        return MathUtils.equalsWithinError(getMotorTargetRPM(rearShooterMotor), getMotorRPM(rearShooterMotor), SHOOTER_RPM_ERROR)
+                && MathUtils.equalsWithinError(getMotorTargetRPM(frontShooterMotor), getMotorRPM(frontShooterMotor), SHOOTER_RPM_ERROR);
     }
 
-    private void updateShooterAngle() {
+    private double getMotorTargetRPM(WPI_TalonFX motor) {
+        return talonUnitsToRPM(motor.getClosedLoopTarget());
+    }
+
+    private double getMotorRPM(WPI_TalonFX motor) {
+        return talonUnitsToRPM(motor.getSensorCollection().getIntegratedSensorVelocity());
+    }
+
+    @Override
+    public void update() {
         switch (targetShooterAngle) {
-            case NOT_SET:
+            case DISABLED:
                 shooterAngleSolenoid.set(DoubleSolenoid.Value.kOff);
                 break;
             case CLOSE_SHOT:
@@ -76,9 +101,23 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         }
     }
 
+    @Override
+    public void periodic() {
+        rearShooterRPMEntry.setDouble(getMotorRPM(rearShooterMotor));
+        frontShooterRPMEntry.setDouble(getMotorRPM(frontShooterMotor));
+    }
+
     public enum ShooterAngle {
-        NOT_SET,
+        DISABLED,
         FAR_SHOT,
         CLOSE_SHOT
+    }
+
+    private double rpmToTalonUnits(double rpm) {
+        return (rpm * 2048 * SHOOTER_MOTOR_GEAR_RATIO) / 600;
+    }
+
+    private double talonUnitsToRPM(double units) {
+        return (units * 600) / (2048 * SHOOTER_MOTOR_GEAR_RATIO);
     }
 }

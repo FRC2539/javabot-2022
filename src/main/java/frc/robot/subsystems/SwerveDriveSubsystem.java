@@ -18,10 +18,10 @@ import frc.robot.util.Updatable;
 
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
     private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-            new Translation2d(0.427799754, 0.427799754), // Front left
-            new Translation2d(0.427799754, -0.427799754), // Front right
-            new Translation2d(-0.427799754, 0.427799754), // Back left
-            new Translation2d(-0.427799754, -0.427799754) // Back right
+            new Translation2d(0.29845, 0.29845), // Front left
+            new Translation2d(0.29845, -0.29845), // Front right
+            new Translation2d(-0.29845, 0.29845), // Back left
+            new Translation2d(-0.29845, -0.29845) // Back right
     );
 
 
@@ -35,9 +35,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = null;
 
-    private NetworkTableEntry vx;
-    private NetworkTableEntry vy;
-    private NetworkTableEntry omega;
+    private NetworkTableEntry vxEntry;
+    private NetworkTableEntry vyEntry;
+    private NetworkTableEntry omegaEntry;
 
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
@@ -73,9 +73,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
-        vx = getEntry("VX");
-        vy = getEntry("VY");
-        omega = getEntry("Omega");
+        vxEntry = getEntry("VX");
+        vyEntry = getEntry("VY");
+        omegaEntry = getEntry("Omega");
     }
 
     public Pose2d getPose() {
@@ -139,9 +139,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             chassisVelocity = new ChassisSpeeds(driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
         }
 
-        vx.setValue(chassisVelocity.vxMetersPerSecond);
-        vy.setValue(chassisVelocity.vyMetersPerSecond);
-        omega.setValue(chassisVelocity.omegaRadiansPerSecond);
+        vxEntry.setDouble(chassisVelocity.vxMetersPerSecond);
+        vyEntry.setDouble(chassisVelocity.vyMetersPerSecond);
+        omegaEntry.setDouble(chassisVelocity.omegaRadiansPerSecond);
 
         SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, 1);

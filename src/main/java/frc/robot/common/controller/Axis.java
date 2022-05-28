@@ -1,5 +1,6 @@
 package frc.robot.common.controller;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 public abstract class Axis {
@@ -43,7 +44,7 @@ public abstract class Axis {
 		}
 
 		// Deadband value
-		// value = Utilities.deadband(value, DEADBAND);
+		value = MathUtil.applyDeadband(value, DEADBAND);
 
 		// Square value
 		if (squared) {

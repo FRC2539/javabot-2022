@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.UpdateManager;
@@ -12,6 +13,9 @@ public class Robot extends TimesliceRobot {
 
 	public Robot() {
 		super(Constants.ROBOT_PERIODIC_ALLOCATION, Constants.CONTROLLER_PERIOD);
+
+		// Prevents the logging of many errors with our controllers
+		DriverStation.silenceJoystickConnectionWarning(true);
 	}
 
 	@Override
