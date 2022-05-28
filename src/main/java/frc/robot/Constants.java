@@ -52,4 +52,6 @@ public class Constants {
 
     public static final int BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL = 0;
     public static final int BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL = 1;
+
+    public static final int CLIMBER_MOTOR_PORT = 18;
 }

@@ -18,6 +18,9 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final LightsSubsystem lightsSubsystem = new LightsSubsystem();
     private final BalltrackSubsystem balltrackSubsystem = new BalltrackSubsystem(shooterSubsystem);
+    private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+    private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
+    private final MachineLearningSubsystem machineLearningSubsystem = new MachineLearningSubsystem();
 
     private AutonomousManager autonomousManager;
 
@@ -28,6 +31,9 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
         CommandScheduler.getInstance().registerSubsystem(lightsSubsystem);
         CommandScheduler.getInstance().registerSubsystem(balltrackSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(climberSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(limelightSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(machineLearningSubsystem);
         
         CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
         CommandScheduler.getInstance().setDefaultCommand(lightsSubsystem, new DefaultLightsCommand(lightsSubsystem));
@@ -74,5 +80,17 @@ public class RobotContainer {
 
     public BalltrackSubsystem getBalltrackSubsystem() {
         return balltrackSubsystem;
+    }
+
+    public ClimberSubsystem getClimberSubsystem() {
+        return climberSubsystem;
+    }
+
+    public LimelightSubsystem getLimelightSubsystem() {
+        return limelightSubsystem;
+    }
+
+    public MachineLearningSubsystem getMachineLearningSubsystem() {
+        return machineLearningSubsystem;
     }
 }
