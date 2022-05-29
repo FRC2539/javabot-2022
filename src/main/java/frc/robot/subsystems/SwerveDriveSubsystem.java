@@ -17,11 +17,15 @@ import frc.robot.common.control.SwerveDriveSignal;
 import frc.robot.util.Updatable;
 
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
+    // Measured in meters (ask CAD dept. for this information in new robots)
+    public static final double TRACKWIDTH = 0.5969;
+    public static final double WHEELBASE = 0.5969;
+
     private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-            new Translation2d(0.29845, 0.29845), // Front left
-            new Translation2d(0.29845, -0.29845), // Front right
-            new Translation2d(-0.29845, 0.29845), // Back left
-            new Translation2d(-0.29845, -0.29845) // Back right
+            new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front left
+            new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front right
+            new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Back left
+            new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
     );
 
 

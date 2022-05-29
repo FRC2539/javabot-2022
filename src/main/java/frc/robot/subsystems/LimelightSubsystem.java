@@ -7,7 +7,7 @@ import frc.robot.util.Updatable;
 
 public class LimelightSubsystem extends NetworkTablesSubsystem implements Updatable {
     private final double TARGET_HEIGHT = 2.62;
-    private final double LIMELIGHT_HEIGHT = 0.737;
+    private final double LIMELIGHT_HEIGHT = 0.75819;
     private final double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
 
     private final double LIMELIGHT_ANGLE = Math.toRadians(60);
