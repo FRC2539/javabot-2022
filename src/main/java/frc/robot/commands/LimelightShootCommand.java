@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 
 public class LimelightShootCommand extends CommandBase {
     private ShooterSubsystem shooterSubsystem;
@@ -17,6 +18,11 @@ public class LimelightShootCommand extends CommandBase {
 
         addRequirements(shooterSubsystem);
     } 
+
+    @Override
+    public void initialize() {
+        limelightSubsystem.setPipeline(LimelightPipeline.SHOOT);
+    }
 
     @Override
     public void execute() {

@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class MachineLearningSubsystem extends NetworkTablesSubsystem {
-    public final double AREA_STOPPING_THRESHOLD = 11000;
+    private final double AREA_STOPPING_THRESHOLD = 11000;
 
     // Measured at 1 meter
     private final double HORIZONTAL_FIELD_OF_VIEW = 1.137;
@@ -100,5 +100,9 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
 
     public double getBallDistance() {
         return SQRT_BALL_SIZE / Math.sqrt(getTargetArea());
+    }
+
+    public boolean isAtBall() {
+        return getTargetArea() >= AREA_STOPPING_THRESHOLD;
     }
 }

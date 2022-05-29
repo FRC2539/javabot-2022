@@ -8,6 +8,7 @@ import frc.robot.common.controller.Axis;
 import frc.robot.subsystems.LightsSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 
 public class LimelightDriveCommand extends CommandBase {
     private SwerveDriveSubsystem drivetrainSubsystem;
@@ -35,6 +36,8 @@ public class LimelightDriveCommand extends CommandBase {
     @Override
     public void initialize() {
         pidController.reset();
+
+        limelightSubsystem.setPipeline(LimelightPipeline.SHOOT);
     }
 
     @Override

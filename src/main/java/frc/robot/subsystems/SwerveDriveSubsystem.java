@@ -106,6 +106,10 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         driveSignal = new SwerveDriveSignal(velocity, isFieldOriented);
     }
 
+    public void stop() {
+        driveSignal = new SwerveDriveSignal();
+    }
+
     public void resetPose(Pose2d pose) {
         this.pose = pose;
         swerveOdometry.resetPosition(pose, getGyroRotation2d());

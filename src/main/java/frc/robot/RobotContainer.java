@@ -48,11 +48,14 @@ public class RobotContainer {
         leftDriveController.getRightThumb().whileHeld(() -> climberSubsystem.raiseClimber(), climberSubsystem);
         leftDriveController.getBottomThumb().whileHeld(() -> climberSubsystem.toggleClimberArm(), climberSubsystem);
 
+        leftDriveController.getLeftTopRight().whenPressed(new SeizureModeCommand(lightsSubsystem));
+
         leftDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderHighGoalShot()));
         rightDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderLowGoalShot()));
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem));
         rightDriveController.getBottomThumb().whileHeld(new LimelightDriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), limelightSubsystem, lightsSubsystem));
+        rightDriveController.getRightThumb().whileHeld(new BallCollectCommand(machineLearningSubsystem, drivetrainSubsystem, balltrackSubsystem));
 
         operatorController.getRightTrigger().whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
 
