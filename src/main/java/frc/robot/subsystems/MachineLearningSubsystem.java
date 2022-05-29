@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class MachineLearningSubsystem extends NetworkTablesSubsystem {
@@ -42,7 +43,8 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
     }
 
     public void enableFiltering() {
-        filterColorEntry.setBoolean(FILTER_BALLS);
+        if (FILTER_BALLS)
+            filterColorEntry.setString(DriverStation.getAlliance() == Alliance.Blue ? "blue" : "red");
     }
 
     public Alliance getTargetColor() {

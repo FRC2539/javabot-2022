@@ -22,6 +22,8 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
 
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
 
+    private boolean isAimed = false;
+
     private NetworkTableEntry pipelineEntry;
     private NetworkTableEntry hasTargetEntry;
     private NetworkTableEntry snapshotEntry;
@@ -53,7 +55,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     }
 
     public boolean isAimed() {
-        return Math.abs(getHorizontalAngle()) < LIMELIGHT_HORIZONTAL_ERROR;
+        return this.isAimed;
     }
 
     public OptionalDouble calculateDistanceToTarget() {
@@ -93,6 +95,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     @Override
     public void update() {
         distanceToTarget = calculateDistanceToTarget();
+        isAimed = Math.abs(getHorizontalAngle()) < LIMELIGHT_HORIZONTAL_ERROR;
     }
 
     public void incrementXOffset() {

@@ -20,14 +20,12 @@ public class SimpleShootCommand extends CommandBase {
     @Override
     public void initialize() {
         setShooterStateRunnable.run();
-
         balltrackSubsystem.shootMode();
     }
 
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.stopShooter();
-
         balltrackSubsystem.stopShootMode();
     }
 }

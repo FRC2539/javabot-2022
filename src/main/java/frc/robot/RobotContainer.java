@@ -44,10 +44,24 @@ public class RobotContainer {
     private void configureControllerLayout() {
         leftDriveController.getLeftTopLeft().whenPressed(() -> drivetrainSubsystem.resetGyroAngle());
 
+        leftDriveController.getLeftThumb().whileHeld(() -> climberSubsystem.lowerClimber(), climberSubsystem);
+        leftDriveController.getRightThumb().whileHeld(() -> climberSubsystem.raiseClimber(), climberSubsystem);
+        leftDriveController.getBottomThumb().whileHeld(() -> climberSubsystem.toggleClimberArm(), climberSubsystem);
+
         leftDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderHighGoalShot()));
         rightDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderLowGoalShot()));
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem));
+        rightDriveController.getBottomThumb().whileHeld(new LimelightDriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), limelightSubsystem, lightsSubsystem));
+
+        operatorController.getRightTrigger().whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
+
+        operatorController.getA().whenPressed(() -> limelightSubsystem.decrementYOffset(), limelightSubsystem);
+        operatorController.getX().whenPressed(() -> limelightSubsystem.incrementXOffset(), limelightSubsystem);
+        operatorController.getB().whenPressed(() -> limelightSubsystem.decrementXOffset(), limelightSubsystem);
+        operatorController.getY().whenPressed(() -> limelightSubsystem.incrementYOffset(), limelightSubsystem);
+
+        operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem));
     }
 
     public Command getAutonomousCommand() {
