@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Constants;
 import frc.robot.common.MathUtils;
 import frc.robot.common.control.ShooterState;
+import frc.robot.common.control.ShooterStateMap;
 import frc.robot.util.Updatable;
 
 public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
@@ -39,8 +40,7 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
 
-    private final ShooterState farShotStartState = new ShooterState(2400, 1800, 0.8);
-    private final ShooterState farShotEndState = new ShooterState(4160, 3120, 3);
+    private final ShooterStateMap farShotStateMap = new ShooterStateMap();
 
     private NetworkTableEntry customRearShooterRPMEntry;
     private NetworkTableEntry customFrontShooterRPMEntry;
@@ -77,6 +77,9 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         customRearShooterRPMEntry.setDouble(0);
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
+
+        farShotStateMap.put(new ShooterState(2400, 1800, 0.8));
+        farShotStateMap.put(new ShooterState(4160, 3120, 3));
     }
 
     public void setShooter(ShooterState shooterState) {
@@ -132,8 +135,12 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         setShooter(fenderHighGoalShooterState);
     }
 
+    public ShooterState calculateShooterStateForDistance(double distance) {
+        return farShotStateMap.getInterpolatedShooterState(distance).orElse(new ShooterState());
+    }
+
     public void setFarShot(double distance) {
-        setShooter(farShotStartState.interpolateWithDistance(farShotEndState, distance));
+        setShooter(calculateShooterStateForDistance(distance));
     }
 
     public void setCustomShot() {
