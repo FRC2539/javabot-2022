@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -9,11 +12,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+
+import java.util.Optional;
 
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.Constants;
 import frc.robot.common.control.SwerveDriveSignal;
+import frc.robot.util.TrajectoryFollower;
 import frc.robot.util.Updatable;
 
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
@@ -28,8 +35,16 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
     );
 
+    private final TrajectoryFollower follower = new TrajectoryFollower(
+        new PIDController(1, 0, 0, 0.005),
+        new PIDController(1, 0, 0, 0.005),
+        new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(Math.PI * 2, Math.PI), 0.005)
+    );
+
     // See sds mk4 website; units are m/s
     private final double PHYSICAL_MAX_VELOCITY = 4.97;
+    public final double MAX_ANGULAR_VELOCITY = PHYSICAL_MAX_VELOCITY /
+          Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
 
     private SwerveModule[] modules;
 
@@ -41,9 +56,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = null;
 
-    private NetworkTableEntry vxEntry;
-    private NetworkTableEntry vyEntry;
-    private NetworkTableEntry omegaEntry;
+    private NetworkTableEntry odometryXEntry;
+    private NetworkTableEntry odometryYEntry;
+    private NetworkTableEntry odometryAngleEntry;
+
+    private NetworkTableEntry trajectoryXEntry;
+    private NetworkTableEntry trajectoryYEntry;
+    private NetworkTableEntry trajectoryAngleEntry;
 
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
@@ -79,9 +98,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
-        vxEntry = getEntry("VX");
-        vyEntry = getEntry("VY");
-        omegaEntry = getEntry("Omega");
+        odometryXEntry = getEntry("X");
+        odometryYEntry = getEntry("Y");
+        odometryAngleEntry = getEntry("Angle");
+
+        trajectoryXEntry = getEntry("Trajectory X");
+        trajectoryYEntry = getEntry("Trajectory Y");
+        trajectoryAngleEntry = getEntry("Trajectory Angle");
     }
 
     public Pose2d getPose() {
@@ -117,13 +140,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         swerveOdometry.resetPosition(pose, getGyroRotation2d());
     }
 
-    public void setGyroAngle(Rotation2d angle) {
+    public void resetGyroAngle(Rotation2d angle) {
         gyroscope.reset();
         gyroscope.setAngleAdjustment(angle.getDegrees());
     }
 
     public void resetGyroAngle() {
-        setGyroAngle(new Rotation2d());
+        resetGyroAngle(new Rotation2d());
     }
 
     private void updateOdometry() {
@@ -155,10 +178,6 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             return;
         }
 
-        vxEntry.setDouble(chassisVelocity.vxMetersPerSecond);
-        vyEntry.setDouble(chassisVelocity.vyMetersPerSecond);
-        omegaEntry.setDouble(chassisVelocity.omegaRadiansPerSecond);
-
         SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, 1);
         for (int i = 0; i < moduleStates.length; i++) {
@@ -179,14 +198,47 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     public void update() {
         updateOdometry();
 
-        SwerveDriveSignal driveSignal = this.driveSignal;
+        SwerveDriveSignal driveSignal;
+
+        Optional<SwerveDriveSignal> trajectorySignal = follower.update(getPose());
+
+        if(trajectorySignal.isPresent()) {
+            driveSignal = trajectorySignal.get();
+            driveSignal = new SwerveDriveSignal(
+                driveSignal.vxMetersPerSecond / PHYSICAL_MAX_VELOCITY,
+                driveSignal.vyMetersPerSecond / PHYSICAL_MAX_VELOCITY,
+                driveSignal.omegaRadiansPerSecond / MAX_ANGULAR_VELOCITY,
+                false
+            );
+        } else {
+            driveSignal = this.driveSignal;
+        }
 
         updateModules(driveSignal);
     }
 
     @Override
     public void periodic() {
-        // Update misc network tables values
-        
+        Pose2d pose = getPose();
+
+        odometryXEntry.setDouble(pose.getX());
+        odometryYEntry.setDouble(pose.getY());
+        odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
+
+        if (follower.getLastState() == null){
+            trajectoryXEntry.setDouble(0);
+            trajectoryYEntry.setDouble(0);
+            trajectoryAngleEntry.setDouble(0);
+        } else {
+            Pose2d trajectoryPose = getFollower().getLastState().poseMeters;
+
+            trajectoryXEntry.setDouble(trajectoryPose.getX());
+            trajectoryYEntry.setDouble(trajectoryPose.getY());
+            trajectoryAngleEntry.setDouble(trajectoryPose.getRotation().getDegrees());
+        }
+    }
+
+    public TrajectoryFollower getFollower() {
+        return follower;
     }
 }

@@ -19,10 +19,16 @@ public class TrajectoryLoader {
     private Trajectory twoBallSide;
 
     public TrajectoryLoader() throws IOException {
-        threeBallOne = TrajectoryUtil.fromPathweaverJson(getPath(THREE_BALL_ONE_PATH));
-        threeBallTwo = TrajectoryUtil.fromPathweaverJson(getPath(THREE_BALL_TWO_PATH));
-        twoBallMain = TrajectoryUtil.fromPathweaverJson(getPath(TWO_BALL_MAIN_PATH));
-        twoBallSide = TrajectoryUtil.fromPathweaverJson(getPath(TWO_BALL_SIDE_PATH));
+        threeBallOne = loadTrajectory(THREE_BALL_ONE_PATH);
+        threeBallTwo = loadTrajectory(THREE_BALL_TWO_PATH);
+        twoBallMain = loadTrajectory(TWO_BALL_MAIN_PATH);
+        twoBallSide = loadTrajectory(TWO_BALL_SIDE_PATH);
+
+        System.out.println("\nAll trajectories loaded successfully.\n");
+    }
+
+    private Trajectory loadTrajectory(String path) throws IOException {
+        return TrajectoryUtil.fromPathweaverJson(getPath(path));
     }
 
     private Path getPath(String path) {
