@@ -2,30 +2,27 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.BalltrackSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
 
 public class ReverseBalltrackCommand extends CommandBase {
     private BalltrackSubsystem balltrackSubsystem;
+    private ShooterSubsystem shooterSubsystem;
 
-    private BalltrackMode previousBalltrackMode;
-
-    public ReverseBalltrackCommand(BalltrackSubsystem balltrackSubsystem) {
+    public ReverseBalltrackCommand(BalltrackSubsystem balltrackSubsystem, ShooterSubsystem shooterSubsystem) {
         this.balltrackSubsystem = balltrackSubsystem;
+        this.shooterSubsystem = shooterSubsystem;
     }
 
     @Override
     public void initialize() {
-        previousBalltrackMode = balltrackSubsystem.getBalltrackMode();
-
         balltrackSubsystem.setBalltrackMode(BalltrackMode.REVERSE);
+        shooterSubsystem.setShooterPercents(-0.3, -0.3);
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (balltrackSubsystem.getBalltrackMode() != BalltrackMode.REVERSE){
-            return;
-        } else {
-            balltrackSubsystem.setBalltrackMode(previousBalltrackMode);
-        }
+        balltrackSubsystem.setBalltrackMode(BalltrackMode.DISABLED);
+        shooterSubsystem.stopShooter();
     }
 }

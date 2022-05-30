@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.io.IOException;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
@@ -8,6 +10,7 @@ import frc.robot.common.controller.ThrustmasterJoystick;
 import frc.robot.common.controller.LogitechController;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
+import frc.robot.util.TrajectoryLoader;
 
 public class RobotContainer {
     private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(Constants.LEFT_DRIVE_CONTROLLER);
@@ -23,9 +26,16 @@ public class RobotContainer {
     private final MachineLearningSubsystem machineLearningSubsystem = new MachineLearningSubsystem();
 
     private AutonomousManager autonomousManager;
+    private TrajectoryLoader trajectoryLoader;
 
     public RobotContainer() {
-        autonomousManager = new AutonomousManager();
+        try {
+            trajectoryLoader = new TrajectoryLoader();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        autonomousManager = new AutonomousManager(trajectoryLoader);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrainSubsystem);
         CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
@@ -64,7 +74,7 @@ public class RobotContainer {
         operatorController.getB().whenPressed(() -> limelightSubsystem.decrementXOffset(), limelightSubsystem);
         operatorController.getY().whenPressed(() -> limelightSubsystem.incrementYOffset(), limelightSubsystem);
 
-        operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem));
+        operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));
     }
 
     public Command getAutonomousCommand() {

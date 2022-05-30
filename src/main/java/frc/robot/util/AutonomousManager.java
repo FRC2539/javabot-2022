@@ -1,6 +1,8 @@
 package frc.robot.util;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -9,16 +11,22 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RobotContainer;
+import frc.robot.commands.LimelightDriveCommand;
+import frc.robot.commands.LimelightShootCommand;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 public class AutonomousManager {
+    private TrajectoryLoader trajectoryLoader;
+
     private NetworkTable autonomousTable;
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"test"};
+    private final String[] autoStrings = {"oneball"};
 
-    public AutonomousManager() {
+    public AutonomousManager(TrajectoryLoader trajectoryLoader) {
+        this.trajectoryLoader = trajectoryLoader;
+
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
         autonomousTable = inst.getTable("Autonomous");
@@ -31,23 +39,34 @@ public class AutonomousManager {
         selectedAuto.setString(autoStrings[0]);
     }
 
-    public Command getTestAutoCommand(RobotContainer container) {
+    public Command getOneBallAutoCommand(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        SwerveDriveSubsystem driveSubsystem = container.getSwerveDriveSubsystem();
-        
-        ChassisSpeeds velocity = new ChassisSpeeds(1, 0, 0);
-
-        command.addCommands(new WaitCommand(2)
-                .alongWith(new InstantCommand(() -> driveSubsystem.drive(velocity, false), driveSubsystem)));
+        // resetRobotPose(command, container, trajectory);
 
         return command;
     }
 
+    private void shootBalls(SequentialCommandGroup command, RobotContainer container, double timeout) {
+        command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
+                            .withTimeout(timeout));
+    }
+
+    private void shootBallsAndAim(SequentialCommandGroup command, RobotContainer container, double timeout) {
+        command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
+                            .alongWith(new LimelightDriveCommand(container.getSwerveDriveSubsystem(), () -> 0.0, () -> 0.0, container.getLimelightSubsystem(), container.getLightsSubsystem()))
+                            .withTimeout(timeout));
+    }
+
+    private void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
+        command.addCommands(new InstantCommand(() -> container.getSwerveDriveSubsystem().resetGyroAngle()));
+        command.addCommands(new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(trajectory.getInitialPose())));
+    }
+
     public Command getAutonomousCommand(RobotContainer container) {
         switch (selectedAuto.getString(autoStrings[0])) {
-            case "test":
-                return getTestAutoCommand(container);        
+            case "oneball":
+                return getOneBallAutoCommand(container);        
         }
 
         // Return an empty command group if no auto is specified

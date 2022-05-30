@@ -92,6 +92,11 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM));
     }
 
+    public void setShooterPercents(double rearShooterPercent, double frontShooterPercent) {
+        rearShooterMotor.set(ControlMode.PercentOutput, rearShooterPercent);
+        frontShooterMotor.set(ControlMode.PercentOutput, frontShooterPercent);
+    }
+
     public void setShooterAngle(ShooterAngle angle) {
         targetShooterAngle = angle;
     }

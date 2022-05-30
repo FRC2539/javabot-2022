@@ -28,6 +28,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
     );
 
+    // See sds mk4 website; units are m/s
+    private final double PHYSICAL_MAX_VELOCITY = 4.97;
 
     private SwerveModule[] modules;
 
@@ -147,6 +149,12 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             chassisVelocity = new ChassisSpeeds(driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
         }
 
+        // Verify
+        if(chassisVelocity.vxMetersPerSecond == 0 && chassisVelocity.vyMetersPerSecond == 0 && chassisVelocity.omegaRadiansPerSecond == 0) {
+            stopModules();
+            return;
+        }
+
         vxEntry.setDouble(chassisVelocity.vxMetersPerSecond);
         vyEntry.setDouble(chassisVelocity.vyMetersPerSecond);
         omegaEntry.setDouble(chassisVelocity.omegaRadiansPerSecond);
@@ -156,6 +164,14 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];
             module.set(moduleStates[i].speedMetersPerSecond * 12.0, moduleStates[i].angle.getRadians());
+        }
+    }
+
+    // Verify
+    public void stopModules() {
+        for (int i = 0; i < modules.length; i++) {
+            var module = modules[i];
+            module.set(0, module.getSteerAngle());
         }
     }
 

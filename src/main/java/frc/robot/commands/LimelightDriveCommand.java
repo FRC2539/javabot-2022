@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -15,12 +17,12 @@ public class LimelightDriveCommand extends CommandBase {
     private LimelightSubsystem limelightSubsystem;
     private LightsSubsystem lightsSubsystem;
 
-    private Axis forward;
-    private Axis strafe;
+    private DoubleSupplier forward;
+    private DoubleSupplier strafe;
 
     private PIDController pidController = new PIDController(0.1, 0, 0, 0.02);
 
-    public LimelightDriveCommand(SwerveDriveSubsystem drivetrain, Axis forward, Axis strafe, LimelightSubsystem limelightSubsystem, LightsSubsystem lightsSubsystem) {
+    public LimelightDriveCommand(SwerveDriveSubsystem drivetrain, DoubleSupplier forward, DoubleSupplier strafe, LimelightSubsystem limelightSubsystem, LightsSubsystem lightsSubsystem) {
         this.forward = forward;
         this.strafe = strafe;
 
@@ -53,7 +55,7 @@ public class LimelightDriveCommand extends CommandBase {
             rotationOutput = pidController.calculate(currentAngle);
         }
 
-        drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(true), strafe.get(true), rotationOutput), true);
+        drivetrainSubsystem.drive(new ChassisSpeeds(forward.getAsDouble(), strafe.getAsDouble(), rotationOutput), true);
 
         if (limelightSubsystem.isAimed())
             lightsSubsystem.solidGreen();
