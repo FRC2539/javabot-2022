@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -28,6 +29,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     public static final double TRACKWIDTH = 0.5969;
     public static final double WHEELBASE = 0.5969;
 
+    public static final double MAX_VOLTAGE = 12.0;
+
     private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front left
             new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front right
@@ -35,16 +38,19 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
     );
 
-    private final TrajectoryFollower follower = new TrajectoryFollower(
-        new PIDController(1, 0, 0, 0.005),
-        new PIDController(1, 0, 0, 0.005),
-        new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(Math.PI * 2, Math.PI), 0.005)
-    );
-
     // See sds mk4 website; units are m/s
-    private final double PHYSICAL_MAX_VELOCITY = 4.97;
-    public final double MAX_ANGULAR_VELOCITY = PHYSICAL_MAX_VELOCITY /
-          Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
+    public final double MAX_VELOCITY = 6380.0 / 60 * 
+            SdsModuleConfigurations.MK4_L2.getDriveReduction() * 
+            SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;
+
+    public final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY /
+            Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
+
+    private final TrajectoryFollower follower = new TrajectoryFollower(
+        new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
+        new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
+        new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY / 2), Constants.CONTROLLER_PERIOD)
+    );
 
     private SwerveModule[] modules;
 
@@ -179,10 +185,10 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         }
 
         SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
-        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, 1);
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];
-            module.set(moduleStates[i].speedMetersPerSecond * 12.0, moduleStates[i].angle.getRadians());
+            module.set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE, moduleStates[i].angle.getRadians());
         }
     }
 
@@ -205,9 +211,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         if(trajectorySignal.isPresent()) {
             driveSignal = trajectorySignal.get();
             driveSignal = new SwerveDriveSignal(
-                driveSignal.vxMetersPerSecond / PHYSICAL_MAX_VELOCITY,
-                driveSignal.vyMetersPerSecond / PHYSICAL_MAX_VELOCITY,
-                driveSignal.omegaRadiansPerSecond / MAX_ANGULAR_VELOCITY,
+                driveSignal.vxMetersPerSecond,
+                driveSignal.vyMetersPerSecond,
+                driveSignal.omegaRadiansPerSecond,
                 false
             );
         } else {

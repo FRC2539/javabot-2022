@@ -23,7 +23,14 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(true), strafe.get(true), rotation.get(true)), true);
+        drivetrainSubsystem.drive(
+            new ChassisSpeeds(
+                forward.get(true) * drivetrainSubsystem.MAX_VELOCITY, 
+                strafe.get(true) * drivetrainSubsystem.MAX_VELOCITY, 
+                rotation.get(true) * drivetrainSubsystem.MAX_ANGULAR_VELOCITY
+            ), 
+            true
+        );
     }
 
     @Override
