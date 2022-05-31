@@ -26,7 +26,7 @@ public class LimelightShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-        shooterSubsystem.setFarShot(limelightSubsystem.getDistanceToTarget().orElse(1));
+        shooterSubsystem.setFarShot(limelightSubsystem.getDistanceToTarget().orElse(0));
 
         if (limelightSubsystem.isAimed() && shooterSubsystem.isShooterAtVelocity())
             balltrackSubsystem.shootMode();

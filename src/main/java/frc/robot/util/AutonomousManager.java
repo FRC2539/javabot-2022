@@ -12,7 +12,7 @@ import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LimelightDriveCommand;
 import frc.robot.commands.LimelightShootCommand;
-import frc.robot.commands.PrepareBallsCommand;
+import frc.robot.commands.PrepareToShootCommand;
 
 public class AutonomousManager {
     private TrajectoryLoader trajectoryLoader;
@@ -62,7 +62,7 @@ public class AutonomousManager {
 
     private void follow(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                            .deadlineWith(new PrepareBallsCommand(container.getBalltrackSubsystem())));
+                            .deadlineWith(new PrepareToShootCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem(), container.getLimelightSubsystem())));
     }
 
     private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {

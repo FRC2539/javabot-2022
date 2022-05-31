@@ -3,6 +3,9 @@ package frc.robot.util;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -25,6 +28,10 @@ public class TrajectoryLoader {
         twoBallSide = loadTrajectory(TWO_BALL_SIDE_PATH);
 
         System.out.println("\nAll trajectories loaded successfully.\n");
+    }
+
+    private PathPlannerTrajectory loadTrajectory(String path, double maxVel, double maxAccel) throws IOException {
+        return PathPlanner.loadPath(path, maxVel, maxAccel);
     }
 
     private Trajectory loadTrajectory(String path) throws IOException {
