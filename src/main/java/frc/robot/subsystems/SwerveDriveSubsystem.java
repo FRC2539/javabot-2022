@@ -70,6 +70,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private NetworkTableEntry trajectoryYEntry;
     private NetworkTableEntry trajectoryAngleEntry;
 
+    private NetworkTableEntry navXAngleEntry;
+
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
 
@@ -85,7 +87,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                 Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
-                Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET
+                Math.PI - Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET
         );
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                 Mk4SwerveModuleHelper.GearRatio.L2,
@@ -99,7 +101,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                 Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
-                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET
+                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET + Math.PI
         );
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
@@ -111,6 +113,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         trajectoryXEntry = getEntry("Trajectory X");
         trajectoryYEntry = getEntry("Trajectory Y");
         trajectoryAngleEntry = getEntry("Trajectory Angle");
+
+        navXAngleEntry = getEntry("NavX Angle");
     }
 
     public Pose2d getPose() {
@@ -188,7 +192,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];
-            module.set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE * ((i == 1 || i == 3) ? -1 : 1), moduleStates[i].angle.getRadians());
+            module.set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE, moduleStates[i].angle.getRadians());
         }
     }
 
@@ -242,6 +246,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             trajectoryYEntry.setDouble(trajectoryPose.getY());
             trajectoryAngleEntry.setDouble(trajectoryPose.getRotation().getDegrees());
         }
+
+        navXAngleEntry.setDouble(getGyroRotation2d().getDegrees());
     }
 
     public TrajectoryFollower getFollower() {

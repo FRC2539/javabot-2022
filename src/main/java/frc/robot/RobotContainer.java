@@ -52,6 +52,9 @@ public class RobotContainer {
     }
 
     private void configureControllerLayout() {
+        leftDriveController.getXAxis().setInverted(true);
+        rightDriveController.getXAxis().setInverted(true);
+
         leftDriveController.getLeftTopLeft().whenPressed(() -> drivetrainSubsystem.resetGyroAngle());
 
         leftDriveController.getLeftThumb().whileHeld(() -> climberSubsystem.lowerClimber(), climberSubsystem);
