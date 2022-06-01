@@ -15,17 +15,20 @@ public class TrajectoryLoader {
     private static final String THREE_BALL_TWO_PATH = "output/threeball2.wpilib.json";
     private static final String TWO_BALL_MAIN_PATH = "output/twoballmain.wpilib.json";
     private static final String TWO_BALL_SIDE_PATH = "output/twoballside.wpilib.json";
+    private static final String PATH_PLANNER_THREE_BALL_PATH = "threeball";
 
     private Trajectory threeBallOne;
     private Trajectory threeBallTwo;
     private Trajectory twoBallMain;
     private Trajectory twoBallSide;
+    private PathPlannerTrajectory threeBall;
 
     public TrajectoryLoader() throws IOException {
         threeBallOne = loadTrajectory(THREE_BALL_ONE_PATH);
         threeBallTwo = loadTrajectory(THREE_BALL_TWO_PATH);
         twoBallMain = loadTrajectory(TWO_BALL_MAIN_PATH);
         twoBallSide = loadTrajectory(TWO_BALL_SIDE_PATH);
+        threeBall = loadTrajectory(PATH_PLANNER_THREE_BALL_PATH, 5, 2.5);
 
         System.out.println("\nAll trajectories loaded successfully.\n");
     }
@@ -56,5 +59,9 @@ public class TrajectoryLoader {
 
     public Trajectory getTwoBallSide() {
         return twoBallSide;
+    }
+
+    public PathPlannerTrajectory getThreeBall() {
+        return threeBall;
     }
 }

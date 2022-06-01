@@ -31,8 +31,9 @@ public class Constants {
 	public static final double CONTROLLER_PERIOD = 0.005;
 
 	public static final double DRIVETRAIN_PERIOD = 0.0015;
-	public static final double SHOOTER_PERIOD = 0.0008;
-    public static final double BALLTRACK_PERIOD = 0.0007;
+	public static final double SHOOTER_PERIOD = 0.0007;
+    public static final double BALLTRACK_PERIOD = 0.0006;
+    public static final double LIMELIGHT_PERIOD = 0.0002;
 
     public static final int PCM_ID = 17;
 

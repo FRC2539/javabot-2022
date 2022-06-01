@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -21,7 +23,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballmain"};
+    private final String[] autoStrings = {"twoballmain", "threeball"};
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader) {
         this.trajectoryLoader = trajectoryLoader;
@@ -49,6 +51,18 @@ public class AutonomousManager {
         return command;
     }
 
+    public Command getThreeBallCommand(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectoryLoader.getThreeBall());
+
+        followAndIntake(command, container, trajectoryLoader.getThreeBall());
+        shootBallsAndAim(command, container, 2);
+        shootAndIntake(command, container, 3);
+
+        return command;
+    }
+
     private void shootBalls(SequentialCommandGroup command, RobotContainer container, double timeout) {
         command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
                             .withTimeout(timeout));
@@ -57,6 +71,12 @@ public class AutonomousManager {
     private void shootBallsAndAim(SequentialCommandGroup command, RobotContainer container, double timeout) {
         command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
                             .alongWith(new LimelightDriveCommand(container.getSwerveDriveSubsystem(), () -> 0.0, () -> 0.0, container.getLimelightSubsystem(), container.getLightsSubsystem()))
+                            .withTimeout(timeout));
+    }
+
+    private void shootAndIntake(SequentialCommandGroup command, RobotContainer container, double timeout) {
+        command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
+                            .alongWith(new IntakeCommand(container.getBalltrackSubsystem()))
                             .withTimeout(timeout));
     }
 
@@ -70,6 +90,16 @@ public class AutonomousManager {
                             .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
     }
 
+    private void follow(SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
+        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
+                            .deadlineWith(new PrepareToShootCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem(), container.getLimelightSubsystem())));
+    }
+
+    private void followAndIntake(SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
+        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
+                            .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
+    }
+
     private void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
         command.addCommands(new InstantCommand(() -> container.getSwerveDriveSubsystem().resetGyroAngle()));
         command.addCommands(new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(trajectory.getInitialPose())));
@@ -78,7 +108,9 @@ public class AutonomousManager {
     public Command getAutonomousCommand(RobotContainer container) {
         switch (selectedAuto.getString(autoStrings[0])) {
             case "twoballmain":
-                return getTwoBallMainCommand(container);        
+                return getTwoBallMainCommand(container);     
+            case "threeball":
+                return getThreeBallCommand(container);   
         }
 
         // Return an empty command group if no auto is specified

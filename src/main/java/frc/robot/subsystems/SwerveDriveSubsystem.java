@@ -188,7 +188,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];
-            module.set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE, moduleStates[i].angle.getRadians());
+            module.set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE * ((i == 1 || i == 3) ? -1 : 1), moduleStates[i].angle.getRadians());
         }
     }
 

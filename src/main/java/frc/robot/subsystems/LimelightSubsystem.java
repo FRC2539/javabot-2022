@@ -31,6 +31,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     private NetworkTableEntry yEntry;
     private NetworkTableEntry xOffsetEntry;
     private NetworkTableEntry yOffsetEntry;
+    private NetworkTableEntry distance;
 
     public LimelightSubsystem() {
         super("limelight");
@@ -42,8 +43,9 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
         yEntry = getEntry("ty");
         xOffsetEntry = getEntry("xOffset");
         yOffsetEntry = getEntry("xOffset");
+        distance = getEntry("distance");
 
-        setPipeline(LimelightPipeline.DRIVE);
+        setPipeline(LimelightPipeline.SHOOT);
     }
 
     public double getHorizontalAngle() {
@@ -96,6 +98,11 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     public void update() {
         distanceToTarget = calculateDistanceToTarget();
         isAimed = Math.abs(getHorizontalAngle()) < LIMELIGHT_HORIZONTAL_ERROR;
+    }
+
+    @Override
+    public void periodic() {
+        distance.setDouble(distanceToTarget.orElse(0));
     }
 
     public void incrementXOffset() {

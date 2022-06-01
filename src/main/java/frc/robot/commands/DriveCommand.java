@@ -27,7 +27,7 @@ public class DriveCommand extends CommandBase {
             new ChassisSpeeds(
                 forward.get(true) * drivetrainSubsystem.MAX_VELOCITY, 
                 strafe.get(true) * drivetrainSubsystem.MAX_VELOCITY, 
-                rotation.get(true) * drivetrainSubsystem.MAX_ANGULAR_VELOCITY
+                rotation.get(true) * drivetrainSubsystem.MAX_ANGULAR_VELOCITY * -1
             ), 
             true
         );
