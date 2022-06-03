@@ -195,6 +195,9 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
                 stopIntakeMotor();
                 retractIntake();
                 break;
+            case PREPARE:
+                prepareBalls();
+                break;
             case INTAKE:
                 extendIntake();
                 intakeBalls();
@@ -228,10 +231,23 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
         }
     }
 
+    private void prepareBalls() {
+        if (isBalltrackFull()) {
+            stopChamberAndConveyor();
+        } else if (chamberBallIsPresent) {
+            intakeWithConveyorMotor();
+            stopChamberMotor();
+        } else {
+            intakeWithConveyorMotor();
+            intakeWithChamberMotor();
+        }
+    }
+
     private void intakeBalls() {
         if (isBalltrackFull()) {
             stopChamberAndConveyor();
             stopIntakeMotor();
+            retractIntake();
         } else if (chamberBallIsPresent) {
             intakeWithConveyorMotor();
             stopChamberMotor();
@@ -251,6 +267,7 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
 
     public enum BalltrackMode {
         DISABLED,
+        PREPARE,
         INTAKE,
         SHOOT,
         INTAKE_AND_SHOOT,

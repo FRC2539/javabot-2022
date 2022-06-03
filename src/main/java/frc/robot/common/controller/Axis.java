@@ -1,9 +1,11 @@
 package frc.robot.common.controller;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
-public abstract class Axis {
+public abstract class Axis implements DoubleSupplier {
 	public static final double DEADBAND = 0.05;
 
 	private boolean inverted = false;
@@ -33,6 +35,11 @@ public abstract class Axis {
 
 	public double get(boolean squared) {
 		return get(squared, false);
+	}
+
+	@Override
+	public double getAsDouble() {
+		return get(true);
 	}
 
 	public double get(boolean squared, boolean ignoreScale) {

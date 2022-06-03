@@ -7,7 +7,7 @@ public class ShooterState {
     public double rearShooterRPM;
     public double frontShooterRPM;
     public ShooterAngle angle;
-    private double distance;
+    public double distance;
 
     public ShooterState(double rearShooterRPM, double frontShooterRPM, ShooterAngle angle, double distance) {
         this.rearShooterRPM = rearShooterRPM;
@@ -44,7 +44,26 @@ public class ShooterState {
         return new ShooterState(
             MathUtil.interpolate(this.rearShooterRPM, otherState.rearShooterRPM, t),
             MathUtil.interpolate(this.frontShooterRPM, otherState.frontShooterRPM, t),
-            angle
+            distance
         );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        // Verify that the shooter rpms are equal
+        final ShooterState other = (ShooterState) obj;
+        if (this.rearShooterRPM != other.rearShooterRPM || this.frontShooterRPM != other.frontShooterRPM) {
+            return false;
+        }
+
+        return true;
     }
 }

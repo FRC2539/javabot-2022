@@ -12,9 +12,18 @@ public class Mk4ModuleConfiguration {
     private double nominalVoltage = 12.0;
     private double driveCurrentLimit = 80.0;
     private double steerCurrentLimit = 20.0;
+    private boolean driveInverted = false;
 
     public double getNominalVoltage() {
         return nominalVoltage;
+    }
+
+    public void setDriveInverted(boolean driveInverted) {
+        this.driveInverted = driveInverted;
+    }
+
+    public boolean getDriveInverted() {
+        return driveInverted;
     }
 
     public void setNominalVoltage(double nominalVoltage) {

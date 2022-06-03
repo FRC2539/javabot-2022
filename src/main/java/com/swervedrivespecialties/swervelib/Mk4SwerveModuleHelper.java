@@ -12,6 +12,7 @@ public final class Mk4SwerveModuleHelper {
         return new Falcon500DriveControllerFactoryBuilder()
                 .withVoltageCompensation(configuration.getNominalVoltage())
                 .withCurrentLimit(configuration.getDriveCurrentLimit())
+                .withDriveInverted(configuration.getDriveInverted())
                 .build();
     }
 

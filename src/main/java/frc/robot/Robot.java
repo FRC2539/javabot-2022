@@ -27,6 +27,7 @@ public class Robot extends TimesliceRobot {
 		updateManager.schedule(robotContainer.getSwerveDriveSubsystem(), Constants.DRIVETRAIN_PERIOD);
 		updateManager.schedule(robotContainer.getShooterSubsystem(), Constants.SHOOTER_PERIOD);
 		updateManager.schedule(robotContainer.getBalltrackSubsystem(), Constants.BALLTRACK_PERIOD);
+		updateManager.schedule(robotContainer.getLimelightSubsystem(), Constants.LIMELIGHT_PERIOD);
 	}
 
 	@Override
