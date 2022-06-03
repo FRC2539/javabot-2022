@@ -52,8 +52,6 @@ public class LimelightDriveCommand extends CommandBase {
             pidController.setSetpoint(targetAngle);
 
             rotationOutput = pidController.calculate(currentAngle);
-
-            System.out.println("Rotation: " + rotationOutput);
         }
 
         drivetrainSubsystem.drive(new ChassisSpeeds(forward.getAsDouble(), strafe.getAsDouble(), rotationOutput * drivetrainSubsystem.MAX_ANGULAR_VELOCITY), true);
