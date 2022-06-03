@@ -52,8 +52,9 @@ public class RobotContainer {
     }
 
     private void configureControllerLayout() {
-        leftDriveController.getXAxis().setInverted(false);
-        rightDriveController.getXAxis().setInverted(false);
+        leftDriveController.getXAxis().setScale(SwerveDriveSubsystem.MAX_VELOCITY);
+        leftDriveController.getYAxis().setScale(SwerveDriveSubsystem.MAX_VELOCITY);
+        rightDriveController.getXAxis().setScale(SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY);
 
         leftDriveController.getLeftTopLeft().whenPressed(() -> drivetrainSubsystem.resetGyroAngle());
 

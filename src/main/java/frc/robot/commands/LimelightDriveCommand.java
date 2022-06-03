@@ -54,7 +54,7 @@ public class LimelightDriveCommand extends CommandBase {
             rotationOutput = pidController.calculate(currentAngle);
         }
 
-        drivetrainSubsystem.drive(new ChassisSpeeds(forward.getAsDouble(), strafe.getAsDouble(), rotationOutput * drivetrainSubsystem.MAX_ANGULAR_VELOCITY), true);
+        drivetrainSubsystem.drive(new ChassisSpeeds(forward.getAsDouble(), strafe.getAsDouble(), rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY), true);
 
         if (limelightSubsystem.isAimed())
             lightsSubsystem.solidGreen();
