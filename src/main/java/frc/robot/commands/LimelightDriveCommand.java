@@ -19,7 +19,7 @@ public class LimelightDriveCommand extends CommandBase {
     private DoubleSupplier forward;
     private DoubleSupplier strafe;
 
-    private PIDController pidController = new PIDController(0.1, 0, 0, 0.02);
+    private PIDController pidController = new PIDController(1, 0, 0.01, 0.02);
 
     public LimelightDriveCommand(SwerveDriveSubsystem drivetrain, DoubleSupplier forward, DoubleSupplier strafe, LimelightSubsystem limelightSubsystem, LightsSubsystem lightsSubsystem) {
         this.forward = forward;
@@ -52,9 +52,11 @@ public class LimelightDriveCommand extends CommandBase {
             pidController.setSetpoint(targetAngle);
 
             rotationOutput = pidController.calculate(currentAngle);
+
+            System.out.println("Rotation: " + rotationOutput);
         }
 
-        drivetrainSubsystem.drive(new ChassisSpeeds(forward.getAsDouble(), strafe.getAsDouble(), rotationOutput), true);
+        drivetrainSubsystem.drive(new ChassisSpeeds(forward.getAsDouble(), strafe.getAsDouble(), rotationOutput * drivetrainSubsystem.MAX_ANGULAR_VELOCITY), true);
 
         if (limelightSubsystem.isAimed())
             lightsSubsystem.solidGreen();

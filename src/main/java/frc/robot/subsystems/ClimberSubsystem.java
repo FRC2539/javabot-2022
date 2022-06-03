@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Constants;
@@ -19,11 +20,16 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
 
     private final boolean USE_LIMITS = true;
 
-    private final double UPPER_LIMIT = 224000;
-    private final double LOWER_LIMIT = 8200;
-    private final double LOWER_LIMIT_RAMP_END = 27500;
+    // private final double UPPER_LIMIT = 224000;
+    // private final double LOWER_LIMIT = 8200;
+    // private final double LOWER_LIMIT_RAMP_END = 27500;
+
+    private final double UPPER_LIMIT = 230000;
+    private final double LOWER_LIMIT = 8000;
 
     private final double CLIMBER_MOTOR_SPEED = 1;
+
+    private NetworkTableEntry positionEntry;
 
     public ClimberSubsystem() {
         super("Climber");
@@ -36,14 +42,24 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
 
         climberMotor.configAllSettings(configuration);
         climberMotor.setNeutralMode(NeutralMode.Brake);
+
+        positionEntry = getEntry("Position");
     }
 
+    // public void raiseClimber() {
+    //     climberMotor.set(ControlMode.PercentOutput, calculateRampSpeed());
+    // }
+
     public void raiseClimber() {
-        climberMotor.set(ControlMode.PercentOutput, calculateRampSpeed());
+        climberMotor.set(ControlMode.PercentOutput, CLIMBER_MOTOR_SPEED);
     }
 
     public void lowerClimber() {
-        climberMotor.set(ControlMode.PercentOutput, CLIMBER_MOTOR_SPEED);
+        climberMotor.set(ControlMode.PercentOutput, -CLIMBER_MOTOR_SPEED);
+    }
+
+    public void stopClimber() {
+        climberMotor.stopMotor();
     }
 
     public void setClimberStraightUp() {
@@ -68,14 +84,19 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
         }
     }
 
-    private double calculateRampSpeed() {
-        double speed = Math.min(
-            (getPosition() - LOWER_LIMIT)
-            / (LOWER_LIMIT_RAMP_END - LOWER_LIMIT),
-            CLIMBER_MOTOR_SPEED
-        );
+    // private double calculateRampSpeed() {
+    //     double speed = Math.min(
+    //         (getPosition() - LOWER_LIMIT)
+    //         / (LOWER_LIMIT_RAMP_END - LOWER_LIMIT),
+    //         CLIMBER_MOTOR_SPEED
+    //     );
 
-        return Math.max(0.5, speed);
+    //     return Math.max(0.5, speed);
+    // }
+
+    @Override
+    public void periodic() {
+        positionEntry.setDouble(getPosition());
     }
 
     public double getPosition() {

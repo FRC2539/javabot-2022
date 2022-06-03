@@ -23,7 +23,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballmain", "threeball"};
+    private final String[] autoStrings = {"twoball", "threeball"};
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader) {
         this.trajectoryLoader = trajectoryLoader;
@@ -40,12 +40,12 @@ public class AutonomousManager {
         selectedAuto.setString(autoStrings[0]);
     }
 
-    public Command getTwoBallMainCommand(RobotContainer container) {
+    public Command getTwoBallCommand(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, trajectoryLoader.getTwoBallMain());
+        resetRobotPose(command, container, trajectoryLoader.getTwoBall());
     
-        followAndIntake(command, container, trajectoryLoader.getTwoBallMain());
+        followAndIntake(command, container, trajectoryLoader.getTwoBall());
         shootBallsAndAim(command, container, 2);
 
         return command;
@@ -107,8 +107,8 @@ public class AutonomousManager {
 
     public Command getAutonomousCommand(RobotContainer container) {
         switch (selectedAuto.getString(autoStrings[0])) {
-            case "twoballmain":
-                return getTwoBallMainCommand(container);     
+            case "twoball":
+                return getTwoBallCommand(container);     
             case "threeball":
                 return getThreeBallCommand(container);   
         }

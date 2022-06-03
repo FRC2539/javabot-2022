@@ -12,7 +12,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
 
     private final double LIMELIGHT_ANGLE = Math.toRadians(60);
 
-    private final double LIMELIGHT_HORIZONTAL_ERROR = 0.5;
+    private final double LIMELIGHT_HORIZONTAL_ERROR = 1;
 
     private final double X_OFFSET_STEP = 0.2;
     private final double Y_OFFSET_STEP = 0.2;

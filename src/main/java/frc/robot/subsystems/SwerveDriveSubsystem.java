@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
+import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Timer;
 
 import java.util.Optional;
 
@@ -75,33 +77,39 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
 
+        Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
+
+        invertedConfiguration.setDriveInverted(true);
+
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
-                Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
-                Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
+            Constants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
+            Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
+            Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET
         );
         SwerveModule frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
-                Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
-                Math.PI - Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET
+            invertedConfiguration,
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
+            Constants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
+            Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
+            Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET
         );
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
-                Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
-                Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
+            Constants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
+            Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
+            Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET
         );
         SwerveModule backRightModule = Mk4SwerveModuleHelper.createFalcon500(
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
-                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
-                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET + Math.PI
+            invertedConfiguration,
+            Mk4SwerveModuleHelper.GearRatio.L2,
+            Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
+            Constants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
+            Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
+            Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET
         );
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
@@ -165,11 +173,11 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];
     
-            moduleStates[i] = new SwerveModuleState(module.getDriveVelocity() * 39.37008, new Rotation2d(module.getSteerAngle()));
+            moduleStates[i] = new SwerveModuleState(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
         }
 
         this.velocity = swerveKinematics.toChassisSpeeds(moduleStates);
-        this.pose = swerveOdometry.update(getGyroRotation2d(), moduleStates);
+        this.pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
     }
 
     private void updateModules(SwerveDriveSignal driveSignal) {

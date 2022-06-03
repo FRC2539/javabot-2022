@@ -21,9 +21,15 @@ public final class Falcon500DriveControllerFactoryBuilder {
 
     private double nominalVoltage = Double.NaN;
     private double currentLimit = Double.NaN;
+    private boolean driveInverted = false;
 
     public Falcon500DriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
         this.nominalVoltage = nominalVoltage;
+        return this;
+    }
+
+    public Falcon500DriveControllerFactoryBuilder withDriveInverted(boolean driveInverted) {
+        this.driveInverted = driveInverted;
         return this;
     }
 
@@ -71,7 +77,7 @@ public final class Falcon500DriveControllerFactoryBuilder {
 
             motor.setNeutralMode(NeutralMode.Brake);
 
-            motor.setInverted(moduleConfiguration.isDriveInverted() ? TalonFXInvertType.Clockwise : TalonFXInvertType.CounterClockwise);
+            motor.setInverted(driveInverted ? TalonFXInvertType.Clockwise : TalonFXInvertType.CounterClockwise);
             motor.setSensorPhase(true);
 
             // Reduce CAN status frame rates

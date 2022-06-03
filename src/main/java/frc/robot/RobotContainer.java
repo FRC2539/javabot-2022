@@ -52,14 +52,14 @@ public class RobotContainer {
     }
 
     private void configureControllerLayout() {
-        leftDriveController.getXAxis().setInverted(true);
-        rightDriveController.getXAxis().setInverted(true);
+        leftDriveController.getXAxis().setInverted(false);
+        rightDriveController.getXAxis().setInverted(false);
 
         leftDriveController.getLeftTopLeft().whenPressed(() -> drivetrainSubsystem.resetGyroAngle());
 
-        leftDriveController.getLeftThumb().whileHeld(() -> climberSubsystem.lowerClimber(), climberSubsystem);
-        leftDriveController.getRightThumb().whileHeld(() -> climberSubsystem.raiseClimber(), climberSubsystem);
-        leftDriveController.getBottomThumb().whileHeld(() -> climberSubsystem.toggleClimberArm(), climberSubsystem);
+        leftDriveController.getLeftThumb().whileHeld(new LowerClimberCommand(climberSubsystem));
+        leftDriveController.getRightThumb().whileHeld(new RaiseClimberCommand(climberSubsystem));
+        leftDriveController.getBottomThumb().whenPressed(() -> climberSubsystem.toggleClimberArm(), climberSubsystem);
 
         leftDriveController.getLeftTopRight().whenPressed(new SeizureModeCommand(lightsSubsystem));
 
@@ -85,11 +85,11 @@ public class RobotContainer {
     }
 
     private Axis getDriveForwardAxis() {
-        return leftDriveController.getXAxis();
+        return leftDriveController.getYAxis();
     }
 
     private Axis getDriveStrafeAxis() {
-        return leftDriveController.getYAxis();
+        return leftDriveController.getXAxis();
     }
 
     private Axis getDriveRotationAxis() {
