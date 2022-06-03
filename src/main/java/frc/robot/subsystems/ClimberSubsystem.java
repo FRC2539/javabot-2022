@@ -20,14 +20,12 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
 
     private final boolean USE_LIMITS = true;
 
-    // private final double UPPER_LIMIT = 224000;
-    // private final double LOWER_LIMIT = 8200;
-    // private final double LOWER_LIMIT_RAMP_END = 27500;
-
     private final double UPPER_LIMIT = 230000;
     private final double LOWER_LIMIT = 8000;
 
     private final double CLIMBER_MOTOR_SPEED = 1;
+
+    private final double CLIMBER_RAMP_DURATION = 0.5;
 
     private NetworkTableEntry positionEntry;
 
@@ -39,16 +37,13 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
         configuration.forwardSoftLimitThreshold = UPPER_LIMIT;
         configuration.reverseSoftLimitEnable = USE_LIMITS;
         configuration.reverseSoftLimitThreshold = LOWER_LIMIT;
+        configuration.openloopRamp = CLIMBER_RAMP_DURATION;
 
         climberMotor.configAllSettings(configuration);
         climberMotor.setNeutralMode(NeutralMode.Brake);
 
         positionEntry = getEntry("Position");
     }
-
-    // public void raiseClimber() {
-    //     climberMotor.set(ControlMode.PercentOutput, calculateRampSpeed());
-    // }
 
     public void raiseClimber() {
         climberMotor.set(ControlMode.PercentOutput, CLIMBER_MOTOR_SPEED);
@@ -83,16 +78,6 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
                 break;
         }
     }
-
-    // private double calculateRampSpeed() {
-    //     double speed = Math.min(
-    //         (getPosition() - LOWER_LIMIT)
-    //         / (LOWER_LIMIT_RAMP_END - LOWER_LIMIT),
-    //         CLIMBER_MOTOR_SPEED
-    //     );
-
-    //     return Math.max(0.5, speed);
-    // }
 
     @Override
     public void periodic() {

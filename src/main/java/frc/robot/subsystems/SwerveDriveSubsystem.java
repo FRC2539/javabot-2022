@@ -34,19 +34,18 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     public static final double MAX_VOLTAGE = 12.0;
 
     private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-            new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front left
-            new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front right
-            new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Back left
-            new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
+        new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front left
+        new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front right
+        new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Back left
+        new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
     );
 
-    // See sds mk4 website; units are m/s
-    public final double MAX_VELOCITY = 6380.0 / 60 * 
-            SdsModuleConfigurations.MK4_L2.getDriveReduction() * 
-            SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;
+    public static final double MAX_VELOCITY = 6380.0 / 60 * 
+        SdsModuleConfigurations.MK4_L2.getDriveReduction() * 
+        SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;
 
-    public final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY /
-            Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
+    public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY /
+        Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
 
     private final TrajectoryFollower follower = new TrajectoryFollower(
         new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
@@ -190,7 +189,6 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             chassisVelocity = new ChassisSpeeds(driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
         }
 
-        // Verify
         if(chassisVelocity.vxMetersPerSecond == 0 && chassisVelocity.vyMetersPerSecond == 0 && chassisVelocity.omegaRadiansPerSecond == 0) {
             stopModules();
             return;
@@ -204,7 +202,6 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         }
     }
 
-    // Verify
     public void stopModules() {
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];
