@@ -9,7 +9,9 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     private final double LIMELIGHT_HEIGHT = 0.75819;
     private final double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
 
-    private final double LIMELIGHT_ANGLE = Math.toRadians(90 - 60);
+    private final double LIMELIGHT_MOUNTING_ANGLE = 60;
+
+    private final double LIMELIGHT_ANGLE = Math.toRadians(90 - LIMELIGHT_MOUNTING_ANGLE);
 
     private final double LIMELIGHT_HORIZONTAL_ERROR = 2;
 
