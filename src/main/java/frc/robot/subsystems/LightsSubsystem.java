@@ -63,9 +63,7 @@ public class LightsSubsystem extends SubsystemBase {
     }
 
     public void showTeamColor() {
-        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue)
-            solidBlue();
-        else
-            solidRed();
+        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) solidBlue();
+        else solidRed();
     }
 }

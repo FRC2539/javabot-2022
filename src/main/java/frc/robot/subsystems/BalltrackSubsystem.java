@@ -4,13 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
 import frc.robot.util.Updatable;
 
@@ -24,10 +24,11 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
 
     private ColorSensorV3 chamberColorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
-    private DoubleSolenoid intakeSolenoid = new DoubleSolenoid(Constants.PCM_ID,
-                                                                PneumaticsModuleType.REVPH,
-                                                                Constants.BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL,
-                                                                Constants.BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL);
+    private DoubleSolenoid intakeSolenoid = new DoubleSolenoid(
+            Constants.PCM_ID,
+            PneumaticsModuleType.REVPH,
+            Constants.BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL,
+            Constants.BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL);
 
     private final double INTAKE_MOTOR_SPEED = 1;
 
@@ -63,9 +64,9 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
         intakeMotor.setInverted(true);
 
         chamberColorSensor.configureColorSensor(
-            ColorSensorV3.ColorSensorResolution.kColorSensorRes18bit, 
-            ColorSensorV3.ColorSensorMeasurementRate.kColorRate25ms,
-            ColorSensorV3.GainFactor.kGain1x);
+                ColorSensorV3.ColorSensorResolution.kColorSensorRes18bit,
+                ColorSensorV3.ColorSensorMeasurementRate.kColorRate25ms,
+                ColorSensorV3.GainFactor.kGain1x);
 
         conveyorBallPresentEntry = getEntry("Conveyor Ball");
         chamberBallPresentEntry = getEntry("Chamber Ball");
@@ -140,12 +141,9 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
     public Alliance getChamberBallColor() {
         Color colorMeasurement = chamberColorSensor.getColor();
 
-        if (!chamberBallIsPresent) 
-            return Alliance.Invalid;
-        else if (colorMeasurement.blue > colorMeasurement.red)
-            return Alliance.Blue;
-        else
-            return Alliance.Red;
+        if (!chamberBallIsPresent) return Alliance.Invalid;
+        else if (colorMeasurement.blue > colorMeasurement.red) return Alliance.Blue;
+        else return Alliance.Red;
     }
 
     public void setBalltrackMode(BalltrackMode balltrackMode) {
@@ -153,31 +151,23 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
     }
 
     public void intakeMode() {
-        if (balltrackMode == BalltrackMode.SHOOT)
-            setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
-        else
-            setBalltrackMode(BalltrackMode.INTAKE);
+        if (balltrackMode == BalltrackMode.SHOOT) setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
+        else setBalltrackMode(BalltrackMode.INTAKE);
     }
 
     public void stopIntakeMode() {
-        if (balltrackMode == BalltrackMode.INTAKE_AND_SHOOT)
-            setBalltrackMode(BalltrackMode.SHOOT);
-        else
-            setBalltrackMode(BalltrackMode.DISABLED);
+        if (balltrackMode == BalltrackMode.INTAKE_AND_SHOOT) setBalltrackMode(BalltrackMode.SHOOT);
+        else setBalltrackMode(BalltrackMode.DISABLED);
     }
 
     public void shootMode() {
-        if (balltrackMode == BalltrackMode.INTAKE)
-            setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
-        else
-            setBalltrackMode(BalltrackMode.SHOOT);
+        if (balltrackMode == BalltrackMode.INTAKE) setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
+        else setBalltrackMode(BalltrackMode.SHOOT);
     }
 
     public void stopShootMode() {
-        if (balltrackMode == BalltrackMode.INTAKE_AND_SHOOT)
-            setBalltrackMode(BalltrackMode.INTAKE);
-        else
-            setBalltrackMode(BalltrackMode.DISABLED);
+        if (balltrackMode == BalltrackMode.INTAKE_AND_SHOOT) setBalltrackMode(BalltrackMode.INTAKE);
+        else setBalltrackMode(BalltrackMode.DISABLED);
     }
 
     public BalltrackMode getBalltrackMode() {

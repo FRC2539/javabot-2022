@@ -1,7 +1,6 @@
 package frc.robot.util;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -44,7 +43,7 @@ public class AutonomousManager {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectoryLoader.getTwoBall());
-    
+
         followAndIntake(command, container, trajectoryLoader.getTwoBall());
         shootBallsAndAim(command, container, 2);
 
@@ -64,53 +63,76 @@ public class AutonomousManager {
     }
 
     private void shootBalls(SequentialCommandGroup command, RobotContainer container, double timeout) {
-        command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
-                            .withTimeout(timeout));
+        command.addCommands(new LimelightShootCommand(
+                        container.getShooterSubsystem(),
+                        container.getBalltrackSubsystem(),
+                        container.getLimelightSubsystem())
+                .withTimeout(timeout));
     }
 
     private void shootBallsAndAim(SequentialCommandGroup command, RobotContainer container, double timeout) {
-        command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
-                            .alongWith(new LimelightDriveCommand(container.getSwerveDriveSubsystem(), () -> 0.0, () -> 0.0, container.getLimelightSubsystem(), container.getLightsSubsystem()))
-                            .withTimeout(timeout));
+        command.addCommands(new LimelightShootCommand(
+                        container.getShooterSubsystem(),
+                        container.getBalltrackSubsystem(),
+                        container.getLimelightSubsystem())
+                .alongWith(new LimelightDriveCommand(
+                        container.getSwerveDriveSubsystem(),
+                        () -> 0.0,
+                        () -> 0.0,
+                        container.getLimelightSubsystem(),
+                        container.getLightsSubsystem()))
+                .withTimeout(timeout));
     }
 
     private void shootAndIntake(SequentialCommandGroup command, RobotContainer container, double timeout) {
-        command.addCommands(new LimelightShootCommand(container.getShooterSubsystem(), container.getBalltrackSubsystem(), container.getLimelightSubsystem())
-                            .alongWith(new IntakeCommand(container.getBalltrackSubsystem()))
-                            .withTimeout(timeout));
+        command.addCommands(new LimelightShootCommand(
+                        container.getShooterSubsystem(),
+                        container.getBalltrackSubsystem(),
+                        container.getLimelightSubsystem())
+                .alongWith(new IntakeCommand(container.getBalltrackSubsystem()))
+                .withTimeout(timeout));
     }
 
     private void follow(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                            .deadlineWith(new PrepareToShootCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem(), container.getLimelightSubsystem())));
+                .deadlineWith(new PrepareToShootCommand(
+                        container.getBalltrackSubsystem(),
+                        container.getShooterSubsystem(),
+                        container.getLimelightSubsystem())));
     }
 
     private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                            .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
+                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
     }
 
     private void follow(SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                            .deadlineWith(new PrepareToShootCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem(), container.getLimelightSubsystem())));
+                .deadlineWith(new PrepareToShootCommand(
+                        container.getBalltrackSubsystem(),
+                        container.getShooterSubsystem(),
+                        container.getLimelightSubsystem())));
     }
 
-    private void followAndIntake(SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
+    private void followAndIntake(
+            SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                            .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
+                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
     }
 
     private void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new InstantCommand(() -> container.getSwerveDriveSubsystem().resetGyroAngle()));
-        command.addCommands(new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(trajectory.getInitialPose())));
+        command.addCommands(
+                new InstantCommand(() -> container.getSwerveDriveSubsystem().resetGyroAngle()));
+        command.addCommands(
+                new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(trajectory.getInitialPose())));
     }
 
     public Command getAutonomousCommand(RobotContainer container) {
         switch (selectedAuto.getString(autoStrings[0])) {
             case "twoball":
-                return getTwoBallCommand(container);     
+                return getTwoBallCommand(container);
             case "threeball":
-                return getThreeBallCommand(container);   
+                return getThreeBallCommand(container);
         }
 
         // Return an empty command group if no auto is specified

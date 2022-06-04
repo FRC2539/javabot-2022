@@ -24,7 +24,8 @@ public class Falcon500SteerConfiguration<EncoderConfiguration> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Falcon500SteerConfiguration<?> that = (Falcon500SteerConfiguration<?>) o;
-        return getMotorPort() == that.getMotorPort() && getEncoderConfiguration().equals(that.getEncoderConfiguration());
+        return getMotorPort() == that.getMotorPort()
+                && getEncoderConfiguration().equals(that.getEncoderConfiguration());
     }
 
     @Override
@@ -34,9 +35,8 @@ public class Falcon500SteerConfiguration<EncoderConfiguration> {
 
     @Override
     public String toString() {
-        return "Falcon500SteerConfiguration{" +
-                "motorPort=" + motorPort +
-                ", encoderConfiguration=" + encoderConfiguration +
-                '}';
+        return "Falcon500SteerConfiguration{" + "motorPort="
+                + motorPort + ", encoderConfiguration="
+                + encoderConfiguration + '}';
     }
 }

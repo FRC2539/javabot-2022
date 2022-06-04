@@ -31,10 +31,9 @@ public class ShooterState {
     public ShooterState interpolate(ShooterState otherState, double t) {
         // Linearly interpolate between the RPMs at t (0 - 1)
         return new ShooterState(
-            MathUtil.interpolate(this.rearShooterRPM, otherState.rearShooterRPM, t),
-            MathUtil.interpolate(this.frontShooterRPM, otherState.frontShooterRPM, t),
-            angle
-        );
+                MathUtil.interpolate(this.rearShooterRPM, otherState.rearShooterRPM, t),
+                MathUtil.interpolate(this.frontShooterRPM, otherState.frontShooterRPM, t),
+                angle);
     }
 
     public ShooterState interpolateWithDistance(ShooterState otherState, double distance) {
@@ -42,10 +41,9 @@ public class ShooterState {
 
         // Linearly interpolate between the RPMs at t (0 - 1)
         return new ShooterState(
-            MathUtil.interpolate(this.rearShooterRPM, otherState.rearShooterRPM, t),
-            MathUtil.interpolate(this.frontShooterRPM, otherState.frontShooterRPM, t),
-            distance
-        );
+                MathUtil.interpolate(this.rearShooterRPM, otherState.rearShooterRPM, t),
+                MathUtil.interpolate(this.frontShooterRPM, otherState.frontShooterRPM, t),
+                distance);
     }
 
     @Override

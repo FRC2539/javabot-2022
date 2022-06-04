@@ -28,10 +28,10 @@ public class Constants {
     public static final String CANIVORE_NAME = "CANivore";
 
     public static final double ROBOT_PERIODIC_ALLOCATION = 0.002;
-	public static final double CONTROLLER_PERIOD = 0.005;
+    public static final double CONTROLLER_PERIOD = 0.005;
 
-	public static final double DRIVETRAIN_PERIOD = 0.0015;
-	public static final double SHOOTER_PERIOD = 0.0007;
+    public static final double DRIVETRAIN_PERIOD = 0.0015;
+    public static final double SHOOTER_PERIOD = 0.0007;
     public static final double BALLTRACK_PERIOD = 0.0006;
     public static final double LIMELIGHT_PERIOD = 0.0002;
 

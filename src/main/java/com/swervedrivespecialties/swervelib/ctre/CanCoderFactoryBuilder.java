@@ -6,7 +6,6 @@ import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.CANCoderStatusFrame;
 import com.swervedrivespecialties.swervelib.AbsoluteEncoder;
 import com.swervedrivespecialties.swervelib.AbsoluteEncoderFactory;
-
 import frc.robot.Constants;
 
 public class CanCoderFactoryBuilder {
@@ -34,7 +33,9 @@ public class CanCoderFactoryBuilder {
             CANCoder encoder = new CANCoder(configuration.getId(), Constants.CANIVORE_NAME);
             CtreUtils.checkCtreError(encoder.configAllSettings(config, 250), "Failed to configure CANCoder");
 
-            CtreUtils.checkCtreError(encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, periodMilliseconds, 250), "Failed to configure CANCoder update rate");
+            CtreUtils.checkCtreError(
+                    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, periodMilliseconds, 250),
+                    "Failed to configure CANCoder update rate");
 
             return new EncoderImplementation(encoder);
         };

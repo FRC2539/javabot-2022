@@ -43,8 +43,7 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
     }
 
     public void enableFiltering() {
-        if (FILTER_BALLS)
-            filterColorEntry.setString(DriverStation.getAlliance() == Alliance.Blue ? "blue" : "red");
+        if (FILTER_BALLS) filterColorEntry.setString(DriverStation.getAlliance() == Alliance.Blue ? "blue" : "red");
     }
 
     public Alliance getTargetColor() {
@@ -73,11 +72,11 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
     public double getTargetArea() {
         return targetAreaEntry.getDouble(0);
     }
-    
+
     public double getResolutionX() {
         return resolutionXEntry.getDouble(0);
     }
-    
+
     public double getResolutionY() {
         return resolutionYEntry.getDouble(0);
     }

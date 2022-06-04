@@ -5,7 +5,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 public class SwerveDriveSignal extends ChassisSpeeds {
     private boolean isFieldOriented;
 
-    public SwerveDriveSignal(double vxMetersPerSecond, double vyMetersPerSecond, double omegaRadiansPerSecond, boolean isFieldOriented) {
+    public SwerveDriveSignal(
+            double vxMetersPerSecond, double vyMetersPerSecond, double omegaRadiansPerSecond, boolean isFieldOriented) {
         super(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
 
         this.isFieldOriented = isFieldOriented;

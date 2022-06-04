@@ -15,8 +15,7 @@ public class ShooterStateMap extends TreeMap<Double, ShooterState> {
     public Optional<ShooterState> getInterpolatedShooterState(double distance) {
         ShooterState shooterState = get(distance);
 
-        if (shooterState != null)
-            return Optional.of(shooterState);
+        if (shooterState != null) return Optional.of(shooterState);
 
         Double floor = floorKey(distance);
         Double ceiling = ceilingKey(distance);

@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -16,15 +15,17 @@ import frc.robot.common.control.ShooterStateMap;
 import frc.robot.util.Updatable;
 
 public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
-    private final DoubleSolenoid shooterAngleSolenoid = new DoubleSolenoid(Constants.PCM_ID, 
-                                                                            PneumaticsModuleType.REVPH,
-                                                                            Constants.SHOOTER_SOLENOID_FORWARD_CHANNEL,
-                                                                            Constants.SHOOTER_SOLENOID_REVERSE_CHANNEL);
+    private final DoubleSolenoid shooterAngleSolenoid = new DoubleSolenoid(
+            Constants.PCM_ID,
+            PneumaticsModuleType.REVPH,
+            Constants.SHOOTER_SOLENOID_FORWARD_CHANNEL,
+            Constants.SHOOTER_SOLENOID_REVERSE_CHANNEL);
 
     private ShooterAngle targetShooterAngle = ShooterAngle.DISABLED;
 
     private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(Constants.SHOOTER_REAR_MOTOR_PORT, Constants.CANIVORE_NAME);
-    private WPI_TalonFX frontShooterMotor = new WPI_TalonFX(Constants.SHOOTER_FRONT_MOTOR_PORT, Constants.CANIVORE_NAME);
+    private WPI_TalonFX frontShooterMotor =
+            new WPI_TalonFX(Constants.SHOOTER_FRONT_MOTOR_PORT, Constants.CANIVORE_NAME);
 
     private final double SHOOTER_F = 0.05;
     private final double SHOOTER_P = 0.13;
@@ -57,7 +58,8 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         shooterConfiguration.slot0.kP = SHOOTER_P;
         shooterConfiguration.slot0.kI = SHOOTER_I;
         shooterConfiguration.slot0.kD = SHOOTER_D;
-        shooterConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
+        shooterConfiguration.primaryPID.selectedFeedbackSensor =
+                TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
 
         rearShooterMotor.configAllSettings(shooterConfiguration);
         frontShooterMotor.configAllSettings(shooterConfiguration);
@@ -103,7 +105,8 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
     public boolean isShooterAtVelocity() {
         return MathUtils.equalsWithinError(getMotorTargetRPM(rearShooterMotor), getRearMotorRPM(), SHOOTER_RPM_ERROR)
-                && MathUtils.equalsWithinError(getMotorTargetRPM(frontShooterMotor), getFrontMotorRPM(), SHOOTER_RPM_ERROR);
+                && MathUtils.equalsWithinError(
+                        getMotorTargetRPM(frontShooterMotor), getFrontMotorRPM(), SHOOTER_RPM_ERROR);
     }
 
     private double getMotorTargetRPM(WPI_TalonFX motor) {

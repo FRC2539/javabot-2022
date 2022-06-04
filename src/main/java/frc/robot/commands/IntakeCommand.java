@@ -5,12 +5,12 @@ import frc.robot.subsystems.BalltrackSubsystem;
 
 public class IntakeCommand extends CommandBase {
     private BalltrackSubsystem balltrackSubsystem;
-    
+
     public IntakeCommand(BalltrackSubsystem balltrackSubsystem) {
         this.balltrackSubsystem = balltrackSubsystem;
 
         addRequirements(balltrackSubsystem);
-    } 
+    }
 
     @Override
     public void initialize() {

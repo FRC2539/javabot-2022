@@ -5,7 +5,7 @@ import frc.robot.subsystems.LightsSubsystem;
 
 public class SeizureModeCommand extends CommandBase {
     private LightsSubsystem lightsSubsystem;
-    
+
     private int currentColor;
 
     public SeizureModeCommand(LightsSubsystem lightsSubsystem) {

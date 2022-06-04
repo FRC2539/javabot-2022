@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
-import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,14 +17,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
-
-import java.util.Optional;
-
-import com.kauailabs.navx.frc.AHRS;
 import frc.robot.Constants;
 import frc.robot.common.control.SwerveDriveSignal;
 import frc.robot.util.TrajectoryFollower;
 import frc.robot.util.Updatable;
+import java.util.Optional;
 
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
     // Measured in meters (ask CAD dept. for this information in new robots)
@@ -34,30 +31,36 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     public static final double MAX_VOLTAGE = 12.0;
 
     private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-        new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front left
-        new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front right
-        new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Back left
-        new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
-    );
+            new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front left
+            new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front right
+            new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Back left
+            new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
+            );
 
-    public static final double MAX_VELOCITY = 6380.0 / 60 * 
-        SdsModuleConfigurations.MK4_L2.getDriveReduction() * 
-        SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;
+    public static final double MAX_VELOCITY = 6380.0
+            / 60
+            * SdsModuleConfigurations.MK4_L2.getDriveReduction()
+            * SdsModuleConfigurations.MK4_L2.getWheelDiameter()
+            * Math.PI;
 
-    public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY /
-        Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
+    public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
 
     private final TrajectoryFollower follower = new TrajectoryFollower(
-        new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
-        new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
-        new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY / 2), Constants.CONTROLLER_PERIOD)
-    );
+            new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
+            new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
+            new ProfiledPIDController(
+                    1,
+                    0,
+                    0,
+                    new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY / 2),
+                    Constants.CONTROLLER_PERIOD));
 
     private SwerveModule[] modules;
 
     private final AHRS gyroscope = new AHRS();
 
-    private final SwerveDriveOdometry swerveOdometry = new SwerveDriveOdometry(swerveKinematics, new Rotation2d(), new Pose2d());
+    private final SwerveDriveOdometry swerveOdometry =
+            new SwerveDriveOdometry(swerveKinematics, new Rotation2d(), new Pose2d());
 
     private Pose2d pose = new Pose2d();
     private ChassisSpeeds velocity = new ChassisSpeeds();
@@ -81,37 +84,33 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         invertedConfiguration.setDriveInverted(true);
 
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-            Mk4SwerveModuleHelper.GearRatio.L2,
-            Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
-            Constants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
-            Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
-            Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET
-        );
+                Mk4SwerveModuleHelper.GearRatio.L2,
+                Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
+                Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
+                Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET);
         SwerveModule frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
-            invertedConfiguration,
-            Mk4SwerveModuleHelper.GearRatio.L2,
-            Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
-            Constants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
-            Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
-            Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET
-        );
+                invertedConfiguration,
+                Mk4SwerveModuleHelper.GearRatio.L2,
+                Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
+                Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
+                Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-            Mk4SwerveModuleHelper.GearRatio.L2,
-            Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
-            Constants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
-            Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
-            Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET
-        );
+                Mk4SwerveModuleHelper.GearRatio.L2,
+                Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
+                Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
+                Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET);
         SwerveModule backRightModule = Mk4SwerveModuleHelper.createFalcon500(
-            invertedConfiguration,
-            Mk4SwerveModuleHelper.GearRatio.L2,
-            Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
-            Constants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
-            Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
-            Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET
-        );
+                invertedConfiguration,
+                Mk4SwerveModuleHelper.GearRatio.L2,
+                Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
+                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
+                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET);
 
-        modules = new SwerveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
+        modules = new SwerveModule[] {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
         odometryXEntry = getEntry("X");
         odometryYEntry = getEntry("Y");
@@ -171,7 +170,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];
-    
+
             moduleStates[i] = new SwerveModuleState(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
         }
 
@@ -184,12 +183,19 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         if (driveSignal == null) {
             chassisVelocity = new ChassisSpeeds();
         } else if (driveSignal.isFieldOriented()) {
-            chassisVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond, getGyroRotation2d());
+            chassisVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    driveSignal.vxMetersPerSecond,
+                    driveSignal.vyMetersPerSecond,
+                    driveSignal.omegaRadiansPerSecond,
+                    getGyroRotation2d());
         } else {
-            chassisVelocity = new ChassisSpeeds(driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
+            chassisVelocity = new ChassisSpeeds(
+                    driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
         }
 
-        if(chassisVelocity.vxMetersPerSecond == 0 && chassisVelocity.vyMetersPerSecond == 0 && chassisVelocity.omegaRadiansPerSecond == 0) {
+        if (chassisVelocity.vxMetersPerSecond == 0
+                && chassisVelocity.vyMetersPerSecond == 0
+                && chassisVelocity.omegaRadiansPerSecond == 0) {
             stopModules();
             return;
         }
@@ -198,7 +204,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];
-            module.set(moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE, moduleStates[i].angle.getRadians());
+            module.set(
+                    moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE,
+                    moduleStates[i].angle.getRadians());
         }
     }
 
@@ -217,14 +225,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         Optional<SwerveDriveSignal> trajectorySignal = follower.update(getPose());
 
-        if(trajectorySignal.isPresent()) {
+        if (trajectorySignal.isPresent()) {
             driveSignal = trajectorySignal.get();
             driveSignal = new SwerveDriveSignal(
-                driveSignal.vxMetersPerSecond,
-                driveSignal.vyMetersPerSecond,
-                driveSignal.omegaRadiansPerSecond,
-                false
-            );
+                    driveSignal.vxMetersPerSecond,
+                    driveSignal.vyMetersPerSecond,
+                    driveSignal.omegaRadiansPerSecond,
+                    false);
         } else {
             driveSignal = this.driveSignal;
         }
@@ -240,7 +247,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         odometryYEntry.setDouble(pose.getY());
         odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
 
-        if (follower.getLastState() == null){
+        if (follower.getLastState() == null) {
             trajectoryXEntry.setDouble(0);
             trajectoryYEntry.setDouble(0);
             trajectoryAngleEntry.setDouble(0);

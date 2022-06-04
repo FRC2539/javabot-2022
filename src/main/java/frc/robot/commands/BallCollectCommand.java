@@ -22,7 +22,10 @@ public class BallCollectCommand extends CommandBase {
     private final Timer ballLostTimer = new Timer();
     private boolean ballLost = false;
 
-    public BallCollectCommand(MachineLearningSubsystem machineLearningSubsystem, SwerveDriveSubsystem swerveDriveSubsystem, BalltrackSubsystem balltrackSubsystem) {
+    public BallCollectCommand(
+            MachineLearningSubsystem machineLearningSubsystem,
+            SwerveDriveSubsystem swerveDriveSubsystem,
+            BalltrackSubsystem balltrackSubsystem) {
         this.machineLearningSubsystem = machineLearningSubsystem;
         this.swerveDriveSubsystem = swerveDriveSubsystem;
         this.balltrackSubsystem = balltrackSubsystem;
@@ -46,14 +49,12 @@ public class BallCollectCommand extends CommandBase {
 
         double horizontalAngle = machineLearningSubsystem.getHorizontalAngle();
 
-        double forwardVelocity = machineLearningSubsystem.isAtBall() ? PICKUP_OUTPUT : MAX_OUTPUT * (1 - Math.abs(horizontalAngle));
-        double strafeVelocity = Math.abs(horizontalAngle) < STRAFE_ANGLE_THRESHOLD ? 0 : (MAX_OUTPUT * 0.55) * horizontalAngle;
+        double forwardVelocity =
+                machineLearningSubsystem.isAtBall() ? PICKUP_OUTPUT : MAX_OUTPUT * (1 - Math.abs(horizontalAngle));
+        double strafeVelocity =
+                Math.abs(horizontalAngle) < STRAFE_ANGLE_THRESHOLD ? 0 : (MAX_OUTPUT * 0.55) * horizontalAngle;
 
-        ChassisSpeeds velocity = new ChassisSpeeds(
-            -forwardVelocity,
-            -strafeVelocity,
-            0 
-        );
+        ChassisSpeeds velocity = new ChassisSpeeds(-forwardVelocity, -strafeVelocity, 0);
 
         swerveDriveSubsystem.drive(velocity, false);
     }
@@ -61,7 +62,7 @@ public class BallCollectCommand extends CommandBase {
     private void updateBallLost() {
         boolean hasTarget = machineLearningSubsystem.hasTarget();
 
-        if(!hasTarget && !ballLost) {
+        if (!hasTarget && !ballLost) {
             ballLostTimer.reset();
             ballLostTimer.start();
         } else if (!hasTarget && ballLostTimer.hasElapsed(AVERAGE_FRAME_TIME)) {

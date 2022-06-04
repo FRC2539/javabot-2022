@@ -4,17 +4,17 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Constants;
 
 public class ClimberSubsystem extends NetworkTablesSubsystem {
-    private DoubleSolenoid climberSolenoid = new DoubleSolenoid(Constants.PCM_ID,
-                                                                PneumaticsModuleType.REVPH,
-                                                                Constants.CLIMBER_SOLENOID_FORWARD_CHANNEL,
-                                                                Constants.CLIMBER_SOLENOID_REVERSE_CHANNEL);
+    private DoubleSolenoid climberSolenoid = new DoubleSolenoid(
+            Constants.PCM_ID,
+            PneumaticsModuleType.REVPH,
+            Constants.CLIMBER_SOLENOID_FORWARD_CHANNEL,
+            Constants.CLIMBER_SOLENOID_REVERSE_CHANNEL);
 
     private WPI_TalonFX climberMotor = new WPI_TalonFX(Constants.CLIMBER_MOTOR_PORT, Constants.CANIVORE_NAME);
 

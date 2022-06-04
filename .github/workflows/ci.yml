@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    container: wpilib/roborio-cross-ubuntu:2022-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Compile and run tests on robot code
+      run: ./gradlew build
+
+    - name: Verify that the spotless formatter has been run
+      run: ./gradlew spotlessCheck
