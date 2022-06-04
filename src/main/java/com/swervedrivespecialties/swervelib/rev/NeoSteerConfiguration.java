@@ -24,7 +24,8 @@ public class NeoSteerConfiguration<EncoderConfiguration> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NeoSteerConfiguration<?> that = (NeoSteerConfiguration<?>) o;
-        return getMotorPort() == that.getMotorPort() && getEncoderConfiguration().equals(that.getEncoderConfiguration());
+        return getMotorPort() == that.getMotorPort()
+                && getEncoderConfiguration().equals(that.getEncoderConfiguration());
     }
 
     @Override
@@ -34,9 +35,8 @@ public class NeoSteerConfiguration<EncoderConfiguration> {
 
     @Override
     public String toString() {
-        return "NeoSteerConfiguration{" +
-                "motorPort=" + motorPort +
-                ", encoderConfiguration=" + encoderConfiguration +
-                '}';
+        return "NeoSteerConfiguration{" + "motorPort="
+                + motorPort + ", encoderConfiguration="
+                + encoderConfiguration + '}';
     }
 }

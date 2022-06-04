@@ -1,9 +1,8 @@
 package frc.robot.subsystems;
 
-import java.util.OptionalDouble;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.util.Updatable;
+import java.util.OptionalDouble;
 
 public class LimelightSubsystem extends NetworkTablesSubsystem implements Updatable {
     private final double TARGET_HEIGHT = 2.62;
@@ -63,8 +62,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     public OptionalDouble calculateDistanceToTarget() {
         if (hasTarget())
             return OptionalDouble.of(DELTA_HEIGHT / Math.tan(LIMELIGHT_ANGLE + Math.toRadians(getVerticalAngle())));
-        else
-            return OptionalDouble.empty();
+        else return OptionalDouble.empty();
     }
 
     public OptionalDouble getDistanceToTarget() {

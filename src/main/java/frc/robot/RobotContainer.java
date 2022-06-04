@@ -1,22 +1,22 @@
 package frc.robot;
 
-import java.io.IOException;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
 import frc.robot.common.controller.Axis;
-import frc.robot.common.controller.ThrustmasterJoystick;
 import frc.robot.common.controller.LogitechController;
+import frc.robot.common.controller.ThrustmasterJoystick;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
+import java.io.IOException;
 
 public class RobotContainer {
     private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(Constants.LEFT_DRIVE_CONTROLLER);
-    private final ThrustmasterJoystick rightDriveController = new ThrustmasterJoystick(Constants.RIGHT_DRIVE_CONTROLLER);
+    private final ThrustmasterJoystick rightDriveController =
+            new ThrustmasterJoystick(Constants.RIGHT_DRIVE_CONTROLLER);
     private final LogitechController operatorController = new LogitechController(Constants.OPERATOR_CONTROLLER);
-    
+
     private final SwerveDriveSubsystem drivetrainSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final LightsSubsystem lightsSubsystem = new LightsSubsystem();
@@ -44,8 +44,15 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(climberSubsystem);
         CommandScheduler.getInstance().registerSubsystem(limelightSubsystem);
         CommandScheduler.getInstance().registerSubsystem(machineLearningSubsystem);
-        
-        CommandScheduler.getInstance().setDefaultCommand(drivetrainSubsystem, new DriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), getDriveRotationAxis()));
+
+        CommandScheduler.getInstance()
+                .setDefaultCommand(
+                        drivetrainSubsystem,
+                        new DriveCommand(
+                                drivetrainSubsystem,
+                                getDriveForwardAxis(),
+                                getDriveStrafeAxis(),
+                                getDriveRotationAxis()));
         CommandScheduler.getInstance().setDefaultCommand(lightsSubsystem, new DefaultLightsCommand(lightsSubsystem));
 
         configureControllerLayout();
@@ -64,14 +71,31 @@ public class RobotContainer {
 
         leftDriveController.getLeftTopRight().whenPressed(new SeizureModeCommand(lightsSubsystem));
 
-        leftDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderHighGoalShot()));
-        rightDriveController.getTrigger().whileHeld(new SimpleShootCommand(shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderLowGoalShot()));
+        leftDriveController
+                .getTrigger()
+                .whileHeld(new SimpleShootCommand(
+                        shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderHighGoalShot()));
+        rightDriveController
+                .getTrigger()
+                .whileHeld(new SimpleShootCommand(
+                        shooterSubsystem, balltrackSubsystem, () -> shooterSubsystem.setFenderLowGoalShot()));
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem));
-        rightDriveController.getBottomThumb().whileHeld(new LimelightDriveCommand(drivetrainSubsystem, getDriveForwardAxis(), getDriveStrafeAxis(), limelightSubsystem, lightsSubsystem));
-        rightDriveController.getRightThumb().whileHeld(new BallCollectCommand(machineLearningSubsystem, drivetrainSubsystem, balltrackSubsystem));
+        rightDriveController
+                .getBottomThumb()
+                .whileHeld(new LimelightDriveCommand(
+                        drivetrainSubsystem,
+                        getDriveForwardAxis(),
+                        getDriveStrafeAxis(),
+                        limelightSubsystem,
+                        lightsSubsystem));
+        rightDriveController
+                .getRightThumb()
+                .whileHeld(new BallCollectCommand(machineLearningSubsystem, drivetrainSubsystem, balltrackSubsystem));
 
-        operatorController.getRightTrigger().whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
+        operatorController
+                .getRightTrigger()
+                .whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
 
         operatorController.getA().whenPressed(() -> limelightSubsystem.decrementYOffset(), limelightSubsystem);
         operatorController.getX().whenPressed(() -> limelightSubsystem.incrementXOffset(), limelightSubsystem);

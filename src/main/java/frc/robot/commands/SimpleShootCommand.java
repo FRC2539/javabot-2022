@@ -8,14 +8,17 @@ public class SimpleShootCommand extends CommandBase {
     private ShooterSubsystem shooterSubsystem;
     private BalltrackSubsystem balltrackSubsystem;
     private Runnable setShooterStateRunnable;
-    
-    public SimpleShootCommand(ShooterSubsystem shooterSubsystem, BalltrackSubsystem balltrackSubsystem, Runnable setShooterStateRunnable) {
+
+    public SimpleShootCommand(
+            ShooterSubsystem shooterSubsystem,
+            BalltrackSubsystem balltrackSubsystem,
+            Runnable setShooterStateRunnable) {
         this.shooterSubsystem = shooterSubsystem;
         this.setShooterStateRunnable = setShooterStateRunnable;
         this.balltrackSubsystem = balltrackSubsystem;
 
         addRequirements(shooterSubsystem);
-    } 
+    }
 
     @Override
     public void initialize() {

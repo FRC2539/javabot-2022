@@ -30,8 +30,12 @@ public class ModuleConfiguration {
      * @param steerInverted  Whether the steer motor should be inverted. If there is an odd number of gear reductions
      *                       this is typically true.
      */
-    public ModuleConfiguration(double wheelDiameter, double driveReduction, boolean driveInverted,
-                               double steerReduction, boolean steerInverted) {
+    public ModuleConfiguration(
+            double wheelDiameter,
+            double driveReduction,
+            boolean driveInverted,
+            double steerReduction,
+            boolean steerInverted) {
         this.wheelDiameter = wheelDiameter;
         this.driveReduction = driveReduction;
         this.driveInverted = driveInverted;
@@ -83,32 +87,26 @@ public class ModuleConfiguration {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ModuleConfiguration that = (ModuleConfiguration) o;
-        return Double.compare(that.getWheelDiameter(), getWheelDiameter()) == 0 &&
-                Double.compare(that.getDriveReduction(), getDriveReduction()) == 0 &&
-                isDriveInverted() == that.isDriveInverted() &&
-                Double.compare(that.getSteerReduction(), getSteerReduction()) == 0 &&
-                isSteerInverted() == that.isSteerInverted();
+        return Double.compare(that.getWheelDiameter(), getWheelDiameter()) == 0
+                && Double.compare(that.getDriveReduction(), getDriveReduction()) == 0
+                && isDriveInverted() == that.isDriveInverted()
+                && Double.compare(that.getSteerReduction(), getSteerReduction()) == 0
+                && isSteerInverted() == that.isSteerInverted();
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
-                getWheelDiameter(),
-                getDriveReduction(),
-                isDriveInverted(),
-                getSteerReduction(),
-                isSteerInverted()
-        );
+                getWheelDiameter(), getDriveReduction(), isDriveInverted(), getSteerReduction(), isSteerInverted());
     }
 
     @Override
     public String toString() {
-        return "ModuleConfiguration{" +
-                "wheelDiameter=" + wheelDiameter +
-                ", driveReduction=" + driveReduction +
-                ", driveInverted=" + driveInverted +
-                ", steerReduction=" + steerReduction +
-                ", steerInverted=" + steerInverted +
-                '}';
+        return "ModuleConfiguration{" + "wheelDiameter="
+                + wheelDiameter + ", driveReduction="
+                + driveReduction + ", driveInverted="
+                + driveInverted + ", steerReduction="
+                + steerReduction + ", steerInverted="
+                + steerInverted + '}';
     }
 }

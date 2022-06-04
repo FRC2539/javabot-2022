@@ -1,14 +1,12 @@
 package frc.robot.util;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class TrajectoryLoader {
     private static final String THREE_BALL_ONE_PATH = "output/threeball1.wpilib.json";

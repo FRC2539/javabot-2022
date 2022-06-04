@@ -1,8 +1,7 @@
 package com.swervedrivespecialties.swervelib;
 
-public interface SteerController 
-{
-    //Object getDriveMotor();
+public interface SteerController {
+    // Object getDriveMotor();
 
     Object getSteerMotor();
 

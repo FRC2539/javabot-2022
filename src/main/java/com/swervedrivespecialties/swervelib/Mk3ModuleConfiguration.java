@@ -42,7 +42,9 @@ public class Mk3ModuleConfiguration {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Mk3ModuleConfiguration that = (Mk3ModuleConfiguration) o;
-        return Double.compare(that.getNominalVoltage(), getNominalVoltage()) == 0 && Double.compare(that.getDriveCurrentLimit(), getDriveCurrentLimit()) == 0 && Double.compare(that.getSteerCurrentLimit(), getSteerCurrentLimit()) == 0;
+        return Double.compare(that.getNominalVoltage(), getNominalVoltage()) == 0
+                && Double.compare(that.getDriveCurrentLimit(), getDriveCurrentLimit()) == 0
+                && Double.compare(that.getSteerCurrentLimit(), getSteerCurrentLimit()) == 0;
     }
 
     @Override
@@ -52,10 +54,9 @@ public class Mk3ModuleConfiguration {
 
     @Override
     public String toString() {
-        return "Mk3ModuleConfiguration{" +
-                "nominalVoltage=" + nominalVoltage +
-                ", driveCurrentLimit=" + driveCurrentLimit +
-                ", steerCurrentLimit=" + steerCurrentLimit +
-                '}';
+        return "Mk3ModuleConfiguration{" + "nominalVoltage="
+                + nominalVoltage + ", driveCurrentLimit="
+                + driveCurrentLimit + ", steerCurrentLimit="
+                + steerCurrentLimit + '}';
     }
 }

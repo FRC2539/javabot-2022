@@ -1,15 +1,14 @@
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LightsSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
+import frc.robot.subsystems.SwerveDriveSubsystem;
+import java.util.function.DoubleSupplier;
 
 public class LimelightDriveCommand extends CommandBase {
     private SwerveDriveSubsystem drivetrainSubsystem;
@@ -21,7 +20,12 @@ public class LimelightDriveCommand extends CommandBase {
 
     private PIDController pidController = new PIDController(1, 0, 0.01, 0.02);
 
-    public LimelightDriveCommand(SwerveDriveSubsystem drivetrain, DoubleSupplier forward, DoubleSupplier strafe, LimelightSubsystem limelightSubsystem, LightsSubsystem lightsSubsystem) {
+    public LimelightDriveCommand(
+            SwerveDriveSubsystem drivetrain,
+            DoubleSupplier forward,
+            DoubleSupplier strafe,
+            LimelightSubsystem limelightSubsystem,
+            LightsSubsystem lightsSubsystem) {
         this.forward = forward;
         this.strafe = strafe;
 
@@ -47,18 +51,22 @@ public class LimelightDriveCommand extends CommandBase {
 
         if (limelightSubsystem.hasTarget()) {
             double currentAngle = drivetrainSubsystem.getGyroRotation2d().getRadians();
-            double targetAngle = MathUtil.angleModulus(currentAngle + Math.toRadians(limelightSubsystem.getHorizontalAngle()));
+            double targetAngle =
+                    MathUtil.angleModulus(currentAngle + Math.toRadians(limelightSubsystem.getHorizontalAngle()));
 
             pidController.setSetpoint(targetAngle);
 
             rotationOutput = pidController.calculate(currentAngle);
         }
 
-        drivetrainSubsystem.drive(new ChassisSpeeds(forward.getAsDouble(), strafe.getAsDouble(), rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY), true);
+        drivetrainSubsystem.drive(
+                new ChassisSpeeds(
+                        forward.getAsDouble(),
+                        strafe.getAsDouble(),
+                        rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY),
+                true);
 
-        if (limelightSubsystem.isAimed())
-            lightsSubsystem.solidGreen();
-        else
-            lightsSubsystem.showTeamColor();
+        if (limelightSubsystem.isAimed()) lightsSubsystem.solidGreen();
+        else lightsSubsystem.showTeamColor();
     }
 }

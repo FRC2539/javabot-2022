@@ -1,4 +1,5 @@
 package com.swervedrivespecialties.swervelib.ctre;
+
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 
 public class CanCoderAbsoluteConfiguration {
@@ -12,11 +13,9 @@ public class CanCoderAbsoluteConfiguration {
         this.initStrategy = initStrategy;
     }
 
-    public CanCoderAbsoluteConfiguration(int id, double offset) 
-    {
+    public CanCoderAbsoluteConfiguration(int id, double offset) {
         this(id, offset, SensorInitializationStrategy.BootToAbsolutePosition);
     }
-
 
     public int getId() {
         return id;
@@ -26,8 +25,7 @@ public class CanCoderAbsoluteConfiguration {
         return offset;
     }
 
-    public SensorInitializationStrategy getInitStrategy() 
-    {
+    public SensorInitializationStrategy getInitStrategy() {
         return initStrategy;
     }
 }

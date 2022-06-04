@@ -1,11 +1,7 @@
 package frc.robot.util;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -14,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.common.control.SwerveDriveSignal;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class TrajectoryFollower {
     private HolonomicDriveController driveController;
@@ -30,7 +28,8 @@ public class TrajectoryFollower {
 
     private boolean finished = false;
 
-    public TrajectoryFollower(PIDController forwardController, PIDController strafeController, ProfiledPIDController rotationController) {
+    public TrajectoryFollower(
+            PIDController forwardController, PIDController strafeController, ProfiledPIDController rotationController) {
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
 
         driveController = new HolonomicDriveController(forwardController, strafeController, rotationController);
@@ -56,7 +55,7 @@ public class TrajectoryFollower {
         timeSinceStart = Timer.getFPGATimestamp() - startTime;
 
         SwerveDriveSignal signal;
-        
+
         if (isPathPlanner) {
             signal = calculateDriveSignal(currentPose, (PathPlannerTrajectory) currentTrajectory, timeSinceStart);
         } else {
@@ -66,7 +65,8 @@ public class TrajectoryFollower {
         return Optional.of(signal);
     }
 
-    private SwerveDriveSignal calculateDriveSignal(Pose2d currentPose, Trajectory trajectory, Supplier<Rotation2d> desiredRotation, double timeSinceStart) {
+    private SwerveDriveSignal calculateDriveSignal(
+            Pose2d currentPose, Trajectory trajectory, Supplier<Rotation2d> desiredRotation, double timeSinceStart) {
         if (timeSinceStart > trajectory.getTotalTimeSeconds()) {
             finished = true;
             return new SwerveDriveSignal();
@@ -77,7 +77,8 @@ public class TrajectoryFollower {
         return new SwerveDriveSignal(driveController.calculate(currentPose, lastState, desiredRotation.get()), false);
     }
 
-    private SwerveDriveSignal calculateDriveSignal(Pose2d currentPose, PathPlannerTrajectory trajectory, double timeSinceStart) {
+    private SwerveDriveSignal calculateDriveSignal(
+            Pose2d currentPose, PathPlannerTrajectory trajectory, double timeSinceStart) {
         if (timeSinceStart > trajectory.getTotalTimeSeconds()) {
             finished = true;
             return new SwerveDriveSignal();
@@ -85,7 +86,9 @@ public class TrajectoryFollower {
 
         lastState = trajectory.sample(timeSinceStart);
 
-        return new SwerveDriveSignal(driveController.calculate(currentPose, lastState, ((PathPlannerState) lastState).holonomicRotation), false);
+        return new SwerveDriveSignal(
+                driveController.calculate(currentPose, lastState, ((PathPlannerState) lastState).holonomicRotation),
+                false);
     }
 
     public boolean isPathPlanner() {

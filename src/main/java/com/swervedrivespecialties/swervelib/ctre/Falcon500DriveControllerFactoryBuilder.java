@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.swervedrivespecialties.swervelib.DriveController;
 import com.swervedrivespecialties.swervelib.DriveControllerFactory;
 import com.swervedrivespecialties.swervelib.ModuleConfiguration;
-
 import frc.robot.Constants;
 
 public final class Falcon500DriveControllerFactoryBuilder {
@@ -55,7 +54,10 @@ public final class Falcon500DriveControllerFactoryBuilder {
         public ControllerImplementation create(Integer driveConfiguration, ModuleConfiguration moduleConfiguration) {
             TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
 
-            double sensorPositionCoefficient = Math.PI * moduleConfiguration.getWheelDiameter() * moduleConfiguration.getDriveReduction() / TICKS_PER_ROTATION;
+            double sensorPositionCoefficient = Math.PI
+                    * moduleConfiguration.getWheelDiameter()
+                    * moduleConfiguration.getDriveReduction()
+                    / TICKS_PER_ROTATION;
             double sensorVelocityCoefficient = sensorPositionCoefficient * 10.0;
 
             if (hasVoltageCompensation()) {
@@ -83,12 +85,8 @@ public final class Falcon500DriveControllerFactoryBuilder {
             // Reduce CAN status frame rates
             CtreUtils.checkCtreError(
                     motor.setStatusFramePeriod(
-                            StatusFrameEnhanced.Status_1_General,
-                            STATUS_FRAME_GENERAL_PERIOD_MS,
-                            CAN_TIMEOUT_MS
-                    ),
-                    "Failed to configure Falcon status frame period"
-            );
+                            StatusFrameEnhanced.Status_1_General, STATUS_FRAME_GENERAL_PERIOD_MS, CAN_TIMEOUT_MS),
+                    "Failed to configure Falcon status frame period");
 
             return new ControllerImplementation(motor, sensorVelocityCoefficient);
         }
@@ -97,26 +95,23 @@ public final class Falcon500DriveControllerFactoryBuilder {
     private class ControllerImplementation implements DriveController {
         private final TalonFX motor;
         private final double sensorVelocityCoefficient;
-        private final double nominalVoltage = hasVoltageCompensation() ? Falcon500DriveControllerFactoryBuilder.this.nominalVoltage : 12.0;
+        private final double nominalVoltage =
+                hasVoltageCompensation() ? Falcon500DriveControllerFactoryBuilder.this.nominalVoltage : 12.0;
 
         private ControllerImplementation(TalonFX motor, double sensorVelocityCoefficient) {
             this.motor = motor;
             this.sensorVelocityCoefficient = sensorVelocityCoefficient;
         }
 
-
         @Override
-        public Double getDriveMotor() 
-        {
+        public Double getDriveMotor() {
             return this.motor.getSelectedSensorPosition();
         }
 
         @Override
-        public void resetEncoder() 
-        {
+        public void resetEncoder() {
             this.motor.setSelectedSensorPosition(0.0);
         }
-
 
         @Override
         public void setReferenceVoltage(double voltage) {

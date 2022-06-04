@@ -2,13 +2,12 @@ import static org.junit.Assert.*;
 
 import frc.robot.common.control.ShooterState;
 import frc.robot.common.control.ShooterStateMap;
-
 import org.junit.*;
 
 public class ShooterStateMapTest {
     ShooterStateMap shooterStateMap;
 
-    @Before 
+    @Before
     public void setup() {
         shooterStateMap = new ShooterStateMap();
 
