@@ -194,6 +194,11 @@ public final class Falcon500SteerControllerFactoryBuilder {
         }
 
         @Override
+        public Double getMotorTemperature() {
+            return this.motor.getTemperature();
+        }
+
+        @Override
         public Object getSteerMotor() {
             return this.motor;
         }

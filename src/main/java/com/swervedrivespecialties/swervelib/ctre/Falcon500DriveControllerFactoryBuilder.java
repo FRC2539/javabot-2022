@@ -104,6 +104,11 @@ public final class Falcon500DriveControllerFactoryBuilder {
         }
 
         @Override
+        public Double getMotorTemperature() {
+            return this.motor.getTemperature();
+        }
+
+        @Override
         public Double getDriveMotor() {
             return this.motor.getSelectedSensorPosition();
         }

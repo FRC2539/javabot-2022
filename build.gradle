@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2022.4.1"
-    id 'com.diffplug.spotless' version '6.6.1'
+    // id 'com.diffplug.spotless' version '6.6.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -91,16 +91,16 @@ test {
    useJUnit()
 }
 
-spotless {
-   java {
-      target fileTree('.') {
-            include '**/*.java'
-            exclude '**/build/**', '**/build-*/**'
-      }
-      toggleOffOn()
-      palantirJavaFormat()
-      removeUnusedImports()
-      trimTrailingWhitespace()
-      endWithNewline()
-   }
-}
+// spotless {
+//    java {
+//       target fileTree('.') {
+//             include '**/*.java'
+//             exclude '**/build/**', '**/build-*/**'
+//       }
+//       toggleOffOn()
+//       palantirJavaFormat()
+//       removeUnusedImports()
+//       trimTrailingWhitespace()
+//       endWithNewline()
+//    }
+// }

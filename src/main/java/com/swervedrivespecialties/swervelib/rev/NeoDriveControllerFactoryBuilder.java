@@ -83,6 +83,11 @@ public final class NeoDriveControllerFactoryBuilder {
         }
 
         @Override
+        public Double getMotorTemperature() {
+            return motor.getMotorTemperature();
+        }
+
+        @Override
         public Double getDriveMotor() {
             return 0.0;
         }

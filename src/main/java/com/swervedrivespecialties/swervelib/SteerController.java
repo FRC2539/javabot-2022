@@ -12,4 +12,6 @@ public interface SteerController {
     void setReferenceAngle(double referenceAngleRadians);
 
     double getStateAngle();
+
+    Double getMotorTemperature();
 }

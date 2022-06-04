@@ -74,6 +74,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private NetworkTableEntry trajectoryYEntry;
     private NetworkTableEntry trajectoryAngleEntry;
 
+    private NetworkTableEntry driveTemperaturesEntry;
+    private NetworkTableEntry steerTemperaturesEntry;
+
     private NetworkTableEntry navXAngleEntry;
 
     public SwerveDriveSubsystem() {
@@ -121,6 +124,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         trajectoryAngleEntry = getEntry("Trajectory Angle");
 
         navXAngleEntry = getEntry("NavX Angle");
+
+        driveTemperaturesEntry = getEntry("Drive Temperatures");
+        steerTemperaturesEntry = getEntry("Steer Temperatures");
     }
 
     public Pose2d getPose() {
@@ -241,25 +247,39 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
     @Override
     public void periodic() {
-        Pose2d pose = getPose();
+        // Pose2d pose = getPose();
 
-        odometryXEntry.setDouble(pose.getX());
-        odometryYEntry.setDouble(pose.getY());
-        odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
+        // odometryXEntry.setDouble(pose.getX());
+        // odometryYEntry.setDouble(pose.getY());
+        // odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
 
-        if (follower.getLastState() == null) {
-            trajectoryXEntry.setDouble(0);
-            trajectoryYEntry.setDouble(0);
-            trajectoryAngleEntry.setDouble(0);
-        } else {
-            Pose2d trajectoryPose = getFollower().getLastState().poseMeters;
+        // if (follower.getLastState() == null) {
+        //     trajectoryXEntry.setDouble(0);
+        //     trajectoryYEntry.setDouble(0);
+        //     trajectoryAngleEntry.setDouble(0);
+        // } else {
+        //     Pose2d trajectoryPose = getFollower().getLastState().poseMeters;
 
-            trajectoryXEntry.setDouble(trajectoryPose.getX());
-            trajectoryYEntry.setDouble(trajectoryPose.getY());
-            trajectoryAngleEntry.setDouble(trajectoryPose.getRotation().getDegrees());
-        }
+        //     trajectoryXEntry.setDouble(trajectoryPose.getX());
+        //     trajectoryYEntry.setDouble(trajectoryPose.getY());
+        //     trajectoryAngleEntry.setDouble(trajectoryPose.getRotation().getDegrees());
+        // }
 
-        navXAngleEntry.setDouble(getGyroRotation2d().getDegrees());
+        // navXAngleEntry.setDouble(getGyroRotation2d().getDegrees());
+
+        driveTemperaturesEntry.setDoubleArray(
+            new double[]{
+                modules[0].getDriveTemperature(),
+                modules[1].getDriveTemperature(),
+                modules[2].getDriveTemperature(),
+                modules[3].getDriveTemperature()});
+
+        steerTemperaturesEntry.setDoubleArray(
+            new double[]{
+                modules[0].getSteerTemperature(),
+                modules[1].getSteerTemperature(),
+                modules[2].getSteerTemperature(),
+                modules[3].getSteerTemperature()});
     }
 
     public TrajectoryFollower getFollower() {

@@ -138,6 +138,11 @@ public final class NeoSteerControllerFactoryBuilder {
         }
 
         @Override
+        public Double getMotorTemperature() {
+            return motor.getMotorTemperature();
+        }
+
+        @Override
         public Object getSteerMotor() {
             return this.motor;
         }

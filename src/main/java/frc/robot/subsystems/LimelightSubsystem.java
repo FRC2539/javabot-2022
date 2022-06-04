@@ -9,9 +9,9 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     private final double LIMELIGHT_HEIGHT = 0.75819;
     private final double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
 
-    private final double LIMELIGHT_ANGLE = Math.toRadians(60);
+    private final double LIMELIGHT_ANGLE = Math.toRadians(90 - 60);
 
-    private final double LIMELIGHT_HORIZONTAL_ERROR = 1;
+    private final double LIMELIGHT_HORIZONTAL_ERROR = 2;
 
     private final double X_OFFSET_STEP = 0.2;
     private final double Y_OFFSET_STEP = 0.2;
@@ -95,7 +95,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     @Override
     public void update() {
         distanceToTarget = calculateDistanceToTarget();
-        isAimed = Math.abs(getHorizontalAngle()) < LIMELIGHT_HORIZONTAL_ERROR;
+        isAimed = hasTarget() && Math.abs(getHorizontalAngle()) < LIMELIGHT_HORIZONTAL_ERROR;
     }
 
     @Override
