@@ -50,10 +50,10 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
             new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
             new ProfiledPIDController(
-                    1,
+                    0.3,
                     0,
-                    0,
-                    new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY / 2),
+                    0.005,
+                    new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY),
                     Constants.CONTROLLER_PERIOD));
 
     private SwerveModule[] modules;
@@ -79,6 +79,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
     private NetworkTableEntry driveTemperaturesEntry;
     private NetworkTableEntry steerTemperaturesEntry;
+
+    private NetworkTableEntry vx;
+    private NetworkTableEntry vy;
 
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
@@ -126,6 +129,12 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         driveTemperaturesEntry = getEntry("Drive Temperatures");
         steerTemperaturesEntry = getEntry("Steer Temperatures");
+
+        vx = getEntry("vx");
+        vy = getEntry("vy");
+
+        vx.setDouble(0);
+        vy.setDouble(0);
     }
 
     public Pose2d getPose() {
@@ -199,7 +208,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                     driveSignal.vxMetersPerSecond,
                     driveSignal.vyMetersPerSecond,
                     driveSignal.omegaRadiansPerSecond,
-                    getGyroRotation2d());
+                    pose.getRotation());
         } else {
             chassisVelocity = new ChassisSpeeds(
                     driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
@@ -211,6 +220,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             stopModules();
             return;
         }
+
+        vx.setDouble(chassisVelocity.vxMetersPerSecond);
+        vy.setDouble(chassisVelocity.vyMetersPerSecond);
 
         SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
@@ -239,6 +251,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         if (trajectorySignal.isPresent()) {
             driveSignal = trajectorySignal.get();
+
             driveSignal = new SwerveDriveSignal(
                     driveSignal.vxMetersPerSecond,
                     driveSignal.vyMetersPerSecond,
