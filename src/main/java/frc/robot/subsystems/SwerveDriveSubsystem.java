@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
@@ -167,6 +168,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
     public void resetGyroAngle() {
         resetGyroAngle(new Rotation2d());
+    }
+
+    public void invertAllDriveMotors() {
+        for (SwerveModule module : modules) {
+            WPI_TalonFX motor = module.getRawDriveMotor();
+            motor.setInverted(!motor.getInverted());
+        }
     }
 
     private void updateOdometry() {

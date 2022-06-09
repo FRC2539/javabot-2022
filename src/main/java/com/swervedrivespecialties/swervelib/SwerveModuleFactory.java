@@ -1,5 +1,6 @@
 package com.swervedrivespecialties.swervelib;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
@@ -78,6 +79,16 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         @Override
         public double getSteerAngle() {
             return steerController.getStateAngle();
+        }
+
+        @Override
+        public WPI_TalonFX getRawDriveMotor() {
+            return driveController.getRawDriveMotor();
+        }
+
+        @Override
+        public WPI_TalonFX getRawSteerMotor() {
+            return steerController.getRawSteerMotor();
         }
 
         @Override

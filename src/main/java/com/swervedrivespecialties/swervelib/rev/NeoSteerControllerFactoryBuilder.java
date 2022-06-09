@@ -2,6 +2,7 @@ package com.swervedrivespecialties.swervelib.rev;
 
 import static com.swervedrivespecialties.swervelib.rev.RevUtils.checkNeoError;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.*;
 import com.swervedrivespecialties.swervelib.*;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
@@ -202,6 +203,11 @@ public final class NeoSteerControllerFactoryBuilder {
             }
 
             return motorAngleRadians;
+        }
+
+        @Override
+        public WPI_TalonFX getRawSteerMotor() {
+            return null;
         }
     }
 }

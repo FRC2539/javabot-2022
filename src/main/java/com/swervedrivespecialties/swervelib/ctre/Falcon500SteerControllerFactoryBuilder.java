@@ -5,6 +5,7 @@ import static com.swervedrivespecialties.swervelib.ctre.CtreUtils.checkCtreError
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.swervedrivespecialties.swervelib.*;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import frc.robot.Constants;
@@ -259,6 +260,11 @@ public final class Falcon500SteerControllerFactoryBuilder {
             }
 
             return motorAngleRadians;
+        }
+
+        @Override
+        public WPI_TalonFX getRawSteerMotor() {
+            return (WPI_TalonFX) motor;
         }
     }
 }

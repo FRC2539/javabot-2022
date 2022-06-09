@@ -2,6 +2,7 @@ package com.swervedrivespecialties.swervelib.rev;
 
 import static com.swervedrivespecialties.swervelib.rev.RevUtils.checkNeoError;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
@@ -100,6 +101,11 @@ public final class NeoDriveControllerFactoryBuilder {
         @Override
         public double getStateVelocity() {
             return encoder.getVelocity();
+        }
+
+        @Override
+        public WPI_TalonFX getRawDriveMotor() {
+            return null;
         }
 
         @Override

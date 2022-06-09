@@ -1,5 +1,7 @@
 package com.swervedrivespecialties.swervelib;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
 public interface DriveController {
     Double getDriveMotor();
 
@@ -10,4 +12,6 @@ public interface DriveController {
     double getStateVelocity();
 
     Double getMotorTemperature();
+
+    WPI_TalonFX getRawDriveMotor();
 }

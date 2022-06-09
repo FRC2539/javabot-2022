@@ -127,5 +127,10 @@ public final class Falcon500DriveControllerFactoryBuilder {
         public double getStateVelocity() {
             return motor.getSelectedSensorVelocity() * sensorVelocityCoefficient;
         }
+
+        @Override
+        public WPI_TalonFX getRawDriveMotor() {
+            return (WPI_TalonFX) motor;
+        }
     }
 }

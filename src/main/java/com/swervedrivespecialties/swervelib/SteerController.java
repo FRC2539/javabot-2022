@@ -1,8 +1,8 @@
 package com.swervedrivespecialties.swervelib;
 
-public interface SteerController {
-    // Object getDriveMotor();
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+public interface SteerController {
     Object getSteerMotor();
 
     AbsoluteEncoder getSteerEncoder();
@@ -14,4 +14,6 @@ public interface SteerController {
     double getStateAngle();
 
     Double getMotorTemperature();
+
+    WPI_TalonFX getRawSteerMotor();
 }
