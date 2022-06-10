@@ -13,6 +13,7 @@ import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LimelightDriveCommand;
 import frc.robot.commands.LimelightShootCommand;
+import frc.robot.commands.LimelightSpinUpCommand;
 import frc.robot.commands.PrepareToShootCommand;
 
 public class AutonomousManager {
@@ -62,6 +63,16 @@ public class AutonomousManager {
         return command;
     }
 
+    public Command getFiveBallCommand(RobotContainer container) {
+        SequentialCommandGroup command = (SequentialCommandGroup) getThreeBallCommand(container);
+
+        followAndIntake(command, container, trajectoryLoader.getFiveBall());
+
+        shootBallsAndAim(command, container, 2.5);
+
+        return command;
+    }
+
     private void shootBalls(SequentialCommandGroup command, RobotContainer container, double timeout) {
         command.addCommands(new LimelightShootCommand(
                         container.getShooterSubsystem(),
@@ -93,19 +104,6 @@ public class AutonomousManager {
                 .withTimeout(timeout));
     }
 
-    private void follow(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new PrepareToShootCommand(
-                        container.getBalltrackSubsystem(),
-                        container.getShooterSubsystem(),
-                        container.getLimelightSubsystem())));
-    }
-
-    private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
-    }
-
     private void follow(SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
                 .deadlineWith(new PrepareToShootCommand(
@@ -117,7 +115,10 @@ public class AutonomousManager {
     private void followAndIntake(
             SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
+                .deadlineWith(
+                        new IntakeCommand(container.getBalltrackSubsystem()),
+                        new LimelightSpinUpCommand(
+                                container.getLimelightSubsystem(), container.getShooterSubsystem())));
     }
 
     private void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
