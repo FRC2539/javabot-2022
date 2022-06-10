@@ -151,7 +151,8 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
     }
 
     public void intakeMode() {
-        if (balltrackMode == BalltrackMode.SHOOT) setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
+        if (balltrackMode == BalltrackMode.SHOOT || balltrackMode == BalltrackMode.INTAKE_AND_SHOOT)
+            setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
         else setBalltrackMode(BalltrackMode.INTAKE);
     }
 
@@ -161,7 +162,8 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
     }
 
     public void shootMode() {
-        if (balltrackMode == BalltrackMode.INTAKE) setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
+        if (balltrackMode == BalltrackMode.INTAKE || balltrackMode == BalltrackMode.INTAKE_AND_SHOOT)
+            setBalltrackMode(BalltrackMode.INTAKE_AND_SHOOT);
         else setBalltrackMode(BalltrackMode.SHOOT);
     }
 
