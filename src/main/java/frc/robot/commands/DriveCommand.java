@@ -13,7 +13,12 @@ public class DriveCommand extends CommandBase {
     private Axis strafe;
     private Axis rotation;
 
-    public DriveCommand(SwerveDriveSubsystem drivetrain, Axis forward, Axis strafe, Axis rotation, BalltrackSubsystem balltrackSubsystem) {
+    public DriveCommand(
+            SwerveDriveSubsystem drivetrain,
+            Axis forward,
+            Axis strafe,
+            Axis rotation,
+            BalltrackSubsystem balltrackSubsystem) {
         this.forward = forward;
         this.strafe = strafe;
         this.rotation = rotation;
@@ -27,7 +32,8 @@ public class DriveCommand extends CommandBase {
     @Override
     public void execute() {
         if (balltrackSubsystem.isIntaking()) {
-            drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(true) / 2, strafe.get(true) / 2, rotation.get(true) / 2), true);
+            drivetrainSubsystem.drive(
+                    new ChassisSpeeds(forward.get(true) / 2, strafe.get(true) / 2, rotation.get(true) / 2), true);
         } else {
             drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(true), strafe.get(true), rotation.get(true)), true);
         }
