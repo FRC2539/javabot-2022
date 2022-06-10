@@ -52,7 +52,8 @@ public class RobotContainer {
                                 drivetrainSubsystem,
                                 getDriveForwardAxis(),
                                 getDriveStrafeAxis(),
-                                getDriveRotationAxis()));
+                                getDriveRotationAxis(),
+                                balltrackSubsystem));
         CommandScheduler.getInstance().setDefaultCommand(lightsSubsystem, new DefaultLightsCommand(lightsSubsystem));
 
         configureControllerLayout();
@@ -97,7 +98,7 @@ public class RobotContainer {
                 .getRightTrigger()
                 .whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
 
-        operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shooterSubsystem));
+        operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shooterSubsystem, balltrackSubsystem));
 
         operatorController.getA().whenPressed(() -> limelightSubsystem.decrementYOffset(), limelightSubsystem);
         operatorController.getX().whenPressed(() -> limelightSubsystem.incrementXOffset(), limelightSubsystem);

@@ -43,8 +43,11 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
         xEntry = getEntry("tx");
         yEntry = getEntry("ty");
         xOffsetEntry = getEntry("xOffset");
-        yOffsetEntry = getEntry("xOffset");
+        yOffsetEntry = getEntry("yOffset");
         distance = getEntry("distance");
+
+        xOffsetEntry.setDouble(xOffset);
+        yOffsetEntry.setDouble(yOffset);
 
         setPipeline(LimelightPipeline.SHOOT);
     }

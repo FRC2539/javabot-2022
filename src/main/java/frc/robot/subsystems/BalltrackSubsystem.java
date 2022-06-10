@@ -174,6 +174,10 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
         return balltrackMode;
     }
 
+    public boolean isIntaking() {
+        return getBalltrackMode() == BalltrackMode.INTAKE || getBalltrackMode() == BalltrackMode.INTAKE_AND_SHOOT;
+    }
+
     @Override
     public void update() {
         conveyorBallIsPresent = isConveyorBallPresent();
@@ -237,7 +241,7 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
         if (isBalltrackFull()) {
             stopChamberAndConveyor();
             stopIntakeMotor();
-            retractIntake();
+            // retractIntake();
         } else if (chamberBallIsPresent) {
             intakeWithConveyorMotor();
             stopChamberMotor();

@@ -50,7 +50,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
             new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
             new ProfiledPIDController(
-                    0.3,
+                    0.5,
                     0,
                     0.005,
                     new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY),
