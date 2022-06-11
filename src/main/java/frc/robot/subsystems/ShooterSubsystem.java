@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -33,11 +32,6 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     private final double SHOOTER_P = 0.13;
     private final double SHOOTER_I = 0;
     private final double SHOOTER_D = 0.05;
-
-    // private final double SHOOTER_F = 0.047;
-    // private final double SHOOTER_P = 0.128;
-    // private final double SHOOTER_I = 0;
-    // private final double SHOOTER_D = 0.08;
 
     private final double SHOOTER_MOTOR_GEAR_RATIO = 1.5;
 

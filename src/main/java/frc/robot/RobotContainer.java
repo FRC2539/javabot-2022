@@ -100,7 +100,9 @@ public class RobotContainer {
 
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shooterSubsystem, balltrackSubsystem));
 
-        operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(balltrackSubsystem, shooterSubsystem, limelightSubsystem));
+        operatorController
+                .getRightBumper()
+                .whileHeld(new PrepareToShootCommand(balltrackSubsystem, shooterSubsystem, limelightSubsystem));
 
         operatorController.getA().whenPressed(() -> limelightSubsystem.decrementYOffset(), limelightSubsystem);
         operatorController.getX().whenPressed(() -> limelightSubsystem.incrementXOffset(), limelightSubsystem);

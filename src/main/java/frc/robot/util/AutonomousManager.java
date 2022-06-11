@@ -132,7 +132,8 @@ public class AutonomousManager {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory));
     }
 
-    private void followAndPrepare(SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
+    private void followAndPrepare(
+            SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
                 .deadlineWith(new PrepareToShootCommand(
                         container.getBalltrackSubsystem(),
@@ -146,8 +147,7 @@ public class AutonomousManager {
                 .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
     }
 
-    private void intakeInPlace(
-            SequentialCommandGroup command, RobotContainer container, double timeout) {
+    private void intakeInPlace(SequentialCommandGroup command, RobotContainer container, double timeout) {
         command.addCommands(new IntakeCommand(container.getBalltrackSubsystem()).withTimeout(timeout));
     }
 
