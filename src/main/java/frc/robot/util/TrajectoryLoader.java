@@ -12,15 +12,24 @@ public class TrajectoryLoader {
     private static final String TWO_BALL_PATH = "twoball";
     private static final String THREE_BALL_PATH = "threeball";
     private static final String FIVE_BALL_PATH = "fiveball";
+    private static final String FIVE_BALL_1_PATH = "fiveball 1";
+    private static final String FIVE_BALL_2_PATH = "fiveball 2";
+    private static final String FOUR_BALL_PATH = "fourball 1";
 
     private PathPlannerTrajectory threeBall;
     private PathPlannerTrajectory twoBall;
     private PathPlannerTrajectory fiveBall;
+    private PathPlannerTrajectory fourBall;
+    private PathPlannerTrajectory fiveBall1;
+    private PathPlannerTrajectory fiveBall2;
 
     public TrajectoryLoader() throws IOException {
         threeBall = loadTrajectory(THREE_BALL_PATH, 5, 2.5);
         twoBall = loadTrajectory(TWO_BALL_PATH, 5, 2.5);
         fiveBall = loadTrajectory(FIVE_BALL_PATH, 5, 2.5);
+        fourBall = loadTrajectory(FOUR_BALL_PATH, 5, 2.5);
+        fiveBall1 = loadTrajectory(FIVE_BALL_1_PATH, 5, 2.5);
+        fiveBall2 = loadTrajectory(FIVE_BALL_2_PATH, 5, 2.5);
 
         System.out.println("\nAll trajectories loaded successfully.\n");
     }
@@ -47,5 +56,17 @@ public class TrajectoryLoader {
 
     public PathPlannerTrajectory getFiveBall() {
         return fiveBall;
+    }
+
+    public PathPlannerTrajectory getFiveBall1() {
+        return fiveBall1;
+    }
+
+    public PathPlannerTrajectory getFiveBall2() {
+        return fiveBall2;
+    }
+
+    public PathPlannerTrajectory getFourBall() {
+        return fourBall;
     }
 }

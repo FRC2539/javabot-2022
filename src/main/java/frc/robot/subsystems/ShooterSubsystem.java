@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -8,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
 import frc.robot.common.MathUtils;
 import frc.robot.common.control.ShooterState;
@@ -31,6 +33,11 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     private final double SHOOTER_P = 0.13;
     private final double SHOOTER_I = 0;
     private final double SHOOTER_D = 0.05;
+
+    // private final double SHOOTER_F = 0.047;
+    // private final double SHOOTER_P = 0.128;
+    // private final double SHOOTER_I = 0;
+    // private final double SHOOTER_D = 0.08;
 
     private final double SHOOTER_MOTOR_GEAR_RATIO = 1.5;
 
@@ -82,7 +89,7 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
         farShotStateMap.put(new ShooterState(2300, 1600, 2.07));
         farShotStateMap.put(new ShooterState(2650, 1550, 2.74));
-        farShotStateMap.put(new ShooterState(3100, 1500, 3.62));
+        farShotStateMap.put(new ShooterState(3150, 1550, 3.62));
         farShotStateMap.put(new ShooterState(4200, 2000, 5.35));
     }
 
@@ -92,8 +99,11 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     }
 
     public void setShooterRPMs(double rearShooterRPM, double frontShooterRPM) {
-        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM));
-        frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM));
+        double rearFeedforward = (rearShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
+        double frontFeedforward = (frontShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
+
+        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM) + rearFeedforward);
+        frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM) + frontFeedforward);
     }
 
     public void setShooterPercents(double rearShooterPercent, double frontShooterPercent) {

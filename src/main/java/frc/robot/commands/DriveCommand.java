@@ -13,6 +13,8 @@ public class DriveCommand extends CommandBase {
     private Axis strafe;
     private Axis rotation;
 
+    private static final double INTAKE_FACTOR = 0.5; //1/3
+
     public DriveCommand(
             SwerveDriveSubsystem drivetrain,
             Axis forward,
@@ -33,7 +35,7 @@ public class DriveCommand extends CommandBase {
     public void execute() {
         if (balltrackSubsystem.isIntaking()) {
             drivetrainSubsystem.drive(
-                    new ChassisSpeeds(forward.get(true) / 3, strafe.get(true) / 3, rotation.get(true) / 2), true);
+                    new ChassisSpeeds(forward.get(true) * INTAKE_FACTOR, strafe.get(true) * INTAKE_FACTOR, rotation.get(true) * INTAKE_FACTOR), true);
         } else {
             drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(true), strafe.get(true), rotation.get(true)), true);
         }
