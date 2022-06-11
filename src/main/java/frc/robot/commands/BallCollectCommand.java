@@ -12,7 +12,7 @@ public class BallCollectCommand extends CommandBase {
     private SwerveDriveSubsystem swerveDriveSubsystem;
     private BalltrackSubsystem balltrackSubsystem;
 
-    private final double MAX_OUTPUT = 0.5;
+    private final double MAX_OUTPUT = 0.75;
     private final double PICKUP_OUTPUT = 0.2;
 
     private final double AVERAGE_FRAME_TIME = 0.08;
@@ -54,7 +54,10 @@ public class BallCollectCommand extends CommandBase {
         double strafeVelocity =
                 Math.abs(horizontalAngle) < STRAFE_ANGLE_THRESHOLD ? 0 : (MAX_OUTPUT * 0.55) * horizontalAngle;
 
-        ChassisSpeeds velocity = new ChassisSpeeds(-forwardVelocity, -strafeVelocity, 0);
+        ChassisSpeeds velocity = new ChassisSpeeds(
+                -forwardVelocity * SwerveDriveSubsystem.MAX_VELOCITY,
+                -strafeVelocity * SwerveDriveSubsystem.MAX_VELOCITY,
+                0);
 
         swerveDriveSubsystem.drive(velocity, false);
     }

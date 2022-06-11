@@ -12,7 +12,7 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
     private final double VERTICAL_FIELD_OF_VIEW = 0.846;
     private final double SQRT_BALL_SIZE = 76;
 
-    private final boolean FILTER_BALLS = true;
+    private final boolean FILTER_BALLS = false;
 
     private NetworkTableEntry targetAcquiredEntry;
     private NetworkTableEntry filterColorEntry;
@@ -44,6 +44,7 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
 
     public void enableFiltering() {
         if (FILTER_BALLS) filterColorEntry.setString(DriverStation.getAlliance() == Alliance.Blue ? "blue" : "red");
+        else filterColorEntry.setString("init_ML");
     }
 
     public Alliance getTargetColor() {

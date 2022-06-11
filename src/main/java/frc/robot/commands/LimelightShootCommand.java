@@ -11,13 +11,17 @@ public class LimelightShootCommand extends CommandBase {
     private BalltrackSubsystem balltrackSubsystem;
     private LimelightSubsystem limelightSubsystem;
 
+    private boolean stopShooting;
+
     public LimelightShootCommand(
             ShooterSubsystem shooterSubsystem,
             BalltrackSubsystem balltrackSubsystem,
-            LimelightSubsystem limelightSubsystem) {
+            LimelightSubsystem limelightSubsystem,
+            boolean stopShooting) {
         this.shooterSubsystem = shooterSubsystem;
         this.balltrackSubsystem = balltrackSubsystem;
         this.limelightSubsystem = limelightSubsystem;
+        this.stopShooting = stopShooting;
 
         addRequirements(shooterSubsystem);
     }
@@ -36,7 +40,7 @@ public class LimelightShootCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        shooterSubsystem.stopShooter();
+        if (stopShooting) shooterSubsystem.stopShooter();
         balltrackSubsystem.stopShootMode();
     }
 }

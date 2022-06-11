@@ -33,7 +33,7 @@ public class DriveCommand extends CommandBase {
     public void execute() {
         if (balltrackSubsystem.isIntaking()) {
             drivetrainSubsystem.drive(
-                    new ChassisSpeeds(forward.get(true) / 2, strafe.get(true) / 2, rotation.get(true) / 2), true);
+                    new ChassisSpeeds(forward.get(true) / 3, strafe.get(true) / 3, rotation.get(true) / 2), true);
         } else {
             drivetrainSubsystem.drive(new ChassisSpeeds(forward.get(true), strafe.get(true), rotation.get(true)), true);
         }

@@ -50,9 +50,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
             new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
             new ProfiledPIDController(
-                    0.5,
+                    0.17,
                     0,
-                    0.005,
+                    0.07,
                     new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY),
                     Constants.CONTROLLER_PERIOD));
 
@@ -208,7 +208,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                     driveSignal.vxMetersPerSecond,
                     driveSignal.vyMetersPerSecond,
                     driveSignal.omegaRadiansPerSecond,
-                    pose.getRotation());
+                    getGyroRotation2d());
         } else {
             chassisVelocity = new ChassisSpeeds(
                     driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
