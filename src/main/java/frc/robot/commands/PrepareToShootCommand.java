@@ -32,5 +32,7 @@ public class PrepareToShootCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         balltrackSubsystem.setBalltrackMode(BalltrackMode.DISABLED);
+
+        shooterSubsystem.stopShooter();
     }
 }

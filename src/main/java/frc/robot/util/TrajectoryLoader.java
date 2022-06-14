@@ -9,27 +9,27 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class TrajectoryLoader {
-    private static final String THREE_BALL_ONE_PATH = "output/threeball1.wpilib.json";
-    private static final String THREE_BALL_TWO_PATH = "output/threeball2.wpilib.json";
-    private static final String TWO_BALL_MAIN_PATH = "output/twoballmain.wpilib.json";
-    private static final String TWO_BALL_SIDE_PATH = "output/twoballside.wpilib.json";
     private static final String TWO_BALL_PATH = "twoball";
-    private static final String PATH_PLANNER_THREE_BALL_PATH = "threeball";
+    private static final String THREE_BALL_PATH = "threeball";
+    private static final String FIVE_BALL_PATH = "fiveball";
+    private static final String FIVE_BALL_1_PATH = "fiveball 1";
+    private static final String FIVE_BALL_2_PATH = "fiveball 2";
+    private static final String FOUR_BALL_PATH = "fourball 1";
 
-    private Trajectory threeBallOne;
-    private Trajectory threeBallTwo;
-    private Trajectory twoBallMain;
-    private Trajectory twoBallSide;
     private PathPlannerTrajectory threeBall;
-    private PathPlannerTrajectory twoball;
+    private PathPlannerTrajectory twoBall;
+    private PathPlannerTrajectory fiveBall;
+    private PathPlannerTrajectory fourBall;
+    private PathPlannerTrajectory fiveBall1;
+    private PathPlannerTrajectory fiveBall2;
 
     public TrajectoryLoader() throws IOException {
-        threeBallOne = loadTrajectory(THREE_BALL_ONE_PATH);
-        threeBallTwo = loadTrajectory(THREE_BALL_TWO_PATH);
-        twoBallMain = loadTrajectory(TWO_BALL_MAIN_PATH);
-        twoBallSide = loadTrajectory(TWO_BALL_SIDE_PATH);
-        threeBall = loadTrajectory(PATH_PLANNER_THREE_BALL_PATH, 5, 2.5);
-        twoball = loadTrajectory(TWO_BALL_PATH, 5, 2.5);
+        threeBall = loadTrajectory(THREE_BALL_PATH, 5, 2.5);
+        twoBall = loadTrajectory(TWO_BALL_PATH, 5, 2.5);
+        fiveBall = loadTrajectory(FIVE_BALL_PATH, 5, 2.5);
+        fourBall = loadTrajectory(FOUR_BALL_PATH, 5, 2.5);
+        fiveBall1 = loadTrajectory(FIVE_BALL_1_PATH, 5, 2.5);
+        fiveBall2 = loadTrajectory(FIVE_BALL_2_PATH, 5, 2.5);
 
         System.out.println("\nAll trajectories loaded successfully.\n");
     }
@@ -46,27 +46,27 @@ public class TrajectoryLoader {
         return Filesystem.getDeployDirectory().toPath().resolve(path);
     }
 
-    public Trajectory getThreeBallOne() {
-        return threeBallOne;
-    }
-
-    public Trajectory getThreeBallTwo() {
-        return threeBallTwo;
-    }
-
-    public Trajectory getTwoBallMain() {
-        return twoBallMain;
-    }
-
-    public Trajectory getTwoBallSide() {
-        return twoBallSide;
-    }
-
     public PathPlannerTrajectory getThreeBall() {
         return threeBall;
     }
 
     public PathPlannerTrajectory getTwoBall() {
-        return twoball;
+        return twoBall;
+    }
+
+    public PathPlannerTrajectory getFiveBall() {
+        return fiveBall;
+    }
+
+    public PathPlannerTrajectory getFiveBall1() {
+        return fiveBall1;
+    }
+
+    public PathPlannerTrajectory getFiveBall2() {
+        return fiveBall2;
+    }
+
+    public PathPlannerTrajectory getFourBall() {
+        return fourBall;
     }
 }

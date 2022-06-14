@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
 import frc.robot.common.MathUtils;
 import frc.robot.common.control.ShooterState;
@@ -80,12 +81,10 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
 
-        farShotStateMap.put(new ShooterState(2200, 1500, 2.07));
-        farShotStateMap.put(new ShooterState(2600, 1500, 2.74));
-        farShotStateMap.put(new ShooterState(3100, 1500, 3.62));
-
-        // farShotStateMap.put(new ShooterState(2400, 1800, 2.49));
-        // farShotStateMap.put(new ShooterState(3120, 2760, 5.3));
+        farShotStateMap.put(new ShooterState(2300, 1600, 2.07));
+        farShotStateMap.put(new ShooterState(2650, 1550, 2.74));
+        farShotStateMap.put(new ShooterState(3150, 1550, 3.62));
+        farShotStateMap.put(new ShooterState(4200, 2000, 5.35));
     }
 
     public void setShooter(ShooterState shooterState) {
@@ -94,8 +93,11 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     }
 
     public void setShooterRPMs(double rearShooterRPM, double frontShooterRPM) {
-        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM));
-        frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM));
+        double rearFeedforward = (rearShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
+        double frontFeedforward = (frontShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
+
+        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM) + rearFeedforward);
+        frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM) + frontFeedforward);
     }
 
     public void setShooterPercents(double rearShooterPercent, double frontShooterPercent) {

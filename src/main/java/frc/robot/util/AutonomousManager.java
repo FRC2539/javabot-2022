@@ -22,7 +22,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoball", "threeball"};
+    private final String[] autoStrings = {"twoball", "threeball", "fiveball", "fourball"};
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader) {
         this.trajectoryLoader = trajectoryLoader;
@@ -45,7 +45,7 @@ public class AutonomousManager {
         resetRobotPose(command, container, trajectoryLoader.getTwoBall());
 
         followAndIntake(command, container, trajectoryLoader.getTwoBall());
-        shootBallsAndAim(command, container, 2);
+        shootBallsAndAim(command, container, 2, true);
 
         return command;
     }
@@ -55,9 +55,40 @@ public class AutonomousManager {
 
         resetRobotPose(command, container, trajectoryLoader.getThreeBall());
 
-        followAndIntake(command, container, trajectoryLoader.getThreeBall());
-        shootBallsAndAim(command, container, 2);
-        shootAndIntake(command, container, 3);
+        followAndIntakeWithTimeout(command, container, trajectoryLoader.getThreeBall(), 2.5);
+        shootBallsAndAim(command, container, 0.5, false);
+        shootAndIntake(command, container, 2.7);
+
+        return command;
+    }
+
+    public Command getFiveBallCommand(RobotContainer container) {
+        SequentialCommandGroup command = (SequentialCommandGroup) getThreeBallCommand(container);
+
+        followAndIntake(command, container, trajectoryLoader.getFiveBall());
+
+        shootBallsAndAim(command, container, 2.5, true);
+
+        return command;
+    }
+
+    public Command getFourBallCommand(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectoryLoader.getFourBall());
+
+        followAndIntake(command, container, trajectoryLoader.getFourBall());
+
+        shootBallsAndAim(command, container, 0.3, false);
+        shootAndIntake(command, container, 2);
+
+        followAndIntake(command, container, trajectoryLoader.getFiveBall1());
+
+        intakeInPlace(command, container, 1.5);
+
+        followAndIntake(command, container, trajectoryLoader.getFiveBall2());
+
+        shootBallsAndAim(command, container, 2.5, true);
 
         return command;
     }
@@ -66,15 +97,18 @@ public class AutonomousManager {
         command.addCommands(new LimelightShootCommand(
                         container.getShooterSubsystem(),
                         container.getBalltrackSubsystem(),
-                        container.getLimelightSubsystem())
+                        container.getLimelightSubsystem(),
+                        true)
                 .withTimeout(timeout));
     }
 
-    private void shootBallsAndAim(SequentialCommandGroup command, RobotContainer container, double timeout) {
+    private void shootBallsAndAim(
+            SequentialCommandGroup command, RobotContainer container, double timeout, boolean stopShooting) {
         command.addCommands(new LimelightShootCommand(
                         container.getShooterSubsystem(),
                         container.getBalltrackSubsystem(),
-                        container.getLimelightSubsystem())
+                        container.getLimelightSubsystem(),
+                        stopShooting)
                 .alongWith(new LimelightDriveCommand(
                         container.getSwerveDriveSubsystem(),
                         () -> 0.0,
@@ -88,25 +122,18 @@ public class AutonomousManager {
         command.addCommands(new LimelightShootCommand(
                         container.getShooterSubsystem(),
                         container.getBalltrackSubsystem(),
-                        container.getLimelightSubsystem())
+                        container.getLimelightSubsystem(),
+                        true)
                 .alongWith(new IntakeCommand(container.getBalltrackSubsystem()))
                 .withTimeout(timeout));
     }
 
-    private void follow(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new PrepareToShootCommand(
-                        container.getBalltrackSubsystem(),
-                        container.getShooterSubsystem(),
-                        container.getLimelightSubsystem())));
-    }
-
-    private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
-    }
-
     private void follow(SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
+        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory));
+    }
+
+    private void followAndPrepare(
+            SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
                 .deadlineWith(new PrepareToShootCommand(
                         container.getBalltrackSubsystem(),
@@ -118,6 +145,19 @@ public class AutonomousManager {
             SequentialCommandGroup command, RobotContainer container, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
                 .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem())));
+    }
+
+    private void intakeInPlace(SequentialCommandGroup command, RobotContainer container, double timeout) {
+        command.addCommands(new IntakeCommand(container.getBalltrackSubsystem()).withTimeout(timeout));
+    }
+
+    private void followAndIntakeWithTimeout(
+            SequentialCommandGroup command,
+            RobotContainer container,
+            PathPlannerTrajectory trajectory,
+            double intakeTimeout) {
+        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
+                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem()).withTimeout(intakeTimeout)));
     }
 
     private void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
@@ -133,6 +173,10 @@ public class AutonomousManager {
                 return getTwoBallCommand(container);
             case "threeball":
                 return getThreeBallCommand(container);
+            case "fiveball":
+                return getFiveBallCommand(container);
+            case "fourball":
+                return getFourBallCommand(container);
         }
 
         // Return an empty command group if no auto is specified
