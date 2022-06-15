@@ -1,8 +1,10 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
@@ -12,15 +14,30 @@ public class BallCollectCommand extends CommandBase {
     private SwerveDriveSubsystem swerveDriveSubsystem;
     private BalltrackSubsystem balltrackSubsystem;
 
-    private final double MAX_OUTPUT = 0.75;
-    private final double PICKUP_OUTPUT = 0.2;
+    private ProfiledPIDController forwardController = new ProfiledPIDController(
+            1,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(
+                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 4),
+            Constants.CONTROLLER_PERIOD);
 
-    private final double AVERAGE_FRAME_TIME = 0.08;
+    private ProfiledPIDController strafeController = new ProfiledPIDController(
+            1,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(
+                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 4),
+            Constants.CONTROLLER_PERIOD);
 
-    private final double STRAFE_ANGLE_THRESHOLD = 0.3;
+    private TrapezoidProfile.State forwardGoal =
+            new TrapezoidProfile.State(MachineLearningSubsystem.STOPPING_DISTANCE, 0);
 
-    private final Timer ballLostTimer = new Timer();
-    private boolean ballLost = false;
+    private TrapezoidProfile.State strafeGoal = new TrapezoidProfile.State(0, 0);
+
+    private boolean collectionComplete = false;
+
+    // private boolean hasInitialBall = false;
 
     public BallCollectCommand(
             MachineLearningSubsystem machineLearningSubsystem,
@@ -31,48 +48,49 @@ public class BallCollectCommand extends CommandBase {
         this.balltrackSubsystem = balltrackSubsystem;
 
         addRequirements(swerveDriveSubsystem, machineLearningSubsystem);
+
+        forwardController.setTolerance(MachineLearningSubsystem.FORWARD_TOLERANCE);
     }
 
     @Override
     public void initialize() {
         balltrackSubsystem.intakeMode();
+
+        // hasInitialBall = balltrackSubsystem.hasOneBall();
+
+        collectionComplete = false;
     }
 
     @Override
     public void execute() {
-        updateBallLost();
-
-        if (ballLost || balltrackSubsystem.isBalltrackFull()) {
+        if (collectionComplete || balltrackSubsystem.isBalltrackFull()) {
             swerveDriveSubsystem.stop();
             return;
         }
 
-        double horizontalAngle = machineLearningSubsystem.getHorizontalAngle();
-
-        double forwardVelocity =
-                machineLearningSubsystem.isAtBall() ? PICKUP_OUTPUT : MAX_OUTPUT * (1 - Math.abs(horizontalAngle));
+        double forwardVelocity = forwardController.calculate(
+                machineLearningSubsystem.getBallDistance().orElse(0), forwardGoal);
         double strafeVelocity =
-                Math.abs(horizontalAngle) < STRAFE_ANGLE_THRESHOLD ? 0 : (MAX_OUTPUT * 0.55) * horizontalAngle;
+                strafeController.calculate(machineLearningSubsystem.getHorizontalAngle(), strafeGoal);
 
-        ChassisSpeeds velocity = new ChassisSpeeds(
-                -forwardVelocity * SwerveDriveSubsystem.MAX_VELOCITY,
-                -strafeVelocity * SwerveDriveSubsystem.MAX_VELOCITY,
-                0);
+        updateCollectionComplete();
+
+        ChassisSpeeds velocity = new ChassisSpeeds(forwardVelocity, strafeVelocity, 0);
 
         swerveDriveSubsystem.drive(velocity, false);
     }
 
-    private void updateBallLost() {
-        boolean hasTarget = machineLearningSubsystem.hasTarget();
+    private void updateCollectionComplete() {
+        // if (collectionComplete
+        //         || machineLearningSubsystem.isAtBall()
+        //         || (!hasInitialBall && balltrackSubsystem.hasOneBall())) {
+        //     collectionComplete = true;
+        // }
 
-        if (!hasTarget && !ballLost) {
-            ballLostTimer.reset();
-            ballLostTimer.start();
-        } else if (!hasTarget && ballLostTimer.hasElapsed(AVERAGE_FRAME_TIME)) {
-            ballLost = true;
-        } else {
-            ballLost = false;
-            ballLostTimer.stop();
+        System.out.println(forwardController.atGoal() + " " + forwardController.atSetpoint());
+
+        if(collectionComplete || forwardController.atGoal()) {
+            collectionComplete = true;
         }
     }
 

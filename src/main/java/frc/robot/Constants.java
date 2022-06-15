@@ -58,4 +58,6 @@ public class Constants {
 
     public static final int CLIMBER_SOLENOID_FORWARD_CHANNEL = 6;
     public static final int CLIMBER_SOLENOID_REVERSE_CHANNEL = 7;
+
+    public static final int CLIMBER_SENSOR_PORT = 2;
 }

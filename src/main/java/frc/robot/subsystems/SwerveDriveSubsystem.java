@@ -170,6 +170,12 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         swerveOdometry.resetPosition(pose, getGyroRotation2d());
     }
 
+    public void resetDriveEncoders() {
+        for (SwerveModule module : modules) {
+            module.getRawDriveMotor().setSelectedSensorPosition(0);
+        }
+    }
+
     public void resetGyroAngle(Rotation2d angle) {
         gyroscope.reset();
         gyroscope.setAngleAdjustment(angle.getDegrees());
