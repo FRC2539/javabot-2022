@@ -81,10 +81,10 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
 
-        farShotStateMap.put(new ShooterState(2300, 1600, 2.07));
-        farShotStateMap.put(new ShooterState(2650, 1550, 2.74));
-        farShotStateMap.put(new ShooterState(3150, 1550, 3.62));
-        farShotStateMap.put(new ShooterState(4200, 2000, 5.35));
+        farShotStateMap.put(new ShooterState(2300, 1600, 2.07 + LimelightSubsystem.TARGET_RADIUS));
+        farShotStateMap.put(new ShooterState(2650, 1550, 2.74 + LimelightSubsystem.TARGET_RADIUS));
+        farShotStateMap.put(new ShooterState(3150, 1550, 3.62 + LimelightSubsystem.TARGET_RADIUS));
+        farShotStateMap.put(new ShooterState(4200, 2000, 5.35 + LimelightSubsystem.TARGET_RADIUS));
     }
 
     public void setShooter(ShooterState shooterState) {

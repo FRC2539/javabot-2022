@@ -1,29 +1,43 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.util.Updatable;
 import java.util.OptionalDouble;
 
 public class LimelightSubsystem extends NetworkTablesSubsystem implements Updatable {
-    private final double TARGET_HEIGHT = 2.62;
-    private final double LIMELIGHT_HEIGHT = 0.75819;
-    private final double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
+    private static double TARGET_HEIGHT = 2.62;
+    private static double LIMELIGHT_HEIGHT = 0.75819;
+    private static double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
+    public static double TARGET_RADIUS = 0.678;
 
-    private final double LIMELIGHT_MOUNTING_ANGLE = 60;
+    private static double LIMELIGHT_MOUNTING_ANGLE = 60;
 
-    private final double LIMELIGHT_ANGLE = Math.toRadians(90 - LIMELIGHT_MOUNTING_ANGLE);
+    private static double LIMELIGHT_ANGLE = Math.toRadians(90 - LIMELIGHT_MOUNTING_ANGLE);
 
-    private final double LIMELIGHT_HORIZONTAL_ERROR = 2;
+    private static double LIMELIGHT_HORIZONTAL_ERROR = 2;
 
-    private final double X_OFFSET_STEP = 0.2;
-    private final double Y_OFFSET_STEP = 0.2;
+    private static double X_OFFSET_STEP = 0.2;
+    private static double Y_OFFSET_STEP = 0.2;
 
     private double xOffset = 0.2;
     private double yOffset = 0;
 
+    private static double lookaheadTime = 0.1; // tune this number to improve shooting with moving
+
+    private OptionalDouble predictedDistanceToTarget = OptionalDouble.empty();
+    private OptionalDouble predictedHorizontalAngle = OptionalDouble.empty();
+
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
 
     private boolean isAimed = false;
+
+    private double horizontalAngle = Double.NaN;
+    private double verticalAngle = Double.NaN;
 
     private NetworkTableEntry pipelineEntry;
     private NetworkTableEntry hasTargetEntry;
@@ -32,10 +46,16 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     private NetworkTableEntry yEntry;
     private NetworkTableEntry xOffsetEntry;
     private NetworkTableEntry yOffsetEntry;
-    private NetworkTableEntry distance;
+    private NetworkTableEntry distanceEntry;
+    private NetworkTableEntry predictedDistanceEntry;
+    private NetworkTableEntry predictedAngleEntry;
 
-    public LimelightSubsystem() {
+    private final SwerveDriveSubsystem swerveDriveSubsystem;
+
+    public LimelightSubsystem(SwerveDriveSubsystem swerveDriveSubsystem) {
         super("limelight");
+
+        this.swerveDriveSubsystem = swerveDriveSubsystem;
 
         pipelineEntry = getEntry("pipeline");
         hasTargetEntry = getEntry("tv");
@@ -44,7 +64,9 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
         yEntry = getEntry("ty");
         xOffsetEntry = getEntry("xOffset");
         yOffsetEntry = getEntry("yOffset");
-        distance = getEntry("distance");
+        distanceEntry = getEntry("distance");
+        predictedDistanceEntry = getEntry("predictedDistance");
+        predictedAngleEntry = getEntry("predictedAngle");
 
         xOffsetEntry.setDouble(xOffset);
         yOffsetEntry.setDouble(yOffset);
@@ -53,11 +75,11 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     }
 
     public double getHorizontalAngle() {
-        return xEntry.getDouble(0) + xOffset;
+        return horizontalAngle;
     }
 
     public double getVerticalAngle() {
-        return yEntry.getDouble(0) + yOffset;
+        return verticalAngle;
     }
 
     public boolean isAimed() {
@@ -66,12 +88,50 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
 
     public OptionalDouble calculateDistanceToTarget() {
         if (hasTarget())
-            return OptionalDouble.of(DELTA_HEIGHT / Math.tan(LIMELIGHT_ANGLE + Math.toRadians(getVerticalAngle())));
+            return OptionalDouble.of(
+                    DELTA_HEIGHT / Math.tan(LIMELIGHT_ANGLE + Math.toRadians(getVerticalAngle())) + TARGET_RADIUS);
         else return OptionalDouble.empty();
     }
 
     public OptionalDouble getDistanceToTarget() {
         return distanceToTarget;
+    }
+
+    public OptionalDouble getPredictedDistanceToTarget() {
+        return predictedDistanceToTarget;
+    }
+
+    public OptionalDouble getPredictedHorizontalAngle() {
+        return predictedHorizontalAngle;
+    }
+
+    public void updatePredictedLimelightMeasurements() {
+        if (hasTarget() && getDistanceToTarget().isPresent()) {
+            Pose2d robotRelativePoseEstimate = new Pose2d(
+                    new Translation2d(getDistanceToTarget().getAsDouble(), new Rotation2d(getHorizontalAngle())),
+                    new Rotation2d());
+
+            ChassisSpeeds robotRelativeVelocity = swerveDriveSubsystem.getVelocity();
+
+            Transform2d estimatedTransform = new Transform2d(
+                            new Translation2d(
+                                    robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond),
+                            new Rotation2d(robotRelativeVelocity.omegaRadiansPerSecond))
+                    .times(lookaheadTime);
+
+            Pose2d predictedPoseEstimate = robotRelativePoseEstimate.transformBy(estimatedTransform);
+
+            predictedDistanceToTarget =
+                    OptionalDouble.of(predictedPoseEstimate.getTranslation().getNorm());
+
+            double predictedChangeInRobotAngle =
+                    predictedPoseEstimate.getRotation().getRadians();
+            double predictedChangeInAngleToTarget =
+                    new Rotation2d(predictedPoseEstimate.getX(), predictedPoseEstimate.getY()).getRadians();
+
+            predictedHorizontalAngle =
+                    OptionalDouble.of(predictedChangeInAngleToTarget - predictedChangeInRobotAngle);
+        }
     }
 
     public void setPipeline(LimelightPipeline pipeline) {
@@ -99,13 +159,21 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
 
     @Override
     public void update() {
+        horizontalAngle = xEntry.getDouble(0) + xOffset;
+        verticalAngle = yEntry.getDouble(0) + yOffset;
+
         distanceToTarget = calculateDistanceToTarget();
         isAimed = hasTarget() && Math.abs(getHorizontalAngle()) < LIMELIGHT_HORIZONTAL_ERROR;
+
+        updatePredictedLimelightMeasurements();
     }
 
     @Override
     public void periodic() {
-        distance.setDouble(distanceToTarget.orElse(0));
+        distanceEntry.setDouble(distanceToTarget.orElse(0));
+        
+        predictedDistanceEntry.setDouble(predictedDistanceToTarget.orElse(0));
+        predictedAngleEntry.setDouble(predictedHorizontalAngle.orElse(0));
     }
 
     public void incrementXOffset() {

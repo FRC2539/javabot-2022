@@ -22,7 +22,7 @@ public class RobotContainer {
     private final LightsSubsystem lightsSubsystem = new LightsSubsystem();
     private final BalltrackSubsystem balltrackSubsystem = new BalltrackSubsystem(shooterSubsystem);
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-    private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
+    private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem(drivetrainSubsystem);
     private final MachineLearningSubsystem machineLearningSubsystem = new MachineLearningSubsystem();
 
     private AutonomousManager autonomousManager;
