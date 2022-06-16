@@ -53,8 +53,11 @@ public class BallCollectCommand extends CommandBase {
     public void initialize() {
         balltrackSubsystem.intakeMode();
 
-        forwardController.reset(machineLearningSubsystem.getBallDistance().orElse(0), swerveDriveSubsystem.getVelocity().vxMetersPerSecond);
-        strafeController.reset(machineLearningSubsystem.getHorizontalAngle(), swerveDriveSubsystem.getVelocity().vyMetersPerSecond);
+        forwardController.reset(
+                machineLearningSubsystem.getBallDistance().orElse(0),
+                swerveDriveSubsystem.getVelocity().vxMetersPerSecond);
+        strafeController.reset(
+                machineLearningSubsystem.getHorizontalAngle(), swerveDriveSubsystem.getVelocity().vyMetersPerSecond);
 
         // hasInitialBall = balltrackSubsystem.hasOneBall();
 

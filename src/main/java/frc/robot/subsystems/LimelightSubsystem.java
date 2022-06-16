@@ -129,8 +129,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
             double predictedChangeInAngleToTarget =
                     new Rotation2d(predictedPoseEstimate.getX(), predictedPoseEstimate.getY()).getRadians();
 
-            predictedHorizontalAngle =
-                    OptionalDouble.of(predictedChangeInAngleToTarget - predictedChangeInRobotAngle);
+            predictedHorizontalAngle = OptionalDouble.of(predictedChangeInAngleToTarget - predictedChangeInRobotAngle);
         }
     }
 
@@ -171,7 +170,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     @Override
     public void periodic() {
         distanceEntry.setDouble(distanceToTarget.orElse(0));
-        
+
         predictedDistanceEntry.setDouble(predictedDistanceToTarget.orElse(0));
         predictedAngleEntry.setDouble(predictedHorizontalAngle.orElse(0));
     }
