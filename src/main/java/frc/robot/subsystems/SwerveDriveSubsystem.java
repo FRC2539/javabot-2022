@@ -291,7 +291,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                 trajectoryAngleEntry.setDouble(trajectoryPose.getRotation().getDegrees());
             }
         }
-
+        
         driveTemperaturesEntry.setDoubleArray(new double[] {
             modules[0].getDriveTemperature(),
             modules[1].getDriveTemperature(),

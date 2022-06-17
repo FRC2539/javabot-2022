@@ -11,6 +11,9 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
     public static double FORWARD_TOLERANCE = 0.2;
     public static double STOPPING_DISTANCE = 0.77;
 
+    public static double STOPPING_Y = 209;
+    public static double STOPPING_TOLERANCE = 0.03;
+
     // Measured at 1 meter
     private final double HORIZONTAL_FIELD_OF_VIEW = 1.137;
     private final double VERTICAL_FIELD_OF_VIEW = 0.846;
