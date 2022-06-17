@@ -97,7 +97,7 @@ public class RobotContainer {
 
         operatorController
                 .getRightTrigger()
-                .whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem, true));
+                .whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
 
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shooterSubsystem, balltrackSubsystem));
 

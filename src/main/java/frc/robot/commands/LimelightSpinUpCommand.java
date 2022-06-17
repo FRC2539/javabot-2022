@@ -17,10 +17,7 @@ public class LimelightSpinUpCommand extends CommandBase {
     @Override
     public void initialize() {
         limelightSubsystem.setPipeline(LimelightPipeline.SHOOT);
-    }
 
-    @Override
-    public void execute() {
-        shooterSubsystem.setFarShot(limelightSubsystem.getDistanceToTarget().orElse(0));
+        shooterSubsystem.setFarShot(limelightSubsystem.getMeasuredDistanceSupplier());
     }
 }

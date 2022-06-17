@@ -14,6 +14,8 @@ import frc.robot.common.MathUtils;
 import frc.robot.common.control.InterpolatingMap;
 import frc.robot.common.control.ShooterState;
 import frc.robot.util.Updatable;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
     private final DoubleSolenoid shooterAngleSolenoid = new DoubleSolenoid(
@@ -36,6 +38,8 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     private final double SHOOTER_MOTOR_GEAR_RATIO = 1.5;
 
     private final double SHOOTER_RPM_ERROR = 40;
+
+    private Optional<DoubleSupplier> distanceSupplier = Optional.empty();
 
     private final ShooterState rejectShooterState = new ShooterState(1000, 800, ShooterAngle.DISABLED);
 
@@ -134,6 +138,8 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     public void stopShooter() {
         rearShooterMotor.stopMotor();
         frontShooterMotor.stopMotor();
+
+        distanceSupplier = Optional.empty();
     }
 
     public void setRejectShot() {
@@ -157,6 +163,12 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         setShooter(calculateShooterStateForDistance(distance));
     }
 
+    public void setFarShot(DoubleSupplier distanceSupplier) {
+        setFarShot(distanceSupplier.getAsDouble());
+
+        this.distanceSupplier = Optional.of(distanceSupplier);
+    }
+
     public void setCustomShot() {
         setShooterRPMs(customRearShooterRPMEntry.getDouble(0), customFrontShooterRPMEntry.getDouble(0));
         setShooterAngle(customShooterAngleEntry.getBoolean(true) ? ShooterAngle.FAR_SHOT : ShooterAngle.CLOSE_SHOT);
@@ -164,6 +176,10 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
     @Override
     public void update() {
+        if (distanceSupplier.isPresent()) {
+            setFarShot(distanceSupplier.get().getAsDouble());
+        }
+
         switch (targetShooterAngle) {
             case DISABLED:
                 shooterAngleSolenoid.set(DoubleSolenoid.Value.kOff);

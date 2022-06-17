@@ -6,8 +6,10 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import frc.robot.common.MathUtils;
 import frc.robot.util.Updatable;
 import java.util.OptionalDouble;
+import java.util.function.DoubleSupplier;
 
 public class LimelightSubsystem extends NetworkTablesSubsystem implements Updatable {
     private static double TARGET_HEIGHT = 2.62;
@@ -35,6 +37,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
 
     private boolean isAimed = false;
+    private boolean isAimedToPrediction = false;
 
     private double horizontalAngle = Double.NaN;
     private double verticalAngle = Double.NaN;
@@ -86,6 +89,10 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
         return this.isAimed;
     }
 
+    public boolean isAimedToPrediction() {
+        return this.isAimedToPrediction;
+    }
+
     public OptionalDouble calculateDistanceToTarget() {
         if (hasTarget())
             return OptionalDouble.of(
@@ -105,14 +112,25 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
         return predictedHorizontalAngle;
     }
 
+    public DoubleSupplier getMeasuredDistanceSupplier() {
+        return () -> getDistanceToTarget().orElse(0);
+    }
+
+    public DoubleSupplier getPredictedDistanceSupplier() {
+        return () -> getPredictedDistanceToTarget().orElse(0);
+    }
+
     public void updatePredictedLimelightMeasurements() {
         if (hasTarget() && getDistanceToTarget().isPresent()) {
+            // Create a pose object that represents the robot relative to the target
             Pose2d robotRelativePoseEstimate = new Pose2d(
                     new Translation2d(getDistanceToTarget().getAsDouble(), new Rotation2d(getHorizontalAngle())),
                     new Rotation2d());
 
             ChassisSpeeds robotRelativeVelocity = swerveDriveSubsystem.getSmoothedVelocity();
 
+            // Using the current velocity, estimate how the pose of the robot will change `lookaheadTime` seconds in the
+            // future
             Transform2d estimatedTransform = new Transform2d(
                             new Translation2d(
                                     robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond),
@@ -129,7 +147,14 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
             double predictedChangeInAngleToTarget =
                     new Rotation2d(predictedPoseEstimate.getX(), predictedPoseEstimate.getY()).getRadians();
 
+            // Predict the horizontal offset the limelight will see `lookaheadTime` seconds in the future
             predictedHorizontalAngle = OptionalDouble.of(predictedChangeInAngleToTarget - predictedChangeInRobotAngle);
+
+            // Calculate the angle that the robot would need to face to be aimed at the predicted target
+            double targetAngleOffset = getHorizontalAngle() - predictedHorizontalAngle.orElse(0);
+
+            isAimedToPrediction = hasTarget()
+                    && MathUtils.equalsWithinError(targetAngleOffset, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
         }
     }
 
@@ -162,7 +187,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
         verticalAngle = yEntry.getDouble(0) + yOffset;
 
         distanceToTarget = calculateDistanceToTarget();
-        isAimed = hasTarget() && Math.abs(getHorizontalAngle()) < LIMELIGHT_HORIZONTAL_ERROR;
+        isAimed = hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
 
         updatePredictedLimelightMeasurements();
     }
