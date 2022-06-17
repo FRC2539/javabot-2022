@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
@@ -28,8 +27,7 @@ public class BallCollectCommand extends CommandBase {
             new TrapezoidProfile.Constraints(
                     SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 4));
 
-    private TrapezoidProfile.State forwardGoal =
-            new TrapezoidProfile.State(0, 0);
+    private TrapezoidProfile.State forwardGoal = new TrapezoidProfile.State(0, 0);
 
     private double strafeGoal = 0;
 
@@ -94,7 +92,8 @@ public class BallCollectCommand extends CommandBase {
     }
 
     private double getForwardOffset() {
-        return (MachineLearningSubsystem.STOPPING_Y - machineLearningSubsystem.getTargetY()) / MachineLearningSubsystem.STOPPING_Y;
+        return (MachineLearningSubsystem.STOPPING_Y - machineLearningSubsystem.getTargetY())
+                / MachineLearningSubsystem.STOPPING_Y;
     }
 
     private void resetControllers() {

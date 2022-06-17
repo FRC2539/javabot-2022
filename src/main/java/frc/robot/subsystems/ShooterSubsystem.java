@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
 import frc.robot.common.MathUtils;
+import frc.robot.common.control.InterpolatingMap;
 import frc.robot.common.control.ShooterState;
-import frc.robot.common.control.ShooterStateMap;
 import frc.robot.util.Updatable;
 
 public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
@@ -42,7 +42,7 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
 
-    private final ShooterStateMap farShotStateMap = new ShooterStateMap();
+    private final InterpolatingMap<ShooterState> farShotStateMap = new InterpolatingMap<ShooterState>();
 
     private NetworkTableEntry customRearShooterRPMEntry;
     private NetworkTableEntry customFrontShooterRPMEntry;
@@ -81,10 +81,10 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
 
-        farShotStateMap.put(new ShooterState(2300, 1600, 2.07 + LimelightSubsystem.TARGET_RADIUS));
-        farShotStateMap.put(new ShooterState(2650, 1550, 2.74 + LimelightSubsystem.TARGET_RADIUS));
-        farShotStateMap.put(new ShooterState(3150, 1550, 3.62 + LimelightSubsystem.TARGET_RADIUS));
-        farShotStateMap.put(new ShooterState(4200, 2000, 5.35 + LimelightSubsystem.TARGET_RADIUS));
+        farShotStateMap.put(2.07 + LimelightSubsystem.TARGET_RADIUS, new ShooterState(2300, 1600));
+        farShotStateMap.put(2.74 + LimelightSubsystem.TARGET_RADIUS, new ShooterState(2650, 1550));
+        farShotStateMap.put(3.62 + LimelightSubsystem.TARGET_RADIUS, new ShooterState(3150, 1550));
+        farShotStateMap.put(5.35 + LimelightSubsystem.TARGET_RADIUS, new ShooterState(4200, 2000));
     }
 
     public void setShooter(ShooterState shooterState) {
@@ -150,7 +150,7 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     }
 
     public ShooterState calculateShooterStateForDistance(double distance) {
-        return farShotStateMap.getInterpolatedShooterState(distance).orElse(new ShooterState());
+        return farShotStateMap.getInterpolated(distance).orElse(new ShooterState());
     }
 
     public void setFarShot(double distance) {

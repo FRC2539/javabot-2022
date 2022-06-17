@@ -92,7 +92,8 @@ public class RobotContainer {
                         lightsSubsystem));
         rightDriveController
                 .getRightThumb()
-                .whileHeld(new BallCollectCommand(machineLearningSubsystem, drivetrainSubsystem, balltrackSubsystem, true));
+                .whileHeld(new BallCollectCommand(
+                        machineLearningSubsystem, drivetrainSubsystem, balltrackSubsystem, true));
 
         operatorController
                 .getRightTrigger()

@@ -111,7 +111,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
                     new Translation2d(getDistanceToTarget().getAsDouble(), new Rotation2d(getHorizontalAngle())),
                     new Rotation2d());
 
-            ChassisSpeeds robotRelativeVelocity = swerveDriveSubsystem.getVelocity();
+            ChassisSpeeds robotRelativeVelocity = swerveDriveSubsystem.getSmoothedVelocity();
 
             Transform2d estimatedTransform = new Transform2d(
                             new Translation2d(

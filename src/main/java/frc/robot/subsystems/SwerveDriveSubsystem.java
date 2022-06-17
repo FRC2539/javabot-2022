@@ -19,6 +19,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
+import frc.robot.common.control.MovingAverageVelocity;
 import frc.robot.common.control.SwerveDriveSignal;
 import frc.robot.util.TrajectoryFollower;
 import frc.robot.util.Updatable;
@@ -62,6 +63,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
     private final SwerveDriveOdometry swerveOdometry =
             new SwerveDriveOdometry(swerveKinematics, new Rotation2d(), new Pose2d());
+
+    private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
 
     private Pose2d pose = new Pose2d();
     private ChassisSpeeds velocity = new ChassisSpeeds();
@@ -145,6 +148,10 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         return velocity;
     }
 
+    public ChassisSpeeds getSmoothedVelocity() {
+        return velocityEstimator.getAverage();
+    }
+
     public Rotation2d getGyroRotation2d() {
         return gyroscope.getRotation2d();
     }
@@ -201,8 +208,11 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             moduleStates[i] = new SwerveModuleState(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
         }
 
-        this.velocity = swerveKinematics.toChassisSpeeds(moduleStates);
-        this.pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
+        velocity = swerveKinematics.toChassisSpeeds(moduleStates);
+
+        velocityEstimator.add(velocity);
+
+        pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
     }
 
     private void updateModules(SwerveDriveSignal driveSignal) {
@@ -291,7 +301,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                 trajectoryAngleEntry.setDouble(trajectoryPose.getRotation().getDegrees());
             }
         }
-        
+
         driveTemperaturesEntry.setDoubleArray(new double[] {
             modules[0].getDriveTemperature(),
             modules[1].getDriveTemperature(),

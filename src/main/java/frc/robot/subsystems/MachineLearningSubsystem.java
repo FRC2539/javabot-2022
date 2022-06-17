@@ -6,11 +6,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.OptionalDouble;
 
 public class MachineLearningSubsystem extends NetworkTablesSubsystem {
-    public final double AREA_STOPPING_THRESHOLD = 11000;
-
-    public static double FORWARD_TOLERANCE = 0.2;
-    public static double STOPPING_DISTANCE = 0.77;
-
     public static double STOPPING_Y = 209;
     public static double STOPPING_TOLERANCE = 0.03;
 
@@ -118,11 +113,5 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
         }
 
         return OptionalDouble.of(SQRT_BALL_SIZE / Math.sqrt(getTargetArea()));
-    }
-
-    public boolean isAtBall() {
-        if (getBallDistance().isEmpty()) return true;
-
-        return getBallDistance().getAsDouble() <= STOPPING_DISTANCE;
     }
 }
