@@ -30,7 +30,9 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
 
     private final double PROXIMITY_SENSOR_THRESHOLD = 50;
 
-    private AnalogInput proximitySensor = new AnalogInput(Constants.CLIMBER_SENSOR_PORT);
+    private AnalogInput proximitySensorRight = new AnalogInput(Constants.CLIMBER_SENSOR_RIGHT_PORT);
+
+    private AnalogInput proximitySensorLeft = new AnalogInput(Constants.CLIMBER_SENSOR_LEFT_PORT);
 
     private NetworkTableEntry positionEntry;
 
@@ -102,6 +104,6 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
     }
 
     public boolean isClimberOnBar() {
-        return proximitySensor.getValue() < PROXIMITY_SENSOR_THRESHOLD;
+        return proximitySensorLeft.getValue() < PROXIMITY_SENSOR_THRESHOLD && proximitySensorRight.getValue() < PROXIMITY_SENSOR_THRESHOLD;
     }
 }
