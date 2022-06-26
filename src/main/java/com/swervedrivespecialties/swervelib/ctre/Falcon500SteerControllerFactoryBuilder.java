@@ -2,14 +2,13 @@ package com.swervedrivespecialties.swervelib.ctre;
 
 import static com.swervedrivespecialties.swervelib.ctre.CtreUtils.checkCtreError;
 
-import java.util.Optional;
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.swervedrivespecialties.swervelib.*;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import java.util.Optional;
 
 public final class Falcon500SteerControllerFactoryBuilder {
     private static final int CAN_TIMEOUT_MS = 250;
@@ -139,10 +138,10 @@ public final class Falcon500SteerControllerFactoryBuilder {
 
             TalonFX motor;
 
+            // Create a Talon FX instance that optionally uses a CANivore
             if (canivoreName.isPresent())
                 motor = new WPI_TalonFX(steerConfiguration.getMotorPort(), canivoreName.get());
-            else
-                motor = new WPI_TalonFX(steerConfiguration.getMotorPort());
+            else motor = new WPI_TalonFX(steerConfiguration.getMotorPort());
 
             checkCtreError(
                     motor.configAllSettings(motorConfiguration, CAN_TIMEOUT_MS),

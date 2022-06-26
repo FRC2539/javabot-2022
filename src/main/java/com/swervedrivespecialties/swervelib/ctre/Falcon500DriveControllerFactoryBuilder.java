@@ -1,7 +1,5 @@
 package com.swervedrivespecialties.swervelib.ctre;
 
-import java.util.Optional;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -12,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.swervedrivespecialties.swervelib.DriveController;
 import com.swervedrivespecialties.swervelib.DriveControllerFactory;
 import com.swervedrivespecialties.swervelib.ModuleConfiguration;
+import java.util.Optional;
 
 public final class Falcon500DriveControllerFactoryBuilder {
     private static final double TICKS_PER_ROTATION = 2048.0;
@@ -78,10 +77,9 @@ public final class Falcon500DriveControllerFactoryBuilder {
 
             TalonFX motor;
 
-            if (canivoreName.isPresent())
-                motor = new WPI_TalonFX(driveConfiguration, canivoreName.get());
-            else
-                motor = new WPI_TalonFX(driveConfiguration);
+            // Create a Talon FX instance that optionally uses a CANivore
+            if (canivoreName.isPresent()) motor = new WPI_TalonFX(driveConfiguration, canivoreName.get());
+            else motor = new WPI_TalonFX(driveConfiguration);
 
             CtreUtils.checkCtreError(motor.configAllSettings(motorConfiguration), "Failed to configure Falcon 500");
 

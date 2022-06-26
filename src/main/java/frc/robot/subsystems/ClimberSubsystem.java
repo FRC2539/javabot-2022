@@ -104,6 +104,7 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
     }
 
     public boolean isClimberOnBar() {
-        return proximitySensorLeft.getValue() < PROXIMITY_SENSOR_THRESHOLD && proximitySensorRight.getValue() < PROXIMITY_SENSOR_THRESHOLD;
+        return proximitySensorLeft.getValue() < PROXIMITY_SENSOR_THRESHOLD
+                && proximitySensorRight.getValue() < PROXIMITY_SENSOR_THRESHOLD;
     }
 }
