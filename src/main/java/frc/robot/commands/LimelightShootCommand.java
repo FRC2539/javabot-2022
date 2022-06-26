@@ -26,15 +26,22 @@ public class LimelightShootCommand extends CommandBase {
         addRequirements(shooterSubsystem);
     }
 
+    public LimelightShootCommand(
+            ShooterSubsystem shooterSubsystem,
+            BalltrackSubsystem balltrackSubsystem,
+            LimelightSubsystem limelightSubsystem) {
+        this(shooterSubsystem, balltrackSubsystem, limelightSubsystem, true);
+    }
+
     @Override
     public void initialize() {
         limelightSubsystem.setPipeline(LimelightPipeline.SHOOT);
+
+        shooterSubsystem.setFarShot(limelightSubsystem.getMeasuredDistanceSupplier());
     }
 
     @Override
     public void execute() {
-        shooterSubsystem.setFarShot(limelightSubsystem.getDistanceToTarget().orElse(0));
-
         if (limelightSubsystem.isAimed() && shooterSubsystem.isShooterAtVelocity()) balltrackSubsystem.shootMode();
     }
 

@@ -79,12 +79,12 @@ public class AutonomousManager {
 
         followAndIntake(command, container, trajectoryLoader.getFourBall());
 
-        shootBallsAndAim(command, container, 0.3, false);
-        shootAndIntake(command, container, 2);
+        shootBallsAndAim(command, container, 0.7, false);
+        shootAndIntake(command, container, 1.6);
 
         followAndIntake(command, container, trajectoryLoader.getFiveBall1());
 
-        intakeInPlace(command, container, 1.5);
+        intakeInPlace(command, container, 2.5);
 
         followAndIntake(command, container, trajectoryLoader.getFiveBall2());
 

@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import java.util.OptionalDouble;
 
 public class MachineLearningSubsystem extends NetworkTablesSubsystem {
-    private final double AREA_STOPPING_THRESHOLD = 11000;
+    public static double STOPPING_Y = 209;
+    public static double STOPPING_TOLERANCE = 0.03;
 
     // Measured at 1 meter
     private final double HORIZONTAL_FIELD_OF_VIEW = 1.137;
@@ -36,6 +38,11 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
         resolutionYEntry = getEntry("resolutionY");
 
         enableFiltering();
+    }
+
+    @Override
+    public void periodic() {
+        getEntry("Ball distance").setDouble(getBallDistance().orElse(0));
     }
 
     public boolean hasTarget() {
@@ -98,11 +105,13 @@ public class MachineLearningSubsystem extends NetworkTablesSubsystem {
         return -getYNormalized() / VERTICAL_FIELD_OF_VIEW;
     }
 
-    public double getBallDistance() {
-        return SQRT_BALL_SIZE / Math.sqrt(getTargetArea());
-    }
+    public OptionalDouble getBallDistance() {
+        double targetArea = getTargetArea();
 
-    public boolean isAtBall() {
-        return getTargetArea() >= AREA_STOPPING_THRESHOLD;
+        if (targetArea == 0) {
+            return OptionalDouble.empty();
+        }
+
+        return OptionalDouble.of(SQRT_BALL_SIZE / Math.sqrt(getTargetArea()));
     }
 }

@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Constants;
@@ -21,11 +22,17 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
     private final boolean USE_LIMITS = true;
 
     private final double UPPER_LIMIT = 230000;
-    private final double LOWER_LIMIT = 8000;
+    private final double LOWER_LIMIT = 1000;
 
     private final double CLIMBER_MOTOR_SPEED = 1;
 
-    private final double CLIMBER_RAMP_DURATION = 0.5;
+    private final double CLIMBER_RAMP_DURATION = 0.25;
+
+    private final double PROXIMITY_SENSOR_THRESHOLD = 50;
+
+    private AnalogInput proximitySensorRight = new AnalogInput(Constants.CLIMBER_SENSOR_RIGHT_PORT);
+
+    private AnalogInput proximitySensorLeft = new AnalogInput(Constants.CLIMBER_SENSOR_LEFT_PORT);
 
     private NetworkTableEntry positionEntry;
 
@@ -94,5 +101,10 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
 
     public void disableLimits() {
         climberMotor.overrideSoftLimitsEnable(false);
+    }
+
+    public boolean isClimberOnBar() {
+        return proximitySensorLeft.getValue() < PROXIMITY_SENSOR_THRESHOLD
+                && proximitySensorRight.getValue() < PROXIMITY_SENSOR_THRESHOLD;
     }
 }

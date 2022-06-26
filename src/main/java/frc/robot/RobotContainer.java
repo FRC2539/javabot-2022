@@ -22,7 +22,7 @@ public class RobotContainer {
     private final LightsSubsystem lightsSubsystem = new LightsSubsystem();
     private final BalltrackSubsystem balltrackSubsystem = new BalltrackSubsystem(shooterSubsystem);
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-    private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
+    private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem(drivetrainSubsystem);
     private final MachineLearningSubsystem machineLearningSubsystem = new MachineLearningSubsystem();
 
     private AutonomousManager autonomousManager;
@@ -92,11 +92,12 @@ public class RobotContainer {
                         lightsSubsystem));
         rightDriveController
                 .getRightThumb()
-                .whileHeld(new BallCollectCommand(machineLearningSubsystem, drivetrainSubsystem, balltrackSubsystem));
+                .whileHeld(new BallCollectCommand(
+                        machineLearningSubsystem, drivetrainSubsystem, balltrackSubsystem, true));
 
         operatorController
                 .getRightTrigger()
-                .whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem, true));
+                .whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
 
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shooterSubsystem, balltrackSubsystem));
 

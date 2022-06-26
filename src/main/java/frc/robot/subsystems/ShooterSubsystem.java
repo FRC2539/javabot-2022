@@ -10,10 +10,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
+import frc.robot.Regressions;
 import frc.robot.common.MathUtils;
+import frc.robot.common.control.InterpolatingMap;
 import frc.robot.common.control.ShooterState;
-import frc.robot.common.control.ShooterStateMap;
 import frc.robot.util.Updatable;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
     private final DoubleSolenoid shooterAngleSolenoid = new DoubleSolenoid(
@@ -37,12 +40,14 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
     private final double SHOOTER_RPM_ERROR = 40;
 
+    private Optional<DoubleSupplier> distanceSupplier = Optional.empty();
+
     private final ShooterState rejectShooterState = new ShooterState(1000, 800, ShooterAngle.DISABLED);
 
     private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
 
-    private final ShooterStateMap farShotStateMap = new ShooterStateMap();
+    private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getPracticeShootingMap();
 
     private NetworkTableEntry customRearShooterRPMEntry;
     private NetworkTableEntry customFrontShooterRPMEntry;
@@ -80,11 +85,6 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         customRearShooterRPMEntry.setDouble(0);
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
-
-        farShotStateMap.put(new ShooterState(2300, 1600, 2.07));
-        farShotStateMap.put(new ShooterState(2650, 1550, 2.74));
-        farShotStateMap.put(new ShooterState(3150, 1550, 3.62));
-        farShotStateMap.put(new ShooterState(4200, 2000, 5.35));
     }
 
     public void setShooter(ShooterState shooterState) {
@@ -134,6 +134,8 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     public void stopShooter() {
         rearShooterMotor.stopMotor();
         frontShooterMotor.stopMotor();
+
+        distanceSupplier = Optional.empty();
     }
 
     public void setRejectShot() {
@@ -150,11 +152,17 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     }
 
     public ShooterState calculateShooterStateForDistance(double distance) {
-        return farShotStateMap.getInterpolatedShooterState(distance).orElse(new ShooterState());
+        return farShotStateMap.getInterpolated(distance).orElse(new ShooterState());
     }
 
     public void setFarShot(double distance) {
         setShooter(calculateShooterStateForDistance(distance));
+    }
+
+    public void setFarShot(DoubleSupplier distanceSupplier) {
+        setFarShot(distanceSupplier.getAsDouble());
+
+        this.distanceSupplier = Optional.of(distanceSupplier);
     }
 
     public void setCustomShot() {
@@ -164,6 +172,10 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
 
     @Override
     public void update() {
+        if (distanceSupplier.isPresent()) {
+            setFarShot(distanceSupplier.get().getAsDouble());
+        }
+
         switch (targetShooterAngle) {
             case DISABLED:
                 shooterAngleSolenoid.set(DoubleSolenoid.Value.kOff);

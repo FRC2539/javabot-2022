@@ -1,7 +1,8 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
@@ -12,73 +13,112 @@ public class BallCollectCommand extends CommandBase {
     private SwerveDriveSubsystem swerveDriveSubsystem;
     private BalltrackSubsystem balltrackSubsystem;
 
-    private final double MAX_OUTPUT = 0.75;
-    private final double PICKUP_OUTPUT = 0.2;
+    private ProfiledPIDController forwardController = new ProfiledPIDController(
+            4,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(
+                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 4));
 
-    private final double AVERAGE_FRAME_TIME = 0.08;
+    private ProfiledPIDController strafeController = new ProfiledPIDController(
+            1,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(
+                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 4));
 
-    private final double STRAFE_ANGLE_THRESHOLD = 0.3;
+    private TrapezoidProfile.State forwardGoal = new TrapezoidProfile.State(0, 0);
 
-    private final Timer ballLostTimer = new Timer();
-    private boolean ballLost = false;
+    private double strafeGoal = 0;
+
+    private boolean collectionComplete = false;
+
+    private final boolean shouldCollectTwo;
+    private boolean collectTwo;
 
     public BallCollectCommand(
             MachineLearningSubsystem machineLearningSubsystem,
             SwerveDriveSubsystem swerveDriveSubsystem,
             BalltrackSubsystem balltrackSubsystem) {
+        this(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem, false);
+    }
+
+    public BallCollectCommand(
+            MachineLearningSubsystem machineLearningSubsystem,
+            SwerveDriveSubsystem swerveDriveSubsystem,
+            BalltrackSubsystem balltrackSubsystem,
+            boolean shouldCollectTwo) {
         this.machineLearningSubsystem = machineLearningSubsystem;
         this.swerveDriveSubsystem = swerveDriveSubsystem;
         this.balltrackSubsystem = balltrackSubsystem;
 
         addRequirements(swerveDriveSubsystem, machineLearningSubsystem);
+
+        forwardController.setTolerance(MachineLearningSubsystem.STOPPING_TOLERANCE);
+
+        this.shouldCollectTwo = shouldCollectTwo;
     }
 
     @Override
     public void initialize() {
         balltrackSubsystem.intakeMode();
+
+        resetControllers();
+
+        collectionComplete = false;
+
+        collectTwo = shouldCollectTwo;
+
+        // Make sure that we only collect one ball if we already have one
+        if (balltrackSubsystem.hasOneBall()) collectTwo = false;
     }
 
     @Override
     public void execute() {
-        updateBallLost();
-
-        if (ballLost || balltrackSubsystem.isBalltrackFull()) {
+        if (collectionComplete || balltrackSubsystem.isBalltrackFull()) {
             swerveDriveSubsystem.stop();
+
             return;
         }
 
-        double horizontalAngle = machineLearningSubsystem.getHorizontalAngle();
+        double forwardVelocity = forwardController.calculate(getForwardOffset(), forwardGoal);
+        double strafeVelocity = strafeController.calculate(machineLearningSubsystem.getHorizontalAngle(), strafeGoal);
 
-        double forwardVelocity =
-                machineLearningSubsystem.isAtBall() ? PICKUP_OUTPUT : MAX_OUTPUT * (1 - Math.abs(horizontalAngle));
-        double strafeVelocity =
-                Math.abs(horizontalAngle) < STRAFE_ANGLE_THRESHOLD ? 0 : (MAX_OUTPUT * 0.55) * horizontalAngle;
+        updateCollectionComplete();
 
-        ChassisSpeeds velocity = new ChassisSpeeds(
-                -forwardVelocity * SwerveDriveSubsystem.MAX_VELOCITY,
-                -strafeVelocity * SwerveDriveSubsystem.MAX_VELOCITY,
-                0);
+        ChassisSpeeds velocity = new ChassisSpeeds(forwardVelocity, strafeVelocity, 0);
 
         swerveDriveSubsystem.drive(velocity, false);
     }
 
-    private void updateBallLost() {
-        boolean hasTarget = machineLearningSubsystem.hasTarget();
+    private double getForwardOffset() {
+        return (MachineLearningSubsystem.STOPPING_Y - machineLearningSubsystem.getTargetY())
+                / MachineLearningSubsystem.STOPPING_Y;
+    }
 
-        if (!hasTarget && !ballLost) {
-            ballLostTimer.reset();
-            ballLostTimer.start();
-        } else if (!hasTarget && ballLostTimer.hasElapsed(AVERAGE_FRAME_TIME)) {
-            ballLost = true;
-        } else {
-            ballLost = false;
-            ballLostTimer.stop();
+    private void resetControllers() {
+        forwardController.reset(getForwardOffset());
+        strafeController.reset(machineLearningSubsystem.getHorizontalAngle());
+    }
+
+    private void updateCollectionComplete() {
+        // No need to run the rest of the method if we are done collecting balls
+        if (collectionComplete) return;
+
+        // Evaluate if we are done collecting balls
+        if (collectTwo && forwardController.atGoal()) {
+            swerveDriveSubsystem.stop();
+
+            resetControllers();
+
+            collectTwo = false;
+        } else if (!collectTwo && forwardController.atGoal()) {
+            collectionComplete = true;
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        // Stop the robot
         swerveDriveSubsystem.stop();
 
         balltrackSubsystem.stopIntakeMode();

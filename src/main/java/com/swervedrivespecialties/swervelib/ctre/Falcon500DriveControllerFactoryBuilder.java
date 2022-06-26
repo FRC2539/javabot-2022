@@ -10,7 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.swervedrivespecialties.swervelib.DriveController;
 import com.swervedrivespecialties.swervelib.DriveControllerFactory;
 import com.swervedrivespecialties.swervelib.ModuleConfiguration;
-import frc.robot.Constants;
+import java.util.Optional;
 
 public final class Falcon500DriveControllerFactoryBuilder {
     private static final double TICKS_PER_ROTATION = 2048.0;
@@ -21,6 +21,7 @@ public final class Falcon500DriveControllerFactoryBuilder {
     private double nominalVoltage = Double.NaN;
     private double currentLimit = Double.NaN;
     private boolean driveInverted = false;
+    private Optional<String> canivoreName = Optional.empty();
 
     public Falcon500DriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
         this.nominalVoltage = nominalVoltage;
@@ -29,6 +30,11 @@ public final class Falcon500DriveControllerFactoryBuilder {
 
     public Falcon500DriveControllerFactoryBuilder withDriveInverted(boolean driveInverted) {
         this.driveInverted = driveInverted;
+        return this;
+    }
+
+    public Falcon500DriveControllerFactoryBuilder withCanivore(Optional<String> canivoreName) {
+        this.canivoreName = canivoreName;
         return this;
     }
 
@@ -69,7 +75,12 @@ public final class Falcon500DriveControllerFactoryBuilder {
                 motorConfiguration.supplyCurrLimit.enable = true;
             }
 
-            TalonFX motor = new WPI_TalonFX(driveConfiguration, Constants.CANIVORE_NAME);
+            TalonFX motor;
+
+            // Create a Talon FX instance that optionally uses a CANivore
+            if (canivoreName.isPresent()) motor = new WPI_TalonFX(driveConfiguration, canivoreName.get());
+            else motor = new WPI_TalonFX(driveConfiguration);
+
             CtreUtils.checkCtreError(motor.configAllSettings(motorConfiguration), "Failed to configure Falcon 500");
 
             if (hasVoltageCompensation()) {

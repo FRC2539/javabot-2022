@@ -8,13 +8,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.swervedrivespecialties.swervelib.*;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-import frc.robot.Constants;
+import java.util.Optional;
 
 public final class Falcon500SteerControllerFactoryBuilder {
     private static final int CAN_TIMEOUT_MS = 250;
     private static final int STATUS_FRAME_GENERAL_PERIOD_MS = 250;
 
     private static final double TICKS_PER_ROTATION = 2048.0;
+
+    private Optional<String> canivoreName = Optional.empty();
 
     // PID configuration
     private double proportionalConstant = Double.NaN;
@@ -48,6 +50,11 @@ public final class Falcon500SteerControllerFactoryBuilder {
         this.velocityConstant = velocityConstant;
         this.accelerationConstant = accelerationConstant;
         this.staticConstant = staticConstant;
+        return this;
+    }
+
+    public Falcon500SteerControllerFactoryBuilder withCanivore(Optional<String> canivoreName) {
+        this.canivoreName = canivoreName;
         return this;
     }
 
@@ -129,7 +136,13 @@ public final class Falcon500SteerControllerFactoryBuilder {
                 motorConfiguration.supplyCurrLimit.enable = true;
             }
 
-            TalonFX motor = new TalonFX(steerConfiguration.getMotorPort(), Constants.CANIVORE_NAME);
+            TalonFX motor;
+
+            // Create a Talon FX instance that optionally uses a CANivore
+            if (canivoreName.isPresent())
+                motor = new WPI_TalonFX(steerConfiguration.getMotorPort(), canivoreName.get());
+            else motor = new WPI_TalonFX(steerConfiguration.getMotorPort());
+
             checkCtreError(
                     motor.configAllSettings(motorConfiguration, CAN_TIMEOUT_MS),
                     "Failed to configure Falcon 500 settings");

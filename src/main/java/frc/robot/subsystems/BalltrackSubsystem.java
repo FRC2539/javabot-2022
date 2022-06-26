@@ -134,6 +134,10 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
         return chamberProximitySensor.getValue() < PROXIMITY_SENSOR_THRESHOLD;
     }
 
+    public boolean hasOneBall() {
+        return conveyorBallIsPresent || chamberBallIsPresent;
+    }
+
     public boolean isBalltrackFull() {
         return conveyorBallIsPresent && chamberBallIsPresent;
     }

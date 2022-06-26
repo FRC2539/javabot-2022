@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
@@ -19,6 +18,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
+import frc.robot.common.control.MovingAverageVelocity;
 import frc.robot.common.control.SwerveDriveSignal;
 import frc.robot.util.TrajectoryFollower;
 import frc.robot.util.Updatable;
@@ -63,6 +63,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private final SwerveDriveOdometry swerveOdometry =
             new SwerveDriveOdometry(swerveKinematics, new Rotation2d(), new Pose2d());
 
+    private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
+
     private Pose2d pose = new Pose2d();
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = null;
@@ -86,11 +88,15 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
 
-        Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
+        Mk4ModuleConfiguration moduleConfiguration = new Mk4ModuleConfiguration();
+        moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
 
+        Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
+        moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
         invertedConfiguration.setDriveInverted(true);
 
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+                moduleConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
                 Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
@@ -104,6 +110,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+                moduleConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
                 Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
@@ -145,6 +152,10 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         return velocity;
     }
 
+    public ChassisSpeeds getSmoothedVelocity() {
+        return velocityEstimator.getAverage();
+    }
+
     public Rotation2d getGyroRotation2d() {
         return gyroscope.getRotation2d();
     }
@@ -170,6 +181,12 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         swerveOdometry.resetPosition(pose, getGyroRotation2d());
     }
 
+    public void resetDriveEncoders() {
+        for (SwerveModule module : modules) {
+            module.getRawDriveMotor().setSelectedSensorPosition(0);
+        }
+    }
+
     public void resetGyroAngle(Rotation2d angle) {
         gyroscope.reset();
         gyroscope.setAngleAdjustment(angle.getDegrees());
@@ -177,13 +194,6 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
     public void resetGyroAngle() {
         resetGyroAngle(new Rotation2d());
-    }
-
-    public void invertAllDriveMotors() {
-        for (SwerveModule module : modules) {
-            WPI_TalonFX motor = module.getRawDriveMotor();
-            motor.setInverted(!motor.getInverted());
-        }
     }
 
     private void updateOdometry() {
@@ -195,8 +205,11 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             moduleStates[i] = new SwerveModuleState(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
         }
 
-        this.velocity = swerveKinematics.toChassisSpeeds(moduleStates);
-        this.pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
+        velocity = swerveKinematics.toChassisSpeeds(moduleStates);
+
+        velocityEstimator.add(velocity);
+
+        pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
     }
 
     private void updateModules(SwerveDriveSignal driveSignal) {
