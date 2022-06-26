@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
@@ -89,11 +88,15 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
 
-        Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
+        Mk4ModuleConfiguration moduleConfiguration = new Mk4ModuleConfiguration();
+        moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
 
+        Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
+        moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
         invertedConfiguration.setDriveInverted(true);
 
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+                moduleConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
                 Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
@@ -107,6 +110,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
                 Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+                moduleConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
                 Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
@@ -190,13 +194,6 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
     public void resetGyroAngle() {
         resetGyroAngle(new Rotation2d());
-    }
-
-    public void invertAllDriveMotors() {
-        for (SwerveModule module : modules) {
-            WPI_TalonFX motor = module.getRawDriveMotor();
-            motor.setInverted(!motor.getInverted());
-        }
     }
 
     private void updateOdometry() {

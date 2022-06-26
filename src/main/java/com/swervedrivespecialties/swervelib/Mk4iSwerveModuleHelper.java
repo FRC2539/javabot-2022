@@ -13,6 +13,8 @@ public final class Mk4iSwerveModuleHelper {
         return new Falcon500DriveControllerFactoryBuilder()
                 .withVoltageCompensation(configuration.getNominalVoltage())
                 .withCurrentLimit(configuration.getDriveCurrentLimit())
+                .withDriveInverted(configuration.getDriveInverted())
+                .withCanivore(configuration.getCanivoreName())
                 .build();
     }
 
@@ -22,6 +24,7 @@ public final class Mk4iSwerveModuleHelper {
                 .withVoltageCompensation(configuration.getNominalVoltage())
                 .withPidConstants(0.2, 0.0, 0.1)
                 .withCurrentLimit(configuration.getSteerCurrentLimit())
+                .withCanivore(configuration.getCanivoreName())
                 .build(new CanCoderFactoryBuilder().withReadingUpdatePeriod(100).build());
     }
 

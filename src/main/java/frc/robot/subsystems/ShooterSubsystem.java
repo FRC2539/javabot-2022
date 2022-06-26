@@ -47,7 +47,6 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
     private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
 
-    // private final InterpolatingMap<ShooterState> farShotStateMap = new InterpolatingMap<ShooterState>();
     private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getPracticeShootingMap();
 
     private NetworkTableEntry customRearShooterRPMEntry;
@@ -86,18 +85,6 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         customRearShooterRPMEntry.setDouble(0);
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
-        
-        /*
-        note, some of these values have the radius added into them afterwards, when adding new points
-        in the future do not do this as it means you can take the value straight from the
-        limelight subsystem instead
-        */
-        // farShotStateMap.put(3, new ShooterState(2300, 1550));
-        // // farShotStateMap.put(2.74 + LimelightSubsystem.TARGET_RADIUS, new ShooterState(2650, 1550));
-        // farShotStateMap.put(3.6, new ShooterState(2600, 1550));
-        // farShotStateMap.put(3.62 + LimelightSubsystem.TARGET_RADIUS, new ShooterState(3150, 1550));
-        // farShotStateMap.put(4.57, new ShooterState(3700, 1800)); //do not re-add in radius
-        // farShotStateMap.put(5.35 + LimelightSubsystem.TARGET_RADIUS, new ShooterState(4200, 2000));
     }
 
     public void setShooter(ShooterState shooterState) {
