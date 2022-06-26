@@ -25,3 +25,8 @@ pluginManagement {
         }
     }
 }
+
+include ':cougarlib'
+include ':cougarlib:cougar-swerve-lib'
+project(':cougarlib').projectDir = new File('./cougarlib')
+project(':cougarlib:cougar-swerve-lib').projectDir = new File('./cougarlib/cougar-swerve-lib')
