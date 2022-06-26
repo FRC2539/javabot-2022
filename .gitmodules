@@ -1,0 +1,3 @@
+[submodule "cougarlib"]
+	path = cougarlib
+	url = https://github.com/FRC2539/cougarlib.git
