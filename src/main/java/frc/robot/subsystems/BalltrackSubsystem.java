@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
-import frc.robot.util.Updatable;
+import org.frc2539.cougarlib.util.Updatable;
 
 public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updatable {
     private WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(Constants.BALLTRACK_CONVEYOR_MOTOR_PORT);

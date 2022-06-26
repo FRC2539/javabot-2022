@@ -1,7 +1,8 @@
 import static org.junit.Assert.*;
 
-import frc.robot.common.control.InterpolatingMap;
-import frc.robot.common.control.ShooterState;
+import org.frc2539.cougarlib.control.InterpolatingMap;
+import frc.robot.util.ShooterState;
+
 import org.junit.*;
 
 public class ShooterStateMapTest {

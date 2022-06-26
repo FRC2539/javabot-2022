@@ -18,10 +18,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
-import frc.robot.common.control.MovingAverageVelocity;
-import frc.robot.common.control.SwerveDriveSignal;
+import org.frc2539.cougarlib.control.MovingAverageVelocity;
+import org.frc2539.cougarlib.control.SwerveDriveSignal;
 import frc.robot.util.TrajectoryFollower;
-import frc.robot.util.Updatable;
+import org.frc2539.cougarlib.util.Updatable;
 import java.util.Optional;
 
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {

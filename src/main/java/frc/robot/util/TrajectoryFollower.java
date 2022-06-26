@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.common.control.SwerveDriveSignal;
+import org.frc2539.cougarlib.control.SwerveDriveSignal;
 import java.util.Optional;
 import java.util.function.Supplier;
 

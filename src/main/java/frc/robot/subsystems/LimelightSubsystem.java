@@ -6,8 +6,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import frc.robot.common.MathUtils;
-import frc.robot.util.Updatable;
+import org.frc2539.cougarlib.MathUtils;
+import org.frc2539.cougarlib.util.Updatable;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;
 

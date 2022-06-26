@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
 import frc.robot.Regressions;
-import frc.robot.common.MathUtils;
-import frc.robot.common.control.InterpolatingMap;
-import frc.robot.common.control.ShooterState;
-import frc.robot.util.Updatable;
+import org.frc2539.cougarlib.MathUtils;
+import org.frc2539.cougarlib.control.InterpolatingMap;
+import frc.robot.util.ShooterState;
+import org.frc2539.cougarlib.util.Updatable;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 

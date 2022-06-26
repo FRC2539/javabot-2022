@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.common.controller.Axis;
+import org.frc2539.cougarlib.controller.Axis;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 

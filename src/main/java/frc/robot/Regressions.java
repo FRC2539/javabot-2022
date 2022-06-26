@@ -1,7 +1,7 @@
 package frc.robot;
 
-import frc.robot.common.control.InterpolatingMap;
-import frc.robot.common.control.ShooterState;
+import org.frc2539.cougarlib.control.InterpolatingMap;
+import frc.robot.util.ShooterState;
 
 public class Regressions {
     public static double[][] practiceRegression = {
