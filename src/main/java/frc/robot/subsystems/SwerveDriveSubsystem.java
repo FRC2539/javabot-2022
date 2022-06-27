@@ -1,10 +1,13 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-import com.swervedrivespecialties.swervelib.SwerveModule;
+import com.team2539.cougarlib.control.MovingAverageVelocity;
+import com.team2539.cougarlib.control.SwerveDriveSignal;
+import com.team2539.cougarlib.util.Updatable;
+import com.team2539.cougarswervelib.Mk4ModuleConfiguration;
+import com.team2539.cougarswervelib.Mk4SwerveModuleHelper;
+import com.team2539.cougarswervelib.SdsModuleConfigurations;
+import com.team2539.cougarswervelib.SwerveModule;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,10 +21,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
-import org.frc2539.cougarlib.control.MovingAverageVelocity;
-import org.frc2539.cougarlib.control.SwerveDriveSignal;
 import frc.robot.util.TrajectoryFollower;
-import org.frc2539.cougarlib.util.Updatable;
 import java.util.Optional;
 
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {

@@ -1,11 +1,11 @@
 package frc.robot;
 
+import com.team2539.cougarlib.controller.Axis;
+import com.team2539.cougarlib.controller.LogitechController;
+import com.team2539.cougarlib.controller.ThrustmasterJoystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
-import org.frc2539.cougarlib.controller.Axis;
-import org.frc2539.cougarlib.controller.LogitechController;
-import org.frc2539.cougarlib.controller.ThrustmasterJoystick;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;

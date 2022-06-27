@@ -1,9 +1,9 @@
 package frc.robot;
 
+import com.team2539.cougarlib.util.UpdateManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.frc2539.cougarlib.util.UpdateManager;
 
 public class Robot extends TimesliceRobot {
     private RobotContainer robotContainer = new RobotContainer();

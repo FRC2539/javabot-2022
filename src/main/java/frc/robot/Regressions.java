@@ -1,6 +1,6 @@
 package frc.robot;
 
-import org.frc2539.cougarlib.control.InterpolatingMap;
+import com.team2539.cougarlib.control.InterpolatingMap;
 import frc.robot.util.ShooterState;
 
 public class Regressions {
