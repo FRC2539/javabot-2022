@@ -99,15 +99,17 @@ test {
 }
 
 spotless {
-   java {
-      target fileTree('.') {
+    enforceCheck true
+
+    java {
+        target fileTree('.') {
             include '**/*.java'
             exclude '**/build/**', '**/build-*/**'
-      }
-      toggleOffOn()
-      palantirJavaFormat()
-      removeUnusedImports()
-      trimTrailingWhitespace()
-      endWithNewline()
-   }
+        }
+        toggleOffOn()
+        palantirJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
