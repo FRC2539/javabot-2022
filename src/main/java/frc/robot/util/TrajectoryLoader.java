@@ -24,8 +24,6 @@ public class TrajectoryLoader {
         fourBall = new LazyPathPlannerTrajectory(FOUR_BALL_PATH, 5, 2.5);
         fiveBall1 = new LazyPathPlannerTrajectory(FIVE_BALL_1_PATH, 5, 2.5);
         fiveBall2 = new LazyPathPlannerTrajectory(FIVE_BALL_2_PATH, 5, 2.5);
-
-        System.out.println("\nAll trajectories loaded successfully.\n");
     }
 
     public PathPlannerTrajectory getThreeBall() {

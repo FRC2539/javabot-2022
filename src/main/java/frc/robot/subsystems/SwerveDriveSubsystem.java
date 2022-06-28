@@ -19,8 +19,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
+import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
 
@@ -85,6 +87,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private NetworkTableEntry vx;
     private NetworkTableEntry vy;
 
+    private DoubleArrayLogEntry driveTemperaturesLogEntry;
+    private DoubleArrayLogEntry steerTemperaturesLogEntry;
+
+    private Timer loggingTimer = new Timer();
+
+    private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
+
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
 
@@ -142,6 +151,13 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         vx.setDouble(0);
         vy.setDouble(0);
+
+        if (LoggingManager.getLog().isPresent()) {
+            driveTemperaturesLogEntry = new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/drive");
+            steerTemperaturesLogEntry = new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/steer");
+
+            loggingTimer.start();
+        }
     }
 
     public Pose2d getPose() {
@@ -299,19 +315,28 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             }
         }
 
-        driveTemperaturesEntry.setDoubleArray(new double[] {
-            modules[0].getDriveTemperature(),
-            modules[1].getDriveTemperature(),
-            modules[2].getDriveTemperature(),
-            modules[3].getDriveTemperature()
-        });
+        // Log the motor temperatures periodically
+        if (loggingTimer.advanceIfElapsed(TEMPERATURE_LOGGING_PERIOD)) {
+            double[] driveTemperatures = new double[] {
+                modules[0].getDriveTemperature(),
+                modules[1].getDriveTemperature(),
+                modules[2].getDriveTemperature(),
+                modules[3].getDriveTemperature()
+            };
 
-        steerTemperaturesEntry.setDoubleArray(new double[] {
-            modules[0].getSteerTemperature(),
-            modules[1].getSteerTemperature(),
-            modules[2].getSteerTemperature(),
-            modules[3].getSteerTemperature()
-        });
+            double[] steerTemperatures = new double[] {
+                modules[0].getSteerTemperature(),
+                modules[1].getSteerTemperature(),
+                modules[2].getSteerTemperature(),
+                modules[3].getSteerTemperature()
+            };
+
+            driveTemperaturesEntry.setDoubleArray(driveTemperatures);
+            steerTemperaturesEntry.setDoubleArray(steerTemperatures);
+
+            driveTemperaturesLogEntry.append(driveTemperatures);
+            steerTemperaturesLogEntry.append(steerTemperatures);
+        }
     }
 
     public TrajectoryFollower getFollower() {
