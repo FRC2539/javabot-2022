@@ -93,6 +93,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private Timer loggingTimer = new Timer();
 
     private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
+    private static boolean TEMPERATURE_LOGGING_ENABLED = false;
 
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
@@ -101,7 +102,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
 
         Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
-        moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
+        invertedConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
         invertedConfiguration.setDriveInverted(true);
 
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -152,9 +153,11 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         vx.setDouble(0);
         vy.setDouble(0);
 
-        if (LoggingManager.getLog().isPresent()) {
-            driveTemperaturesLogEntry = new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/drive");
-            steerTemperaturesLogEntry = new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/steer");
+        if (TEMPERATURE_LOGGING_ENABLED && LoggingManager.getLog().isPresent()) {
+            driveTemperaturesLogEntry =
+                    new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/drive");
+            steerTemperaturesLogEntry =
+                    new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/steer");
 
             loggingTimer.start();
         }
