@@ -6,10 +6,12 @@ import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Optional;
 
 public class LoggingManager {
+    private static boolean FORCE_LOGGING = false;
+
     private static Optional<DataLog> log = Optional.empty();
 
     static {
-        if (RobotBase.isReal()) {
+        if (RobotBase.isReal() || FORCE_LOGGING) {
             // Disable network tables logging, as we use network tables intensively
             DataLogManager.logNetworkTables(false);
 

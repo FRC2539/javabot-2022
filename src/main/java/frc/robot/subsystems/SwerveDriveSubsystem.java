@@ -219,6 +219,24 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         resetGyroAngle(new Rotation2d());
     }
 
+    public double[] getDriveTemperatures() {
+        return new double[] {
+            modules[0].getDriveTemperature(),
+            modules[1].getDriveTemperature(),
+            modules[2].getDriveTemperature(),
+            modules[3].getDriveTemperature()
+        };
+    }
+
+    public double[] getSteerTemperatures() {
+        return new double[] {
+            modules[0].getSteerTemperature(),
+            modules[1].getSteerTemperature(),
+            modules[2].getSteerTemperature(),
+            modules[3].getSteerTemperature()
+        };
+    }
+
     private void updateOdometry() {
         SwerveModuleState[] moduleStates = new SwerveModuleState[modules.length];
 
@@ -324,19 +342,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         // Log the motor temperatures periodically
         if (loggingTimer.advanceIfElapsed(TEMPERATURE_LOGGING_PERIOD)) {
-            double[] driveTemperatures = new double[] {
-                modules[0].getDriveTemperature(),
-                modules[1].getDriveTemperature(),
-                modules[2].getDriveTemperature(),
-                modules[3].getDriveTemperature()
-            };
-
-            double[] steerTemperatures = new double[] {
-                modules[0].getSteerTemperature(),
-                modules[1].getSteerTemperature(),
-                modules[2].getSteerTemperature(),
-                modules[3].getSteerTemperature()
-            };
+            double[] driveTemperatures = getDriveTemperatures();
+            double[] steerTemperatures = getSteerTemperatures();
 
             driveTemperaturesEntry.setDoubleArray(driveTemperatures);
             steerTemperaturesEntry.setDoubleArray(steerTemperatures);
