@@ -153,6 +153,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         vx.setDouble(0);
         vy.setDouble(0);
 
+        // Log motor temperatures only when not simulated
         if (TEMPERATURE_LOGGING_ENABLED && LoggingManager.getLog().isPresent()) {
             driveTemperaturesLogEntry =
                     new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/drive");
