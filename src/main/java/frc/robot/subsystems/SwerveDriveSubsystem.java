@@ -26,6 +26,9 @@ import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
 
+/**
+ * SwerveDriveSubsystem
+ */
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
     // Measured in meters (ask CAD dept. for this information in new robots)
     public static final double TRACKWIDTH = 0.5969;
