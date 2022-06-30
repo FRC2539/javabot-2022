@@ -1,10 +1,13 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-import com.swervedrivespecialties.swervelib.SwerveModule;
+import com.team2539.cougarlib.control.MovingAverageVelocity;
+import com.team2539.cougarlib.control.SwerveDriveSignal;
+import com.team2539.cougarlib.util.Updatable;
+import com.team2539.cougarswervelib.Mk4ModuleConfiguration;
+import com.team2539.cougarswervelib.Mk4SwerveModuleHelper;
+import com.team2539.cougarswervelib.SdsModuleConfigurations;
+import com.team2539.cougarswervelib.SwerveModule;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,14 +19,16 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
-import frc.robot.common.control.MovingAverageVelocity;
-import frc.robot.common.control.SwerveDriveSignal;
+import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
-import frc.robot.util.Updatable;
 import java.util.Optional;
 
+/**
+ * SwerveDriveSubsystem
+ */
 public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
     // Measured in meters (ask CAD dept. for this information in new robots)
     public static final double TRACKWIDTH = 0.5969;
@@ -85,6 +90,14 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private NetworkTableEntry vx;
     private NetworkTableEntry vy;
 
+    private DoubleArrayLogEntry driveTemperaturesLogEntry;
+    private DoubleArrayLogEntry steerTemperaturesLogEntry;
+
+    private Timer loggingTimer = new Timer();
+
+    private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
+    private static boolean TEMPERATURE_LOGGING_ENABLED = false;
+
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
 
@@ -92,7 +105,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
 
         Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
-        moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
+        invertedConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
         invertedConfiguration.setDriveInverted(true);
 
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -142,6 +155,16 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
         vx.setDouble(0);
         vy.setDouble(0);
+
+        // Log motor temperatures only when not simulated
+        if (TEMPERATURE_LOGGING_ENABLED && LoggingManager.getLog().isPresent()) {
+            driveTemperaturesLogEntry =
+                    new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/drive");
+            steerTemperaturesLogEntry =
+                    new DoubleArrayLogEntry(LoggingManager.getLog().get(), "/temps/steer");
+
+            loggingTimer.start();
+        }
     }
 
     public Pose2d getPose() {
@@ -194,6 +217,24 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
     public void resetGyroAngle() {
         resetGyroAngle(new Rotation2d());
+    }
+
+    public double[] getDriveTemperatures() {
+        return new double[] {
+            modules[0].getDriveTemperature(),
+            modules[1].getDriveTemperature(),
+            modules[2].getDriveTemperature(),
+            modules[3].getDriveTemperature()
+        };
+    }
+
+    public double[] getSteerTemperatures() {
+        return new double[] {
+            modules[0].getSteerTemperature(),
+            modules[1].getSteerTemperature(),
+            modules[2].getSteerTemperature(),
+            modules[3].getSteerTemperature()
+        };
     }
 
     private void updateOdometry() {
@@ -299,19 +340,17 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             }
         }
 
-        driveTemperaturesEntry.setDoubleArray(new double[] {
-            modules[0].getDriveTemperature(),
-            modules[1].getDriveTemperature(),
-            modules[2].getDriveTemperature(),
-            modules[3].getDriveTemperature()
-        });
+        // Log the motor temperatures periodically
+        if (loggingTimer.advanceIfElapsed(TEMPERATURE_LOGGING_PERIOD)) {
+            double[] driveTemperatures = getDriveTemperatures();
+            double[] steerTemperatures = getSteerTemperatures();
 
-        steerTemperaturesEntry.setDoubleArray(new double[] {
-            modules[0].getSteerTemperature(),
-            modules[1].getSteerTemperature(),
-            modules[2].getSteerTemperature(),
-            modules[3].getSteerTemperature()
-        });
+            driveTemperaturesEntry.setDoubleArray(driveTemperatures);
+            steerTemperaturesEntry.setDoubleArray(steerTemperatures);
+
+            driveTemperaturesLogEntry.append(driveTemperatures);
+            steerTemperaturesLogEntry.append(steerTemperatures);
+        }
     }
 
     public TrajectoryFollower getFollower() {

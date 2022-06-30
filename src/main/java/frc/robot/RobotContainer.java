@@ -1,15 +1,14 @@
 package frc.robot;
 
+import com.team2539.cougarlib.controller.Axis;
+import com.team2539.cougarlib.controller.LogitechController;
+import com.team2539.cougarlib.controller.ThrustmasterJoystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.*;
-import frc.robot.common.controller.Axis;
-import frc.robot.common.controller.LogitechController;
-import frc.robot.common.controller.ThrustmasterJoystick;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
-import java.io.IOException;
 
 public class RobotContainer {
     private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(Constants.LEFT_DRIVE_CONTROLLER);
@@ -29,13 +28,9 @@ public class RobotContainer {
     private TrajectoryLoader trajectoryLoader;
 
     public RobotContainer() {
-        try {
-            trajectoryLoader = new TrajectoryLoader();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        trajectoryLoader = new TrajectoryLoader();
 
-        autonomousManager = new AutonomousManager(trajectoryLoader);
+        autonomousManager = new AutonomousManager(trajectoryLoader, this);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrainSubsystem);
         CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
@@ -114,7 +109,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autonomousManager.getAutonomousCommand(this);
+        return autonomousManager.getAutonomousCommand();
     }
 
     private Axis getDriveForwardAxis() {
