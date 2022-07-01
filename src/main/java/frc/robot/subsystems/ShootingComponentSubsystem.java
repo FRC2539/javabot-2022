@@ -10,7 +10,7 @@ public class ShootingComponentSubsystem extends NetworkTablesSubsystem implement
         super(tableName);
     }
 
-    public void registerMediator(ShootingSuperstructure shootingSuperstructure) {
+    public void registerSuperstructure(ShootingSuperstructure shootingSuperstructure) {
         this.shootingSuperstructure = shootingSuperstructure;
     }
 

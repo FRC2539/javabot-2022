@@ -18,7 +18,7 @@ public class ShootingSuperstructure {
     public ShootingSuperstructure() {}
 
     public void registerComponent(ShootingComponent component) {
-        component.registerMediator(this);
+        component.registerSuperstructure(this);
 
         switch (component.getName()) {
             case "BallSystem":

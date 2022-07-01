@@ -21,11 +21,8 @@ public class MovingAimStrategy implements LimelightAimStrategy {
         double rotationOutput = 0;
 
         if (limelightSubsystem.hasTarget()) {
-            // Fetch the current angle of the robot
             double currentAngle = swerveDriveSubsystem.getGyroRotation2d().getRadians();
 
-            // Store the predicted angle (calculated by the limelight subsystem), and if that value is empty, fetch the
-            // current horizontal angle instead.
             double predictedAngle = Math.toRadians(limelightSubsystem
                     .getPredictedHorizontalAngle()
                     .orElseGet(() -> limelightSubsystem.getHorizontalAngle()));
