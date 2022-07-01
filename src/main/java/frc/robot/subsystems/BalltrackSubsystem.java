@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
 
-public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updatable {
+public class BalltrackSubsystem extends ShootingComponentSubsystem implements Updatable {
     private WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(Constants.BALLTRACK_CONVEYOR_MOTOR_PORT);
     private WPI_TalonSRX chamberMotor = new WPI_TalonSRX(Constants.BALLTRACK_CHAMBER_MOTOR_PORT);
     private WPI_TalonSRX intakeMotor = new WPI_TalonSRX(Constants.BALLTRACK_INTAKE_MOTOR_PORT);
@@ -48,12 +48,8 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
     private boolean conveyorBallIsPresent = false;
     private boolean chamberBallIsPresent = false;
 
-    private ShooterSubsystem shooterSubsystem;
-
-    public BalltrackSubsystem(ShooterSubsystem shooterSubsystem) {
+    public BalltrackSubsystem() {
         super("BallSystem");
-
-        this.shooterSubsystem = shooterSubsystem;
 
         conveyorMotor.setNeutralMode(NeutralMode.Brake);
         chamberMotor.setNeutralMode(NeutralMode.Brake);
@@ -206,23 +202,15 @@ public class BalltrackSubsystem extends NetworkTablesSubsystem implements Updata
                 retractIntake();
                 stopIntakeMotor();
 
-                if (shooterSubsystem.isShooterAtVelocity()) {
-                    shootWithConveyorMotor();
-                    shootWithChamberMotor();
-                }
-
+                shootWithConveyorMotor();
+                shootWithChamberMotor();
                 break;
             case INTAKE_AND_SHOOT:
                 extendIntake();
+                runIntakeMotor();
 
-                if (shooterSubsystem.isShooterAtVelocity()) {
-                    shootWithConveyorMotor();
-                    shootWithChamberMotor();
-                    runIntakeMotor();
-                } else {
-                    intakeBalls();
-                }
-
+                shootWithConveyorMotor();
+                shootWithChamberMotor();
                 break;
             case REVERSE:
                 reverseChamberAndConveyor();

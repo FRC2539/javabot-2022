@@ -108,20 +108,12 @@ public class AutonomousManager {
     }
 
     private void shootBalls(SequentialCommandGroup command, double timeout) {
-        command.addCommands(new LimelightShootCommand(
-                        container.getShooterSubsystem(),
-                        container.getBalltrackSubsystem(),
-                        container.getLimelightSubsystem(),
-                        true)
+        command.addCommands(new LimelightShootCommand(container.getShootingSuperstructure(), true)
                 .withTimeout(timeout));
     }
 
     private void shootBallsAndAim(SequentialCommandGroup command, double timeout, boolean stopShooting) {
-        command.addCommands(new LimelightShootCommand(
-                        container.getShooterSubsystem(),
-                        container.getBalltrackSubsystem(),
-                        container.getLimelightSubsystem(),
-                        stopShooting)
+        command.addCommands(new LimelightShootCommand(container.getShootingSuperstructure(), stopShooting)
                 .alongWith(new LimelightDriveCommand(
                         container.getSwerveDriveSubsystem(),
                         () -> 0.0,
@@ -132,11 +124,7 @@ public class AutonomousManager {
     }
 
     private void shootAndIntake(SequentialCommandGroup command, double timeout) {
-        command.addCommands(new LimelightShootCommand(
-                        container.getShooterSubsystem(),
-                        container.getBalltrackSubsystem(),
-                        container.getLimelightSubsystem(),
-                        true)
+        command.addCommands(new LimelightShootCommand(container.getShootingSuperstructure(), true)
                 .alongWith(new IntakeCommand(container.getBalltrackSubsystem()))
                 .withTimeout(timeout));
     }
@@ -147,10 +135,7 @@ public class AutonomousManager {
 
     private void followAndPrepare(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new PrepareToShootCommand(
-                        container.getBalltrackSubsystem(),
-                        container.getShooterSubsystem(),
-                        container.getLimelightSubsystem())));
+                .deadlineWith(new PrepareToShootCommand(container.getShootingSuperstructure())));
     }
 
     private void followAndIntake(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {

@@ -1,29 +1,27 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.BalltrackSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.ShootingSuperstructure;
 
 public class CustomShootCommand extends CommandBase {
-    private ShooterSubsystem shooterSubsystem;
-    private BalltrackSubsystem balltrackSubsystem;
+    private ShootingSuperstructure shootingSuperstructure;
 
-    public CustomShootCommand(ShooterSubsystem shooterSubsystem, BalltrackSubsystem balltrackSubsystem) {
-        this.shooterSubsystem = shooterSubsystem;
-        this.balltrackSubsystem = balltrackSubsystem;
+    public CustomShootCommand(ShootingSuperstructure shootingSuperstructure) {
+        this.shootingSuperstructure = shootingSuperstructure;
     }
 
     @Override
     public void initialize() {
-        shooterSubsystem.setCustomShot();
+        shootingSuperstructure.spinupShooterWithCustomSpeeds();
+    }
 
-        balltrackSubsystem.shootMode();
+    @Override
+    public void execute() {
+        shootingSuperstructure.shootWithoutLimelight();
     }
 
     @Override
     public void end(boolean interrupted) {
-        shooterSubsystem.stopShooter();
-
-        balltrackSubsystem.stopShootMode();
+        shootingSuperstructure.stopShooting();
     }
 }

@@ -11,7 +11,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;
 
-public class LimelightSubsystem extends NetworkTablesSubsystem implements Updatable {
+public class LimelightSubsystem extends ShootingComponentSubsystem implements Updatable {
     private static double TARGET_HEIGHT = 2.62;
     private static double LIMELIGHT_HEIGHT = 0.75819;
     private static double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
@@ -53,12 +53,8 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
     private NetworkTableEntry predictedDistanceEntry;
     private NetworkTableEntry predictedAngleEntry;
 
-    private final SwerveDriveSubsystem swerveDriveSubsystem;
-
-    public LimelightSubsystem(SwerveDriveSubsystem swerveDriveSubsystem) {
+    public LimelightSubsystem() {
         super("limelight");
-
-        this.swerveDriveSubsystem = swerveDriveSubsystem;
 
         pipelineEntry = getEntry("pipeline");
         hasTargetEntry = getEntry("tv");
@@ -127,7 +123,7 @@ public class LimelightSubsystem extends NetworkTablesSubsystem implements Updata
                     new Translation2d(getDistanceToTarget().getAsDouble(), new Rotation2d(getHorizontalAngle())),
                     new Rotation2d());
 
-            ChassisSpeeds robotRelativeVelocity = swerveDriveSubsystem.getSmoothedVelocity();
+            ChassisSpeeds robotRelativeVelocity = shootingSuperstructure.getSmoothedRobotVelocity();
 
             // Using the current velocity, estimate how the pose of the robot will change `lookaheadTime` seconds in the
             // future

@@ -19,18 +19,25 @@ public class RobotContainer {
     private final SwerveDriveSubsystem drivetrainSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final LightsSubsystem lightsSubsystem = new LightsSubsystem();
-    private final BalltrackSubsystem balltrackSubsystem = new BalltrackSubsystem(shooterSubsystem);
+    private final BalltrackSubsystem balltrackSubsystem = new BalltrackSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-    private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem(drivetrainSubsystem);
+    private final LimelightSubsystem limelightSubsystem = new LimelightSubsystem();
     private final MachineLearningSubsystem machineLearningSubsystem = new MachineLearningSubsystem();
 
     private AutonomousManager autonomousManager;
     private TrajectoryLoader trajectoryLoader;
 
+    private ShootingSuperstructure shootingSuperstructure = new ShootingSuperstructure();
+
     public RobotContainer() {
         trajectoryLoader = new TrajectoryLoader();
 
         autonomousManager = new AutonomousManager(trajectoryLoader, this);
+
+        shootingSuperstructure.registerComponent(drivetrainSubsystem);
+        shootingSuperstructure.registerComponent(shooterSubsystem);
+        shootingSuperstructure.registerComponent(limelightSubsystem);
+        shootingSuperstructure.registerComponent(balltrackSubsystem);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrainSubsystem);
         CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
@@ -92,13 +99,13 @@ public class RobotContainer {
 
         operatorController
                 .getRightTrigger()
-                .whileHeld(new LimelightShootCommand(shooterSubsystem, balltrackSubsystem, limelightSubsystem));
+                .whileHeld(new LimelightShootCommand(shootingSuperstructure));
 
-        operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shooterSubsystem, balltrackSubsystem));
+        operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
 
         operatorController
                 .getRightBumper()
-                .whileHeld(new PrepareToShootCommand(balltrackSubsystem, shooterSubsystem, limelightSubsystem));
+                .whileHeld(new PrepareToShootCommand(shootingSuperstructure));
 
         operatorController.getA().whenPressed(() -> limelightSubsystem.decrementYOffset(), limelightSubsystem);
         operatorController.getX().whenPressed(() -> limelightSubsystem.incrementXOffset(), limelightSubsystem);
@@ -122,6 +129,10 @@ public class RobotContainer {
 
     private Axis getDriveRotationAxis() {
         return rightDriveController.getXAxis();
+    }
+
+    public ShootingSuperstructure getShootingSuperstructure() {
+        return shootingSuperstructure;
     }
 
     public SwerveDriveSubsystem getSwerveDriveSubsystem() {

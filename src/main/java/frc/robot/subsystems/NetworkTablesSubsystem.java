@@ -7,11 +7,14 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public abstract class NetworkTablesSubsystem implements Subsystem {
     private NetworkTable table;
+    protected String name;
 
     public NetworkTablesSubsystem(String tableName) {
+        this.name = tableName;
+
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-        table = inst.getTable(tableName);
+        table = inst.getTable(name);
     }
 
     public NetworkTableEntry getEntry(String key) {

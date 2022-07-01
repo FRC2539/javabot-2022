@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * SwerveDriveSubsystem
  */
-public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
+public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements Updatable {    
     // Measured in meters (ask CAD dept. for this information in new robots)
     public static final double TRACKWIDTH = 0.5969;
     public static final double WHEELBASE = 0.5969;

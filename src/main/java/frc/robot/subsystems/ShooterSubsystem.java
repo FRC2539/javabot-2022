@@ -18,7 +18,7 @@ import frc.robot.util.ShooterState;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
-public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
+public class ShooterSubsystem extends ShootingComponentSubsystem implements Updatable {
     private final DoubleSolenoid shooterAngleSolenoid = new DoubleSolenoid(
             Constants.PCM_ID,
             PneumaticsModuleType.REVPH,
