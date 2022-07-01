@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * SwerveDriveSubsystem
  */
-public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements Updatable {    
+public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements Updatable {
     // Measured in meters (ask CAD dept. for this information in new robots)
     public static final double TRACKWIDTH = 0.5969;
     public static final double WHEELBASE = 0.5969;
@@ -96,7 +96,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private Timer loggingTimer = new Timer();
 
     private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
-    private static boolean TEMPERATURE_LOGGING_ENABLED = false;
+    private boolean TEMPERATURE_LOGGING_ENABLED = false;
 
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
@@ -156,6 +156,10 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vx.setDouble(0);
         vy.setDouble(0);
 
+        startLoggingTemperatures();
+    }
+
+    public void startLoggingTemperatures() {
         // Log motor temperatures only when not simulated
         if (TEMPERATURE_LOGGING_ENABLED && LoggingManager.getLog().isPresent()) {
             driveTemperaturesLogEntry =
@@ -165,6 +169,12 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
             loggingTimer.start();
         }
+    }
+
+    public void enableLoggingTemperatures() {
+        TEMPERATURE_LOGGING_ENABLED = true;
+
+        startLoggingTemperatures();
     }
 
     public Pose2d getPose() {

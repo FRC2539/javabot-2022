@@ -2,12 +2,12 @@ package frc.robot;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.subsystems.BalltrackSubsystem;
+import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
-import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 import frc.robot.util.ShootingComponent;
-import frc.robot.subsystems.LimelightSubsystem;
 
 public class ShootingSuperstructure {
     private BalltrackSubsystem balltrackSubsystem;
@@ -54,12 +54,24 @@ public class ShootingSuperstructure {
         return limelightSubsystem;
     }
 
-    public void spinupShooterWithLimelight() {
+    public void activateShootingPipeline() {
         limelightSubsystem.setPipeline(LimelightPipeline.SHOOT);
+    }
+
+    public void spinupShooterWithLimelight() {
+        activateShootingPipeline();
 
         System.out.println(limelightSubsystem.getDistanceToTarget().orElse(0));
 
         shooterSubsystem.setFarShot(limelightSubsystem.getMeasuredDistanceSupplier());
+    }
+
+    public void spinupShooterWithLimelightPrediction() {
+        activateShootingPipeline();
+
+        System.out.println(limelightSubsystem.getPredictedDistanceToTarget().orElse(0));
+
+        shooterSubsystem.setFarShot(limelightSubsystem.getPredictedDistanceSupplier());
     }
 
     public void prepareBallsToShoot() {
@@ -71,8 +83,7 @@ public class ShootingSuperstructure {
     }
 
     public void shootWithLimelight() {
-        if (limelightSubsystem.isAimed() && shooterSubsystem.isShooterAtVelocity()) 
-            balltrackSubsystem.shootMode();
+        if (limelightSubsystem.isAimed() && shooterSubsystem.isShooterAtVelocity()) balltrackSubsystem.shootMode();
     }
 
     public void shootWithoutLimelight() {

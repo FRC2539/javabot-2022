@@ -8,9 +8,7 @@ public class LimelightShootCommand extends CommandBase {
 
     private boolean stopShooting;
 
-    public LimelightShootCommand(
-            ShootingSuperstructure shootingSuperstructure,
-            boolean stopShooting) {
+    public LimelightShootCommand(ShootingSuperstructure shootingSuperstructure, boolean stopShooting) {
         this.shootingSuperstructure = shootingSuperstructure;
         this.stopShooting = stopShooting;
 

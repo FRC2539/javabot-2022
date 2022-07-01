@@ -8,6 +8,8 @@ public class PrepareToShootCommand extends CommandBase {
 
     public PrepareToShootCommand(ShootingSuperstructure shootingSuperstructure) {
         this.shootingSuperstructure = shootingSuperstructure;
+
+        addRequirements(shootingSuperstructure.getShooterSubsystem(), shootingSuperstructure.getBalltrackSubsystem());
     }
 
     @Override

@@ -22,7 +22,7 @@
       "buttonKeys": [
         90,
         88,
-        67,
+        -1,
         86
       ],
       "povConfig": [
@@ -42,8 +42,7 @@
     {
       "axisConfig": [
         {
-          "decKey": 74,
-          "incKey": 76
+          "decKey": 74
         },
         {
           "decKey": 73,
@@ -51,12 +50,15 @@
         }
       ],
       "axisCount": 2,
-      "buttonCount": 4,
+      "buttonCount": 7,
       "buttonKeys": [
         77,
         44,
         46,
-        47
+        47,
+        -1,
+        -1,
+        67
       ],
       "povCount": 0
     },
@@ -92,6 +94,9 @@
   "robotJoysticks": [
     {
       "guid": "Keyboard0"
+    },
+    {
+      "guid": "Keyboard2"
     },
     {
       "guid": "Keyboard1"
