@@ -7,20 +7,20 @@ import frc.robot.ShootingSuperstructure;
 import frc.robot.strategies.LimelightAimStrategy;
 import frc.robot.strategies.StaticAimStrategy;
 import frc.robot.subsystems.LightsSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class LimelightDriveCommand extends CommandBase {
     private ShootingSuperstructure shootingSuperstructure;
     private SwerveDriveSubsystem swerveDriveSubsystem;
-    private LimelightSubsystem limelightSubsystem;
     private LightsSubsystem lightsSubsystem;
 
     private DoubleSupplier forward;
     private DoubleSupplier strafe;
 
-    private PIDController pidController = new PIDController(1, 0, 0.01, 0.02);
+    private static boolean ROTATE_AROUND_TARGET = false;
+
+    private PIDController pidController = new PIDController(1, 0, 0.04, 0.02);
 
     private LimelightAimStrategy aimStrategy;
 
@@ -35,7 +35,6 @@ public class LimelightDriveCommand extends CommandBase {
         this.shootingSuperstructure = shootingSuperstructure;
         this.lightsSubsystem = lightsSubsystem;
         this.swerveDriveSubsystem = shootingSuperstructure.getSwerveDriveSubsystem();
-        this.limelightSubsystem = shootingSuperstructure.getLimelightSubsystem();
 
         addRequirements(swerveDriveSubsystem, lightsSubsystem);
 
@@ -49,6 +48,8 @@ public class LimelightDriveCommand extends CommandBase {
         pidController.reset();
 
         shootingSuperstructure.activateShootingPipeline();
+        
+        if (ROTATE_AROUND_TARGET) shootingSuperstructure.rotateAroundTarget();
     }
 
     @Override
@@ -58,7 +59,12 @@ public class LimelightDriveCommand extends CommandBase {
                         forward.getAsDouble(), strafe.getAsDouble(), aimStrategy.calculateRotationalVelocity()),
                 true);
 
-        if (limelightSubsystem.isAimed()) lightsSubsystem.solidGreen();
+        if (aimStrategy.isAimed()) lightsSubsystem.solidGreen();
         else lightsSubsystem.showTeamColor();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (ROTATE_AROUND_TARGET) shootingSuperstructure.stopRotatingAroundTarget();
     }
 }

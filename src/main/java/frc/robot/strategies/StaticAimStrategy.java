@@ -23,13 +23,17 @@ public class StaticAimStrategy implements LimelightAimStrategy {
         if (limelightSubsystem.hasTarget()) {
             double currentAngle = swerveDriveSubsystem.getGyroRotation2d().getRadians();
             double targetAngle =
-                    MathUtil.angleModulus(currentAngle + Math.toRadians(limelightSubsystem.getHorizontalAngle()));
+                    MathUtil.angleModulus(currentAngle - Math.toRadians(limelightSubsystem.getHorizontalAngle()));
 
             pidController.setSetpoint(targetAngle);
 
             rotationOutput = pidController.calculate(currentAngle);
         }
 
-        return rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY;
+        return -1 * rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY;
+    }
+
+    public boolean isAimed() {
+        return limelightSubsystem.isAimed();
     }
 }

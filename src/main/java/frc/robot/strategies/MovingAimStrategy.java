@@ -24,16 +24,20 @@ public class MovingAimStrategy implements LimelightAimStrategy {
             double currentAngle = swerveDriveSubsystem.getGyroRotation2d().getRadians();
 
             double predictedAngle = Math.toRadians(limelightSubsystem
-                    .getPredictedHorizontalAngle()
+                    .getPredictedTargetAngleOffset()
                     .orElseGet(() -> limelightSubsystem.getHorizontalAngle()));
 
-            double targetAngle = MathUtil.angleModulus(currentAngle + predictedAngle);
+            double targetAngle = MathUtil.angleModulus(currentAngle - predictedAngle);
 
             pidController.setSetpoint(targetAngle);
 
             rotationOutput = pidController.calculate(currentAngle);
         }
 
-        return rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY;
+        return -1 * rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY;
+    }
+
+    public boolean isAimed() {
+        return limelightSubsystem.isAimedToPrediction();
     }
 }

@@ -3,12 +3,13 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.util.LoggingCommand;
 
-public class BallCollectCommand extends CommandBase {
+public class BallCollectCommand extends LoggingCommand {
     private MachineLearningSubsystem machineLearningSubsystem;
     private SwerveDriveSubsystem swerveDriveSubsystem;
     private BalltrackSubsystem balltrackSubsystem;
@@ -18,7 +19,7 @@ public class BallCollectCommand extends CommandBase {
             0,
             0,
             new TrapezoidProfile.Constraints(
-                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 4));
+                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 6));
 
     private ProfiledPIDController strafeController = new ProfiledPIDController(
             1,
@@ -35,6 +36,8 @@ public class BallCollectCommand extends CommandBase {
 
     private final boolean shouldCollectTwo;
     private boolean collectTwo;
+
+    private NetworkTableEntry forwardOffsetEntry = getEntry("forwardOffset");
 
     public BallCollectCommand(
             MachineLearningSubsystem machineLearningSubsystem,
@@ -75,6 +78,10 @@ public class BallCollectCommand extends CommandBase {
 
     @Override
     public void execute() {
+        // System.out.println(collectionComplete + " : " + getForwardOffset());
+
+        forwardOffsetEntry.setDouble(getForwardOffset());
+
         if (collectionComplete || balltrackSubsystem.isBalltrackFull()) {
             swerveDriveSubsystem.stop();
 
@@ -92,6 +99,7 @@ public class BallCollectCommand extends CommandBase {
     }
 
     private double getForwardOffset() {
+        // Scale the y value of the target from 0 to 1, where 0 is at the target.
         return (MachineLearningSubsystem.STOPPING_Y - machineLearningSubsystem.getTargetY())
                 / MachineLearningSubsystem.STOPPING_Y;
     }

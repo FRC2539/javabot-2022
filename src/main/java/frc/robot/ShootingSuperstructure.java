@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
@@ -8,6 +9,7 @@ import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.ShootingComponent;
+import java.util.Optional;
 
 public class ShootingSuperstructure {
     private BalltrackSubsystem balltrackSubsystem;
@@ -61,15 +63,11 @@ public class ShootingSuperstructure {
     public void spinupShooterWithLimelight() {
         activateShootingPipeline();
 
-        System.out.println(limelightSubsystem.getDistanceToTarget().orElse(0));
-
         shooterSubsystem.setFarShot(limelightSubsystem.getMeasuredDistanceSupplier());
     }
 
     public void spinupShooterWithLimelightPrediction() {
         activateShootingPipeline();
-
-        System.out.println(limelightSubsystem.getPredictedDistanceToTarget().orElse(0));
 
         shooterSubsystem.setFarShot(limelightSubsystem.getPredictedDistanceSupplier());
     }
@@ -101,5 +99,20 @@ public class ShootingSuperstructure {
 
     public ChassisSpeeds getSmoothedRobotVelocity() {
         return swerveDriveSubsystem.getSmoothedVelocity();
+    }
+
+    public void rotateAroundTarget() {
+        swerveDriveSubsystem.setAxisOfRotation(Optional.of(() -> getTranslationToTarget()));
+    }
+
+    public Translation2d getTranslationToTarget() {
+        return limelightSubsystem
+                .getRobotRelativePoseEstimate()
+                .getTranslation()
+                .unaryMinus();
+    }
+
+    public void stopRotatingAroundTarget() {
+        swerveDriveSubsystem.setAxisOfRotation(Optional.empty());
     }
 }

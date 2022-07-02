@@ -25,6 +25,7 @@ import frc.robot.Constants;
 import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * SwerveDriveSubsystem
@@ -73,6 +74,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private Pose2d pose = new Pose2d();
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = null;
+
+    private Optional<Supplier<Translation2d>> axisOfRotationSupplier = Optional.empty();
 
     private final boolean LOG_TRAJECTORY_INFO = false;
 
@@ -288,7 +291,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vx.setDouble(chassisVelocity.vxMetersPerSecond);
         vy.setDouble(chassisVelocity.vyMetersPerSecond);
 
-        SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
+        SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity, getAxisOfRotation());
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];
@@ -296,6 +299,14 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
                     moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE,
                     moduleStates[i].angle.getRadians());
         }
+    }
+
+    public void setAxisOfRotation(Optional<Supplier<Translation2d>> axisOfRotationSupplier) {
+        this.axisOfRotationSupplier = axisOfRotationSupplier;
+    }
+
+    public Translation2d getAxisOfRotation() {
+        return (axisOfRotationSupplier.orElse(() -> new Translation2d())).get();
     }
 
     public void stopModules() {
