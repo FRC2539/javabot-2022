@@ -48,7 +48,7 @@ public class LimelightDriveCommand extends CommandBase {
         pidController.reset();
 
         shootingSuperstructure.activateShootingPipeline();
-        
+
         if (ROTATE_AROUND_TARGET) shootingSuperstructure.rotateAroundTarget();
     }
 
