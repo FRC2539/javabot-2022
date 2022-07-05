@@ -50,6 +50,8 @@ public class LimelightDriveCommand extends CommandBase {
         shootingSuperstructure.activateShootingPipeline();
 
         if (ROTATE_AROUND_TARGET) shootingSuperstructure.rotateAroundTarget();
+
+        lightsSubsystem.setAimingMode(() -> aimStrategy.isAimed());
     }
 
     @Override
@@ -58,9 +60,6 @@ public class LimelightDriveCommand extends CommandBase {
                 new ChassisSpeeds(
                         forward.getAsDouble(), strafe.getAsDouble(), aimStrategy.calculateRotationalVelocity()),
                 true);
-
-        if (aimStrategy.isAimed()) lightsSubsystem.solidGreen();
-        else lightsSubsystem.showTeamColor();
     }
 
     @Override

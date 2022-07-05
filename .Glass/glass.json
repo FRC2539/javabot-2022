@@ -31,7 +31,15 @@
       "/LiveWindow/Ungrouped/Talon SRX [10]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [11]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [12]": "Motor Controller",
-      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro"
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/PIDController[4]": "PIDController"
+    },
+    "windows": {
+      "/SmartDashboard/PIDController[4]": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Settings": {

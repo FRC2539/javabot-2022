@@ -14,6 +14,6 @@ public class DefaultLightsCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        lightsSubsystem.showTeamColor();
+        lightsSubsystem.setDefaultMode();
     }
 }

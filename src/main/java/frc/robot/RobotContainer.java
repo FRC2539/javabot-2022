@@ -83,7 +83,7 @@ public class RobotContainer {
                 .whileHeld(
                         new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderLowGoalShot()));
 
-        rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem));
+        rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
         rightDriveController
                 .getBottomThumb()
                 .whileHeld(new LimelightDriveCommand(
