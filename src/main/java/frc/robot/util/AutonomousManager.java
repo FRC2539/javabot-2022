@@ -140,13 +140,15 @@ public class AutonomousManager {
     }
 
     private void intakeInPlace(SequentialCommandGroup command, double timeout) {
-        command.addCommands(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()).withTimeout(timeout));
+        command.addCommands(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem())
+                .withTimeout(timeout));
     }
 
     private void followAndIntakeWithTimeout(
             SequentialCommandGroup command, PathPlannerTrajectory trajectory, double intakeTimeout) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()).withTimeout(intakeTimeout)));
+                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem())
+                        .withTimeout(intakeTimeout)));
     }
 
     private void resetRobotPose(SequentialCommandGroup command, Trajectory trajectory) {

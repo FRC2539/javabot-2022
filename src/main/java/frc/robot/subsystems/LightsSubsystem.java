@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import java.util.function.Supplier;
 
 public class LightsSubsystem extends SubsystemBase {
     private Spark ledController = new Spark(Constants.LED_CONTROLLER_PWM_ID);
