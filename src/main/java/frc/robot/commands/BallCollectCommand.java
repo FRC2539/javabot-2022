@@ -63,9 +63,9 @@ public class BallCollectCommand extends LoggingCommand {
 
         this.shouldCollectTwo = shouldCollectTwo;
 
-        Shuffleboard.getTab("Testing")
-                .add("Forward", forwardController)
-                .withPosition(2, 0);
+        // Shuffleboard.getTab("Testing")
+        //         .add("Forward", forwardController)
+        //         .withPosition(2, 0);
         // Shuffleboard.getTab("Testing")
         //         .add("Strafe", strafeController)
         //         .withWidget(BuiltInWidgets.kPIDController)

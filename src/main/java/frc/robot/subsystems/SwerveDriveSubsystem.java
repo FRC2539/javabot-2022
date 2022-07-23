@@ -166,11 +166,11 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
         startLoggingTemperatures();
 
-        Shuffleboard.getTab("Telemetry")
-                .add("Field", fieldWidget)
-                .withWidget(BuiltInWidgets.kField)
-                .withSize(7, 4)
-                .withPosition(2, 0);
+        // Shuffleboard.getTab("Telemetry")
+        //         .add("Field", fieldWidget)
+        //         .withWidget(BuiltInWidgets.kField)
+        //         .withSize(7, 4)
+        //         .withPosition(2, 0);
     }
 
     public void startLoggingTemperatures() {

@@ -24,9 +24,9 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoball", "threeball", "fiveball", "fourball"};
+    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball"};
 
-    private Command selectedAutonomousCommand;
+    // private Command selectedAutonomousCommand;
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader, RobotContainer container) {
         this.trajectoryLoader = trajectoryLoader;
@@ -41,13 +41,13 @@ public class AutonomousManager {
         selectedAuto = autonomousTable.getEntry("selectedAuto");
 
         // Automatically load the selected auto and print a success message
-        selectedAuto.addListener(
-                event -> {
-                    selectedAutonomousCommand = loadAutonomousCommand();
+        // selectedAuto.addListener(
+        //         event -> {
+        //             selectedAutonomousCommand = loadAutonomousCommand();
 
-                    System.out.println("\nAuto loaded: " + event.getEntry().getString("null") + "\n");
-                },
-                EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        //             System.out.println("\nAuto loaded: " + event.getEntry().getString("null") + "\n");
+        //         },
+        //         EntryListenerFlags.kNew | EntryListenerFlags.kUpdate | EntryListenerFlags.kImmediate);
 
         // Choose the first auto as the default
         selectedAuto.setString(autoStrings[0]);
@@ -59,6 +59,17 @@ public class AutonomousManager {
         resetRobotPose(command, trajectoryLoader.getTwoBall());
 
         followAndIntake(command, trajectoryLoader.getTwoBall());
+        shootBallsAndAim(command, 2, true);
+
+        return command;
+    }
+
+    public Command getTwoBallFarCommand() {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, trajectoryLoader.getTwoBallFar());
+
+        followAndIntake(command, trajectoryLoader.getTwoBallFar());
         shootBallsAndAim(command, 2, true);
 
         return command;
@@ -162,6 +173,8 @@ public class AutonomousManager {
         switch (selectedAuto.getString(autoStrings[0])) {
             case "twoball":
                 return getTwoBallCommand();
+            case "twoballfar":
+                return getTwoBallFarCommand();
             case "threeball":
                 return getThreeBallCommand();
             case "fiveball":
@@ -175,6 +188,6 @@ public class AutonomousManager {
     }
 
     public Command getAutonomousCommand() {
-        return selectedAutonomousCommand;
+        return loadAutonomousCommand();
     }
 }

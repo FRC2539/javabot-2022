@@ -49,7 +49,7 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
     private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
 
-    private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getPracticeShootingMap();
+    private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getCompetitionShootingMap();
 
     private NetworkTableEntry customRearShooterRPMEntry;
     private NetworkTableEntry customFrontShooterRPMEntry;

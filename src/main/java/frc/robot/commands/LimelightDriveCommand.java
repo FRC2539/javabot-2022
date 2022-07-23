@@ -43,7 +43,7 @@ public class LimelightDriveCommand extends CommandBase {
 
         aimStrategy = new StaticAimStrategy(shootingSuperstructure, pidController);
 
-        Shuffleboard.getTab("Testing").add("Aim Controller", pidController).withPosition(0, 0);
+        // Shuffleboard.getTab("Testing").add("Aim Controller", pidController).withPosition(0, 0);
     }
 
     @Override

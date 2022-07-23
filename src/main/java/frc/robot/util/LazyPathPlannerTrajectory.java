@@ -9,20 +9,26 @@ public class LazyPathPlannerTrajectory {
     private final double maxVelocity;
     private final double maxAcceleration;
 
-    private Optional<PathPlannerTrajectory> trajectory = Optional.empty();
+    // private Optional<PathPlannerTrajectory> trajectory = Optional.empty();
+
+    private PathPlannerTrajectory trajectory;
 
     public LazyPathPlannerTrajectory(String trajectoryPath, double maxVelocity, double maxAcceleration) {
         this.trajectoryPath = trajectoryPath;
         this.maxVelocity = maxVelocity;
         this.maxAcceleration = maxAcceleration;
+
+        this.trajectory = loadTrajectory(trajectoryPath, maxVelocity, maxAcceleration);
     }
 
     public PathPlannerTrajectory getTrajectory() {
         // Loads the trajectory only at the first request
-        if (trajectory.isEmpty())
-            trajectory = Optional.of(loadTrajectory(trajectoryPath, maxVelocity, maxAcceleration));
+        // if (trajectory.isEmpty())
+        //     trajectory = Optional.of(loadTrajectory(trajectoryPath, maxVelocity, maxAcceleration));
 
-        return trajectory.orElse(null);
+        // return trajectory.orElse(null);
+
+        return trajectory;
     }
 
     private PathPlannerTrajectory loadTrajectory(String path, double maxVel, double maxAccel) {

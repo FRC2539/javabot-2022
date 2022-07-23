@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.OptionalDouble;
 
 public class MachineLearningSubsystem extends NetworkTablesSubsystem {
-    public static double STOPPING_Y = 209;
+    public static double STOPPING_Y = 178;//209;
     public static double STOPPING_TOLERANCE = 0.2;
 
     // Measured at 1 meter
