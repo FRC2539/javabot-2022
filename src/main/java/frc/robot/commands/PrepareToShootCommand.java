@@ -1,38 +1,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.BalltrackSubsystem;
-import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.ShootingSuperstructure;
 
 public class PrepareToShootCommand extends CommandBase {
-    private BalltrackSubsystem balltrackSubsystem;
-    private ShooterSubsystem shooterSubsystem;
-    private LimelightSubsystem limelightSubsystem;
+    private ShootingSuperstructure shootingSuperstructure;
 
-    public PrepareToShootCommand(
-            BalltrackSubsystem balltrackSubsystem,
-            ShooterSubsystem shooterSubsystem,
-            LimelightSubsystem limelightSubsystem) {
-        this.balltrackSubsystem = balltrackSubsystem;
-        this.shooterSubsystem = shooterSubsystem;
-        this.limelightSubsystem = limelightSubsystem;
+    public PrepareToShootCommand(ShootingSuperstructure shootingSuperstructure) {
+        this.shootingSuperstructure = shootingSuperstructure;
 
-        addRequirements(balltrackSubsystem, shooterSubsystem);
+        addRequirements(shootingSuperstructure.getShooterSubsystem(), shootingSuperstructure.getBalltrackSubsystem());
     }
 
     @Override
     public void initialize() {
-        shooterSubsystem.setFarShot(limelightSubsystem.getDistanceToTarget().orElse(0));
-
-        balltrackSubsystem.setBalltrackMode(BalltrackMode.PREPARE);
+        shootingSuperstructure.spinupShooterWithLimelight();
+        shootingSuperstructure.prepareBallsToShoot();
     }
 
     @Override
     public void end(boolean interrupted) {
-        balltrackSubsystem.setBalltrackMode(BalltrackMode.DISABLED);
-
-        shooterSubsystem.stopShooter();
+        shootingSuperstructure.stopShooting();
     }
 }

@@ -1,23 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.ShootingSuperstructure;
 
 public class LimelightSpinUpCommand extends CommandBase {
-    private LimelightSubsystem limelightSubsystem;
-    private ShooterSubsystem shooterSubsystem;
+    private ShootingSuperstructure shootingSuperstructure;
 
-    public LimelightSpinUpCommand(LimelightSubsystem limelightSubsystem, ShooterSubsystem shooterSubsystem) {
-        this.limelightSubsystem = limelightSubsystem;
-        this.shooterSubsystem = shooterSubsystem;
+    public LimelightSpinUpCommand(ShootingSuperstructure shootingSuperstructure) {
+        this.shootingSuperstructure = shootingSuperstructure;
     }
 
     @Override
     public void initialize() {
-        limelightSubsystem.setPipeline(LimelightPipeline.SHOOT);
-
-        shooterSubsystem.setFarShot(limelightSubsystem.getMeasuredDistanceSupplier());
+        shootingSuperstructure.spinupShooterWithLimelight();
     }
 }

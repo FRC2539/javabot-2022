@@ -8,7 +8,15 @@ public class Regressions {
         {3, 2300, 1550},
         {3.6, 2600, 1550},
         {4.3, 3150, 1550},
-        {4.57, 3700, 1800},
+        {5.57, 3700, 1800},
+        {6.03, 4200, 2000},
+    };
+
+    public static double[][] competitionRegression = {
+        {3, 2300, 1550},
+        {3.6, 2550, 1550},
+        {4.3, 3150, 1550},
+        {5.57, 3700, 1800},
         {6.03, 4200, 2000},
     };
 
@@ -24,5 +32,9 @@ public class Regressions {
 
     public static InterpolatingMap<ShooterState> getPracticeShootingMap() {
         return loadShootingMap(practiceRegression);
+    }
+
+    public static InterpolatingMap<ShooterState> getCompetitionShootingMap() {
+        return loadShootingMap(competitionRegression);
     }
 }

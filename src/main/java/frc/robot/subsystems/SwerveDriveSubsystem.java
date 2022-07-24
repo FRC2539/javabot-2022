@@ -21,15 +21,17 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * SwerveDriveSubsystem
  */
-public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Updatable {
+public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements Updatable {
     // Measured in meters (ask CAD dept. for this information in new robots)
     public static final double TRACKWIDTH = 0.5969;
     public static final double WHEELBASE = 0.5969;
@@ -74,6 +76,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = null;
 
+    private Optional<Supplier<Translation2d>> axisOfRotationSupplier = Optional.empty();
+
     private final boolean LOG_TRAJECTORY_INFO = false;
 
     private NetworkTableEntry odometryXEntry;
@@ -96,7 +100,9 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
     private Timer loggingTimer = new Timer();
 
     private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
-    private static boolean TEMPERATURE_LOGGING_ENABLED = false;
+    private boolean TEMPERATURE_LOGGING_ENABLED = false;
+
+    private Field2d fieldWidget = new Field2d();
 
     public SwerveDriveSubsystem() {
         super("Swerve Drive");
@@ -156,6 +162,10 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         vx.setDouble(0);
         vy.setDouble(0);
 
+        startLoggingTemperatures();
+    }
+
+    public void startLoggingTemperatures() {
         // Log motor temperatures only when not simulated
         if (TEMPERATURE_LOGGING_ENABLED && LoggingManager.getLog().isPresent()) {
             driveTemperaturesLogEntry =
@@ -165,6 +175,12 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
 
             loggingTimer.start();
         }
+    }
+
+    public void enableLoggingTemperatures() {
+        TEMPERATURE_LOGGING_ENABLED = true;
+
+        startLoggingTemperatures();
     }
 
     public Pose2d getPose() {
@@ -278,7 +294,7 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
         vx.setDouble(chassisVelocity.vxMetersPerSecond);
         vy.setDouble(chassisVelocity.vyMetersPerSecond);
 
-        SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
+        SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity, getAxisOfRotation());
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];
@@ -286,6 +302,14 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
                     moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE,
                     moduleStates[i].angle.getRadians());
         }
+    }
+
+    public void setAxisOfRotation(Optional<Supplier<Translation2d>> axisOfRotationSupplier) {
+        this.axisOfRotationSupplier = axisOfRotationSupplier;
+    }
+
+    public Translation2d getAxisOfRotation() {
+        return (axisOfRotationSupplier.orElse(() -> new Translation2d())).get();
     }
 
     public void stopModules() {
@@ -351,6 +375,8 @@ public class SwerveDriveSubsystem extends NetworkTablesSubsystem implements Upda
             driveTemperaturesLogEntry.append(driveTemperatures);
             steerTemperaturesLogEntry.append(steerTemperatures);
         }
+
+        fieldWidget.setRobotPose(swerveOdometry.getPoseMeters());
     }
 
     public TrajectoryFollower getFollower() {

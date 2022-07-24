@@ -16,15 +16,6 @@ public class LowerClimberCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        // Because the command is on a while held, finishing it forcefully would not stop
-        // the climber.
-        if (climberSubsystem.isClimberOnBar()) {
-            climberSubsystem.stopClimber();
-        }
-    }
-
-    @Override
     public void end(boolean interrupted) {
         climberSubsystem.stopClimber();
     }

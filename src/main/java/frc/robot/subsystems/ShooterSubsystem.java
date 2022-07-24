@@ -12,13 +12,15 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants;
 import frc.robot.Regressions;
 import frc.robot.util.ShooterState;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
-public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatable {
+public class ShooterSubsystem extends ShootingComponentSubsystem implements Updatable {
     private final DoubleSolenoid shooterAngleSolenoid = new DoubleSolenoid(
             Constants.PCM_ID,
             PneumaticsModuleType.REVPH,
@@ -85,6 +87,17 @@ public class ShooterSubsystem extends NetworkTablesSubsystem implements Updatabl
         customRearShooterRPMEntry.setDouble(0);
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
+
+        Shuffleboard.getTab("Testing")
+                .addNumber("Front RPM", () -> getMotorRPM(frontShooterMotor))
+                .withPosition(3, 0)
+                .withSize(1, 1)
+                .withWidget(BuiltInWidgets.kGraph);
+        Shuffleboard.getTab("Testing")
+                .addNumber("Rear RPM", () -> getMotorRPM(rearShooterMotor))
+                .withPosition(5, 0)
+                .withSize(1, 1)
+                .withWidget(BuiltInWidgets.kGraph);
     }
 
     public void setShooter(ShooterState shooterState) {

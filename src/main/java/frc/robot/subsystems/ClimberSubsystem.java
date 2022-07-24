@@ -26,7 +26,7 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
 
     private final double CLIMBER_MOTOR_SPEED = 1;
 
-    private final double CLIMBER_RAMP_DURATION = 0.25;
+    private final double CLIMBER_RAMP_DURATION = 0.29;
 
     private final double PROXIMITY_SENSOR_THRESHOLD = 50;
 
