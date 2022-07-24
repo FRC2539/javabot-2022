@@ -2,7 +2,6 @@ package frc.robot.util;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import java.util.Optional;
 
 public class LazyPathPlannerTrajectory {
     private final String trajectoryPath;

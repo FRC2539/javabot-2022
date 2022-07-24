@@ -4,19 +4,11 @@ import com.team2539.cougarlib.control.InterpolatingMap;
 import frc.robot.util.ShooterState;
 
 public class Regressions {
-
-    // TODO: fix null pointer exception auto
-    // when testing, restart robot code before auto
-    // Test lazy loading with the new immediate flag
-
-    // auto
-    // long transition
-
     public static double[][] practiceRegression = {
         {3, 2300, 1550},
         {3.6, 2600, 1550},
         {4.3, 3150, 1550},
-        {4.57, 3700, 1800},
+        {5.57, 3700, 1800},
         {6.03, 4200, 2000},
     };
 

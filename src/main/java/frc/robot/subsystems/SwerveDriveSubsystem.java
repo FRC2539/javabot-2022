@@ -21,8 +21,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.util.LoggingManager;
@@ -165,12 +163,6 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vy.setDouble(0);
 
         startLoggingTemperatures();
-
-        // Shuffleboard.getTab("Telemetry")
-        //         .add("Field", fieldWidget)
-        //         .withWidget(BuiltInWidgets.kField)
-        //         .withSize(7, 4)
-        //         .withPosition(2, 0);
     }
 
     public void startLoggingTemperatures() {

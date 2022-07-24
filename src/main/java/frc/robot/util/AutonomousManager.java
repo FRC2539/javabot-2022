@@ -2,7 +2,6 @@ package frc.robot.util;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -40,6 +39,9 @@ public class AutonomousManager {
 
         selectedAuto = autonomousTable.getEntry("selectedAuto");
 
+        // Choose the first auto as the default
+        selectedAuto.setString(autoStrings[0]);
+
         // Automatically load the selected auto and print a success message
         // selectedAuto.addListener(
         //         event -> {
@@ -48,9 +50,6 @@ public class AutonomousManager {
         //             System.out.println("\nAuto loaded: " + event.getEntry().getString("null") + "\n");
         //         },
         //         EntryListenerFlags.kNew | EntryListenerFlags.kUpdate | EntryListenerFlags.kImmediate);
-
-        // Choose the first auto as the default
-        selectedAuto.setString(autoStrings[0]);
     }
 
     public Command getTwoBallCommand() {

@@ -4,8 +4,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
@@ -62,14 +60,6 @@ public class BallCollectCommand extends LoggingCommand {
         forwardController.setTolerance(MachineLearningSubsystem.STOPPING_TOLERANCE);
 
         this.shouldCollectTwo = shouldCollectTwo;
-
-        // Shuffleboard.getTab("Testing")
-        //         .add("Forward", forwardController)
-        //         .withPosition(2, 0);
-        // Shuffleboard.getTab("Testing")
-        //         .add("Strafe", strafeController)
-        //         .withWidget(BuiltInWidgets.kPIDController)
-        //         .withPosition(2, 1);
     }
 
     @Override
@@ -88,8 +78,6 @@ public class BallCollectCommand extends LoggingCommand {
 
     @Override
     public void execute() {
-        // System.out.println(collectionComplete + " : " + getForwardOffset());
-
         forwardOffsetEntry.setDouble(getForwardOffset());
 
         if (collectionComplete || balltrackSubsystem.isBalltrackFull()) {

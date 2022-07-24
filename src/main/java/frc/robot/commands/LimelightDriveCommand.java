@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ShootingSuperstructure;
 import frc.robot.strategies.LimelightAimStrategy;
@@ -42,8 +41,6 @@ public class LimelightDriveCommand extends CommandBase {
         pidController.enableContinuousInput(-Math.PI, Math.PI);
 
         aimStrategy = new StaticAimStrategy(shootingSuperstructure, pidController);
-
-        // Shuffleboard.getTab("Testing").add("Aim Controller", pidController).withPosition(0, 0);
     }
 
     @Override

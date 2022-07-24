@@ -99,7 +99,7 @@ test {
 }
 
 spotless {
-    enforceCheck false
+    enforceCheck true
 
     java {
         target fileTree('.') {

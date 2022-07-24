@@ -49,7 +49,7 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
     private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
 
-    private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getCompetitionShootingMap();
+    private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getPracticeShootingMap();
 
     private NetworkTableEntry customRearShooterRPMEntry;
     private NetworkTableEntry customFrontShooterRPMEntry;
@@ -88,8 +88,16 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
 
-        Shuffleboard.getTab("Testing").addNumber("Front RPM", () -> getMotorRPM(frontShooterMotor)).withPosition(3, 0).withSize(1, 1).withWidget(BuiltInWidgets.kGraph);
-        Shuffleboard.getTab("Testing").addNumber("Rear RPM", () -> getMotorRPM(rearShooterMotor)).withPosition(5, 0).withSize(1, 1).withWidget(BuiltInWidgets.kGraph);
+        Shuffleboard.getTab("Testing")
+                .addNumber("Front RPM", () -> getMotorRPM(frontShooterMotor))
+                .withPosition(3, 0)
+                .withSize(1, 1)
+                .withWidget(BuiltInWidgets.kGraph);
+        Shuffleboard.getTab("Testing")
+                .addNumber("Rear RPM", () -> getMotorRPM(rearShooterMotor))
+                .withPosition(5, 0)
+                .withSize(1, 1)
+                .withWidget(BuiltInWidgets.kGraph);
     }
 
     public void setShooter(ShooterState shooterState) {
