@@ -5,16 +5,17 @@ import com.team2539.cougarlib.controller.LogitechController;
 import com.team2539.cougarlib.controller.ThrustmasterJoystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
 
 public class RobotContainer {
-    private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(Constants.LEFT_DRIVE_CONTROLLER);
+    private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(ControllerConstants.LEFT_DRIVE_CONTROLLER);
     private final ThrustmasterJoystick rightDriveController =
-            new ThrustmasterJoystick(Constants.RIGHT_DRIVE_CONTROLLER);
-    private final LogitechController operatorController = new LogitechController(Constants.OPERATOR_CONTROLLER);
+            new ThrustmasterJoystick(ControllerConstants.RIGHT_DRIVE_CONTROLLER);
+    private final LogitechController operatorController = new LogitechController(ControllerConstants.OPERATOR_CONTROLLER);
 
     private final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();

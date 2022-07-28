@@ -14,24 +14,25 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import frc.robot.Constants;
 import frc.robot.Regressions;
+import frc.robot.Constants.GlobalConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.util.ShooterState;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends ShootingComponentSubsystem implements Updatable {
     private final DoubleSolenoid shooterAngleSolenoid = new DoubleSolenoid(
-            Constants.PCM_ID,
+            GlobalConstants.PCM_ID,
             PneumaticsModuleType.REVPH,
-            Constants.SHOOTER_SOLENOID_FORWARD_CHANNEL,
-            Constants.SHOOTER_SOLENOID_REVERSE_CHANNEL);
+            ShooterConstants.SHOOTER_SOLENOID_FORWARD_CHANNEL,
+            ShooterConstants.SHOOTER_SOLENOID_REVERSE_CHANNEL);
 
     private ShooterAngle targetShooterAngle = ShooterAngle.DISABLED;
 
-    private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(Constants.SHOOTER_REAR_MOTOR_PORT, Constants.CANIVORE_NAME);
+    private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(ShooterConstants.SHOOTER_REAR_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
     private WPI_TalonFX frontShooterMotor =
-            new WPI_TalonFX(Constants.SHOOTER_FRONT_MOTOR_PORT, Constants.CANIVORE_NAME);
+            new WPI_TalonFX(ShooterConstants.SHOOTER_FRONT_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
 
     private final double SHOOTER_F = 0.05;
     private final double SHOOTER_P = 0.13;

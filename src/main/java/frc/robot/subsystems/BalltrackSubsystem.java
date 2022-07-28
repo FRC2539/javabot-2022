@@ -12,23 +12,24 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.Constants;
+import frc.robot.Constants.BalltrackConstants;
+import frc.robot.Constants.GlobalConstants;
 
 public class BalltrackSubsystem extends ShootingComponentSubsystem implements Updatable {
-    private WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(Constants.BALLTRACK_CONVEYOR_MOTOR_PORT);
-    private WPI_TalonSRX chamberMotor = new WPI_TalonSRX(Constants.BALLTRACK_CHAMBER_MOTOR_PORT);
-    private WPI_TalonSRX intakeMotor = new WPI_TalonSRX(Constants.BALLTRACK_INTAKE_MOTOR_PORT);
+    private WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_CONVEYOR_MOTOR_PORT);
+    private WPI_TalonSRX chamberMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_CHAMBER_MOTOR_PORT);
+    private WPI_TalonSRX intakeMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_INTAKE_MOTOR_PORT);
 
-    private AnalogInput conveyorProximitySensor = new AnalogInput(Constants.BALLTRACK_CONVEYOR_SENSOR_PORT);
-    private AnalogInput chamberProximitySensor = new AnalogInput(Constants.BALLTRACK_CHAMBER_SENSOR_PORT);
+    private AnalogInput conveyorProximitySensor = new AnalogInput(BalltrackConstants.BALLTRACK_CONVEYOR_SENSOR_PORT);
+    private AnalogInput chamberProximitySensor = new AnalogInput(BalltrackConstants.BALLTRACK_CHAMBER_SENSOR_PORT);
 
     private ColorSensorV3 chamberColorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
     private DoubleSolenoid intakeSolenoid = new DoubleSolenoid(
-            Constants.PCM_ID,
+            GlobalConstants.PCM_ID,
             PneumaticsModuleType.REVPH,
-            Constants.BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL,
-            Constants.BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL);
+            BalltrackConstants.BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL,
+            BalltrackConstants.BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL);
 
     private final double INTAKE_MOTOR_SPEED = 0.9;
 

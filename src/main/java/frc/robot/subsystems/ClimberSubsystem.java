@@ -8,16 +8,17 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import frc.robot.Constants;
+import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.GlobalConstants;
 
 public class ClimberSubsystem extends NetworkTablesSubsystem {
     private DoubleSolenoid climberSolenoid = new DoubleSolenoid(
-            Constants.PCM_ID,
+            GlobalConstants.PCM_ID,
             PneumaticsModuleType.REVPH,
-            Constants.CLIMBER_SOLENOID_FORWARD_CHANNEL,
-            Constants.CLIMBER_SOLENOID_REVERSE_CHANNEL);
+            ClimberConstants.CLIMBER_SOLENOID_FORWARD_CHANNEL,
+            ClimberConstants.CLIMBER_SOLENOID_REVERSE_CHANNEL);
 
-    private WPI_TalonFX climberMotor = new WPI_TalonFX(Constants.CLIMBER_MOTOR_PORT, Constants.CANIVORE_NAME);
+    private WPI_TalonFX climberMotor = new WPI_TalonFX(ClimberConstants.CLIMBER_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
 
     private final boolean USE_LIMITS = true;
 
@@ -30,9 +31,9 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
 
     private final double PROXIMITY_SENSOR_THRESHOLD = 50;
 
-    private AnalogInput proximitySensorRight = new AnalogInput(Constants.CLIMBER_SENSOR_RIGHT_PORT);
+    private AnalogInput proximitySensorRight = new AnalogInput(ClimberConstants.CLIMBER_SENSOR_RIGHT_PORT);
 
-    private AnalogInput proximitySensorLeft = new AnalogInput(Constants.CLIMBER_SENSOR_LEFT_PORT);
+    private AnalogInput proximitySensorLeft = new AnalogInput(ClimberConstants.CLIMBER_SENSOR_LEFT_PORT);
 
     private NetworkTableEntry positionEntry;
 

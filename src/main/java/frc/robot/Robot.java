@@ -4,6 +4,7 @@ import com.team2539.cougarlib.util.UpdateManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.TimesliceConstants;
 
 public class Robot extends TimesliceRobot {
     private RobotContainer robotContainer = new RobotContainer();
@@ -12,7 +13,7 @@ public class Robot extends TimesliceRobot {
     private UpdateManager updateManager = new UpdateManager(this);
 
     public Robot() {
-        super(Constants.ROBOT_PERIODIC_ALLOCATION, Constants.CONTROLLER_PERIOD);
+        super(TimesliceConstants.ROBOT_PERIODIC_ALLOCATION, TimesliceConstants.CONTROLLER_PERIOD);
 
         // Prevents the logging of many errors with our controllers
         DriverStation.silenceJoystickConnectionWarning(true);
@@ -24,10 +25,10 @@ public class Robot extends TimesliceRobot {
     }
 
     private void scheduleUpdateFunctions() {
-        updateManager.schedule(robotContainer.getSwerveDriveSubsystem(), Constants.DRIVETRAIN_PERIOD);
-        updateManager.schedule(robotContainer.getLimelightSubsystem(), Constants.LIMELIGHT_PERIOD);
-        updateManager.schedule(robotContainer.getShooterSubsystem(), Constants.SHOOTER_PERIOD);
-        updateManager.schedule(robotContainer.getBalltrackSubsystem(), Constants.BALLTRACK_PERIOD);
+        updateManager.schedule(robotContainer.getSwerveDriveSubsystem(), TimesliceConstants.DRIVETRAIN_PERIOD);
+        updateManager.schedule(robotContainer.getLimelightSubsystem(), TimesliceConstants.LIMELIGHT_PERIOD);
+        updateManager.schedule(robotContainer.getShooterSubsystem(), TimesliceConstants.SHOOTER_PERIOD);
+        updateManager.schedule(robotContainer.getBalltrackSubsystem(), TimesliceConstants.BALLTRACK_PERIOD);
     }
 
     @Override

@@ -22,7 +22,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Constants;
+import frc.robot.Constants.GlobalConstants;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.TimesliceConstants;
 import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
@@ -54,14 +56,14 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
 
     private final TrajectoryFollower follower = new TrajectoryFollower(
-            new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
-            new PIDController(1, 0, 0, Constants.CONTROLLER_PERIOD),
+            new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD),
+            new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD),
             new ProfiledPIDController(
                     0.17,
                     0,
                     0.07,
                     new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY),
-                    Constants.CONTROLLER_PERIOD));
+                    TimesliceConstants.CONTROLLER_PERIOD));
 
     private SwerveModule[] modules;
 
@@ -108,40 +110,40 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         super("Swerve Drive");
 
         Mk4ModuleConfiguration moduleConfiguration = new Mk4ModuleConfiguration();
-        moduleConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
+        moduleConfiguration.setCanivoreName(GlobalConstants.CANIVORE_NAME);
 
         Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
-        invertedConfiguration.setCanivoreName(Constants.CANIVORE_NAME);
+        invertedConfiguration.setCanivoreName(GlobalConstants.CANIVORE_NAME);
         invertedConfiguration.setDriveInverted(true);
 
         SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                 moduleConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
-                Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
-                Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET);
+                SwerveConstants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
+                SwerveConstants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
+                SwerveConstants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
+                SwerveConstants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET);
         SwerveModule frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
                 invertedConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
-                Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
-                Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
+                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
+                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
+                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
+                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
         SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                 moduleConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
-                Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
-                Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET);
+                SwerveConstants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
+                SwerveConstants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
+                SwerveConstants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
+                SwerveConstants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET);
         SwerveModule backRightModule = Mk4SwerveModuleHelper.createFalcon500(
                 invertedConfiguration,
                 Mk4SwerveModuleHelper.GearRatio.L2,
-                Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
-                Constants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
-                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
-                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET);
+                SwerveConstants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
+                SwerveConstants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
+                SwerveConstants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
+                SwerveConstants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET);
 
         modules = new SwerveModule[] {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
