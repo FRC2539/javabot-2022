@@ -18,7 +18,8 @@ public class ClimberSubsystem extends NetworkTablesSubsystem {
             ClimberConstants.CLIMBER_SOLENOID_FORWARD_CHANNEL,
             ClimberConstants.CLIMBER_SOLENOID_REVERSE_CHANNEL);
 
-    private WPI_TalonFX climberMotor = new WPI_TalonFX(ClimberConstants.CLIMBER_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
+    private WPI_TalonFX climberMotor =
+            new WPI_TalonFX(ClimberConstants.CLIMBER_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
 
     private final boolean USE_LIMITS = true;
 

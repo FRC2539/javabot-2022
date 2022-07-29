@@ -12,10 +12,12 @@ import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
 
 public class RobotContainer {
-    private final ThrustmasterJoystick leftDriveController = new ThrustmasterJoystick(ControllerConstants.LEFT_DRIVE_CONTROLLER);
+    private final ThrustmasterJoystick leftDriveController =
+            new ThrustmasterJoystick(ControllerConstants.LEFT_DRIVE_CONTROLLER);
     private final ThrustmasterJoystick rightDriveController =
             new ThrustmasterJoystick(ControllerConstants.RIGHT_DRIVE_CONTROLLER);
-    private final LogitechController operatorController = new LogitechController(ControllerConstants.OPERATOR_CONTROLLER);
+    private final LogitechController operatorController =
+            new LogitechController(ControllerConstants.OPERATOR_CONTROLLER);
 
     private final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();

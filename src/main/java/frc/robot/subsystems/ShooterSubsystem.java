@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import frc.robot.Regressions;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Regressions;
 import frc.robot.util.ShooterState;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
@@ -30,7 +30,8 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
 
     private ShooterAngle targetShooterAngle = ShooterAngle.DISABLED;
 
-    private WPI_TalonFX rearShooterMotor = new WPI_TalonFX(ShooterConstants.SHOOTER_REAR_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
+    private WPI_TalonFX rearShooterMotor =
+            new WPI_TalonFX(ShooterConstants.SHOOTER_REAR_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
     private WPI_TalonFX frontShooterMotor =
             new WPI_TalonFX(ShooterConstants.SHOOTER_FRONT_MOTOR_PORT, GlobalConstants.CANIVORE_NAME);
 
