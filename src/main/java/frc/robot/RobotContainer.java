@@ -93,7 +93,13 @@ public class RobotContainer {
                         getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem));
         rightDriveController
                 .getRightThumb()
-                .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
+                .whileHeld(new AimAssistIntakeCommand(
+                    machineLearningSubsystem,
+                    swerveDriveSubsystem,
+                    balltrackSubsystem,
+                    getDriveForwardAxis(),
+                    getDriveStrafeAxis(),
+                    getDriveRotationAxis()));
 
         operatorController.getRightTrigger().whileHeld(new LimelightShootCommand(shootingSuperstructure));
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
