@@ -69,7 +69,12 @@ public class AimAssistIntakeCommand extends LoggingCommand {
                             rotationControl.calculate(rotationAngle)),
                     false);
         } else {
-            swerveDriveSubsystem.drive(new ChassisSpeeds(forward.get(true) * speedModifier, strafe.get(true) * speedModifier, rotate.get(true) * speedModifier), true);
+            swerveDriveSubsystem.drive(
+                    new ChassisSpeeds(
+                            forward.get(true) * speedModifier,
+                            strafe.get(true) * speedModifier,
+                            rotate.get(true) * speedModifier),
+                    true);
         }
         if (shouldIntake()) {
             balltrackSubsystem.intakeMode();
@@ -89,7 +94,7 @@ public class AimAssistIntakeCommand extends LoggingCommand {
     }
 
     private boolean isDriverGoingForBall() {
-        //if (Math.abs(getDriverStrafeFromBall()) < 0.5) return false;
+        // if (Math.abs(getDriverStrafeFromBall()) < 0.5) return false;
 
         if (Math.abs(machineLearningSubsystem.getHorizontalAngle()) < Math.toRadians(30)) {
             return true;
@@ -99,13 +104,15 @@ public class AimAssistIntakeCommand extends LoggingCommand {
     }
 
     private double getDriverValueTowardsBall() {
-        double ballAngle = machineLearningSubsystem.getHorizontalAngle() + swerveDriveSubsystem.getGyroRotation2d().getRadians();
+        double ballAngle = machineLearningSubsystem.getHorizontalAngle()
+                + swerveDriveSubsystem.getGyroRotation2d().getRadians();
         double towardsBall = -forward.get(true) * Math.cos(ballAngle) + -strafe.get(true) * Math.sin(ballAngle);
         return towardsBall;
     }
 
     private double getDriverStrafeFromBall() {
-        double ballAngle = machineLearningSubsystem.getHorizontalAngle() + swerveDriveSubsystem.getGyroRotation2d().getRadians();
+        double ballAngle = machineLearningSubsystem.getHorizontalAngle()
+                + swerveDriveSubsystem.getGyroRotation2d().getRadians();
         double strafeBall = forward.get(true) * Math.sin(ballAngle) + -strafe.get(true) * Math.cos(ballAngle);
         return strafeBall;
     }
@@ -113,7 +120,8 @@ public class AimAssistIntakeCommand extends LoggingCommand {
     private boolean shouldIntake() {
         if (!machineLearningSubsystem.getBallDistance().isPresent()) return false;
 
-        if (machineLearningSubsystem.getBallDistance().orElse(2) / getVelocity() < (INTAKE_DOWN_DISTANCE * INTAKE_FACTOR)) {
+        if (machineLearningSubsystem.getBallDistance().orElse(2) / getVelocity()
+                < (INTAKE_DOWN_DISTANCE * INTAKE_FACTOR)) {
             return true;
         }
 
