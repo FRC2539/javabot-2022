@@ -296,7 +296,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vx.setDouble(chassisVelocity.vxMetersPerSecond);
         vy.setDouble(chassisVelocity.vyMetersPerSecond);
 
-        SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity, getAxisOfRotation());
+        SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity);
         SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
         for (int i = 0; i < moduleStates.length; i++) {
             var module = modules[i];

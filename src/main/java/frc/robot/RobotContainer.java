@@ -69,6 +69,15 @@ public class RobotContainer {
         leftDriveController.getYAxis().setScale(SwerveDriveSubsystem.MAX_VELOCITY);
         rightDriveController.getXAxis().setScale(SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY);
 
+        leftDriveController
+                .getLeftBottomLeft()
+                .toggleWhenPressed(new TestControlCurvesCommand(
+                        swerveDriveSubsystem,
+                        getDriveForwardAxis(),
+                        getDriveStrafeAxis(),
+                        getDriveRotationAxis(),
+                        getDriveTwistAxis()));
+
         leftDriveController.getLeftTopLeft().whenPressed(() -> swerveDriveSubsystem.resetGyroAngle());
 
         leftDriveController.getLeftThumb().whileHeld(new LowerClimberCommand(climberSubsystem));
@@ -79,8 +88,7 @@ public class RobotContainer {
 
         leftDriveController
                 .getTrigger()
-                .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderHighGoalShot()));
+                .whileHeld(new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setSpitShot()));
         rightDriveController
                 .getTrigger()
                 .whileHeld(
@@ -90,7 +98,11 @@ public class RobotContainer {
         rightDriveController
                 .getBottomThumb()
                 .whileHeld(new LimelightDriveCommand(
-                        getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem));
+                        getDriveForwardAxis(),
+                        getDriveStrafeAxis(),
+                        getDriveRotationAxis(),
+                        shootingSuperstructure,
+                        lightsSubsystem));
         rightDriveController
                 .getRightThumb()
                 .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
@@ -122,6 +134,10 @@ public class RobotContainer {
 
     private Axis getDriveRotationAxis() {
         return rightDriveController.getXAxis();
+    }
+
+    private Axis getDriveTwistAxis() {
+        return rightDriveController.getZAxis();
     }
 
     public ShootingSuperstructure getShootingSuperstructure() {

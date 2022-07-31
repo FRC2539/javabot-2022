@@ -12,8 +12,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Regressions;
@@ -46,10 +44,9 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
 
     private Optional<DoubleSupplier> distanceSupplier = Optional.empty();
 
-    private final ShooterState rejectShooterState = new ShooterState(1000, 800, ShooterAngle.DISABLED);
-
     private final ShooterState fenderLowGoalShooterState = new ShooterState(1150, 900, ShooterAngle.FAR_SHOT);
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
+    private final ShooterState fenderSpitShooterState = new ShooterState(500, 500, ShooterAngle.FAR_SHOT);
 
     private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getPracticeShootingMap();
 
@@ -59,6 +56,8 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
 
     private NetworkTableEntry rearShooterRPMEntry;
     private NetworkTableEntry frontShooterRPMEntry;
+
+    private boolean rejectBalls = false;
 
     public ShooterSubsystem() {
         super("Shooter");
@@ -89,22 +88,29 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         customRearShooterRPMEntry.setDouble(0);
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
+    }
 
-        Shuffleboard.getTab("Testing")
-                .addNumber("Front RPM", () -> getMotorRPM(frontShooterMotor))
-                .withPosition(3, 0)
-                .withSize(1, 1)
-                .withWidget(BuiltInWidgets.kGraph);
-        Shuffleboard.getTab("Testing")
-                .addNumber("Rear RPM", () -> getMotorRPM(rearShooterMotor))
-                .withPosition(5, 0)
-                .withSize(1, 1)
-                .withWidget(BuiltInWidgets.kGraph);
+    public void enableRejectBalls() {
+        rejectBalls = true;
+    }
+
+    public void disableRejectBalls() {
+        rejectBalls = false;
     }
 
     public void setShooter(ShooterState shooterState) {
         setShooterAngle(shooterState.angle);
-        setShooterRPMs(shooterState.rearShooterRPM, shooterState.frontShooterRPM);
+
+        if (rejectBalls) setShooterRPMs(shooterState.rearShooterRPM);
+        else setShooterRPMs(shooterState.rearShooterRPM, shooterState.frontShooterRPM);
+    }
+
+    public void setShooterRPMs(double rearShooterRPM) {
+        double rearFeedforward = (rearShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
+
+        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM) + rearFeedforward);
+
+        frontShooterMotor.stopMotor();
     }
 
     public void setShooterRPMs(double rearShooterRPM, double frontShooterRPM) {
@@ -130,6 +136,11 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
                         getMotorTargetRPM(frontShooterMotor), getFrontMotorRPM(), SHOOTER_RPM_ERROR);
     }
 
+    public boolean isShooting() {
+        return !(MathUtils.equalsWithinError(getMotorTargetRPM(rearShooterMotor), 0.0, SHOOTER_RPM_ERROR)
+                && MathUtils.equalsWithinError(getMotorTargetRPM(frontShooterMotor), 0.0, SHOOTER_RPM_ERROR));
+    }
+
     private double getMotorTargetRPM(WPI_TalonFX motor) {
         return talonUnitsToRPM(motor.getClosedLoopTarget());
     }
@@ -153,17 +164,16 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         distanceSupplier = Optional.empty();
     }
 
-    public void setRejectShot() {
-        // No need to change the shooter angle to reject a ball
-        setShooterRPMs(rejectShooterState.rearShooterRPM, rejectShooterState.frontShooterRPM);
-    }
-
     public void setFenderLowGoalShot() {
         setShooter(fenderLowGoalShooterState);
     }
 
     public void setFenderHighGoalShot() {
         setShooter(fenderHighGoalShooterState);
+    }
+
+    public void setSpitShot() {
+        setShooter(fenderSpitShooterState);
     }
 
     public ShooterState calculateShooterStateForDistance(double distance) {

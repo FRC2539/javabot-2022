@@ -125,7 +125,11 @@ public class AutonomousManager {
     private void shootBallsAndAim(SequentialCommandGroup command, double timeout, boolean stopShooting) {
         command.addCommands(new LimelightShootCommand(container.getShootingSuperstructure(), stopShooting)
                 .alongWith(new LimelightDriveCommand(
-                        () -> 0.0, () -> 0.0, container.getShootingSuperstructure(), container.getLightsSubsystem()))
+                        () -> 0.0,
+                        () -> 0.0,
+                        () -> 0.0,
+                        container.getShootingSuperstructure(),
+                        container.getLightsSubsystem()))
                 .withTimeout(timeout));
     }
 

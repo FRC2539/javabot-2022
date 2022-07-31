@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -82,6 +83,23 @@ public class ShootingSuperstructure {
 
     public void shootWithLimelight() {
         if (limelightSubsystem.isAimed() && shooterSubsystem.isShooterAtVelocity()) balltrackSubsystem.shootMode();
+    }
+
+    public void shootWithLimelightAndRejection() {
+        boolean isBallCorrectColor = balltrackSubsystem.getChamberBallColor() == DriverStation.getAlliance();
+
+        if (isBallCorrectColor) {
+            shooterSubsystem.disableRejectBalls();
+        } else {
+            shooterSubsystem.enableRejectBalls();
+        }
+
+        if (!isBallCorrectColor) {
+            balltrackSubsystem.shootMode();
+        } else {
+            if (limelightSubsystem.isAimed() && shooterSubsystem.isShooterAtVelocity()) balltrackSubsystem.shootMode();
+            else balltrackSubsystem.stopShootMode();
+        }
     }
 
     public void shootWithoutLimelight() {
