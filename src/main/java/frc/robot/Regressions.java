@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.team2539.cougarlib.control.InterpolatingMap;
 import frc.robot.util.ShooterState;
+import java.util.stream.Collectors;
 
 public class Regressions {
     public static double[][] practiceRegression = {
@@ -28,6 +29,18 @@ public class Regressions {
         }
 
         return shootingMap;
+    }
+
+    public static String stringifyMap(InterpolatingMap<ShooterState> shootingMap) {
+        String mapAsString = shootingMap.keySet().stream()
+                .map(key -> stringifyShooterMapEntry(key, shootingMap.get(key)))
+                .collect(Collectors.joining(", ", "{", "}"));
+
+        return mapAsString;
+    }
+
+    private static String stringifyShooterMapEntry(Double key, ShooterState shooterState) {
+        return key + ": " + "{" + shooterState.rearShooterRPM + ", " + shooterState.frontShooterRPM + "}";
     }
 
     public static InterpolatingMap<ShooterState> getPracticeShootingMap() {
