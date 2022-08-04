@@ -170,6 +170,12 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         return farShotStateMap.getInterpolated(distance).orElse(new ShooterState());
     }
 
+    public void modifyShooterStateForDistance(double distance, double modification) {
+        ShooterState ceilingShooterState =
+                farShotStateMap.ceilingEntry(distance).getValue();
+        ceilingShooterState.rearShooterRPM += modification;
+    }
+
     public void setFarShot(double distance) {
         setShooter(calculateShooterStateForDistance(distance));
     }

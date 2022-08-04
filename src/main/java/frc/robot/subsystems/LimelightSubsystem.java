@@ -26,6 +26,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private static double X_OFFSET_STEP = 0.2;
     private static double Y_OFFSET_STEP = 0.2;
 
+    private OptionalDouble storedLimelightDistance = OptionalDouble.empty();
+
     private double xOffset = 0.2;
     private double yOffset = 0;
 
@@ -187,6 +189,14 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     public void stopTakingSnapshots() {
         snapshotEntry.setNumber(0);
+    }
+
+    public void storeCurrentShotDistance() {
+        storedLimelightDistance = getDistanceToTarget();
+    }
+
+    public OptionalDouble getStoredShotDistance() {
+        return storedLimelightDistance;
     }
 
     @Override

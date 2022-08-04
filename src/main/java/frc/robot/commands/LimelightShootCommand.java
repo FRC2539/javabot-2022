@@ -33,5 +33,7 @@ public class LimelightShootCommand extends CommandBase {
     public void end(boolean interrupted) {
         if (stopShooting) shootingSuperstructure.stopShooting();
         else shootingSuperstructure.stopShootingMaintainSpeed();
+
+        shootingSuperstructure.storeCurrentShotDistance();
     }
 }
