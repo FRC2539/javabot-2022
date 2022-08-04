@@ -10,16 +10,14 @@ public class LoggingManager {
 
     private static Optional<DataLog> log = Optional.empty();
 
-    static {
-        if (RobotBase.isReal() || FORCE_LOGGING) {
+    public static Optional<DataLog> getLog() {
+        if (log.isEmpty() && (RobotBase.isReal() || FORCE_LOGGING)) {
             // Disable network tables logging, as we use network tables intensively
             DataLogManager.logNetworkTables(false);
 
             log = Optional.of(DataLogManager.getLog());
         }
-    }
 
-    public static Optional<DataLog> getLog() {
         return log;
     }
 
