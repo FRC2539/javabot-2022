@@ -10,6 +10,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.ShootingComponent;
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 public class ShootingSuperstructure {
     private BalltrackSubsystem balltrackSubsystem;
@@ -95,6 +96,14 @@ public class ShootingSuperstructure {
 
     public void stopShootingMaintainSpeed() {
         balltrackSubsystem.stopShootMode();
+    }
+
+    public void storeCurrentShotDistance() {
+        limelightSubsystem.storeCurrentShotDistance();
+    }
+
+    public OptionalDouble getStoredShotDistance() {
+        return limelightSubsystem.getStoredShotDistance();
     }
 
     public ChassisSpeeds getSmoothedRobotVelocity() {
