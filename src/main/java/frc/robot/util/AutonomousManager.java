@@ -52,6 +52,15 @@ public class AutonomousManager {
         //         EntryListenerFlags.kNew | EntryListenerFlags.kUpdate | EntryListenerFlags.kImmediate);
     }
 
+    public Command funStuffCommand() {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, trajectoryLoader.getFunStuff());
+        followAndIntake(command, trajectoryLoader.getFunStuff());
+
+        return command;
+    }
+
     public Command getTwoBallCommand() {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
