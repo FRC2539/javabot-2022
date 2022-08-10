@@ -102,6 +102,10 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
                 .withWidget(BuiltInWidgets.kGraph);
     }
 
+    public InterpolatingMap<ShooterState> getShooterMap() {
+        return farShotStateMap;
+    }
+
     public void setShooter(ShooterState shooterState) {
         setShooterAngle(shooterState.angle);
         setShooterRPMs(shooterState.rearShooterRPM, shooterState.frontShooterRPM);
