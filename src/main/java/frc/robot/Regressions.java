@@ -40,7 +40,7 @@ public class Regressions {
     }
 
     private static String stringifyShooterMapEntry(Double key, ShooterState shooterState) {
-        return key + ": " + "{" + shooterState.rearShooterRPM + ", " + shooterState.frontShooterRPM + "}";
+        return "\"" + key + "\": " + "[" + shooterState.rearShooterRPM + ", " + shooterState.frontShooterRPM + "]";
     }
 
     public static InterpolatingMap<ShooterState> getPracticeShootingMap() {
