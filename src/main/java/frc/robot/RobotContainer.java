@@ -102,8 +102,6 @@ public class RobotContainer {
         operatorController.getY().whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 100));
         operatorController.getA().whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, -100));
 
-        operatorController.getRightJoystick().whenPressed(new SendShooterMapCommand(shooterSubsystem));
-
         operatorController.getStart().whenPressed(new EnableTemperatureLogging(swerveDriveSubsystem));
         operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));
     }
