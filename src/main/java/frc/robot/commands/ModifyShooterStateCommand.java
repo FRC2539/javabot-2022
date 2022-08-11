@@ -10,17 +10,20 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class ModifyShooterStateCommand extends InstantCommand {
     private ShooterSubsystem shooterSubsystem;
     private ShootingSuperstructure shootingSuperstructure;
-    private double modificationFactor;
+    private double rearModificationFactor;
+    private double frontModificationFactor;
 
     private NetworkTableEntry shooterMapEntry;
 
     public ModifyShooterStateCommand(
             ShooterSubsystem shooterSubsystem,
             ShootingSuperstructure shootingSuperstructure,
-            double modificationFactor) {
+            double rearModificationFactor,
+            double frontModificationFactor) {
         this.shooterSubsystem = shooterSubsystem;
         this.shootingSuperstructure = shootingSuperstructure;
-        this.modificationFactor = modificationFactor;
+        this.rearModificationFactor = rearModificationFactor;
+        this.frontModificationFactor = frontModificationFactor;
 
         shooterMapEntry = NetworkTableInstance.getDefault().getTable("Commands").getEntry("shooterMap");
     }
@@ -29,7 +32,7 @@ public class ModifyShooterStateCommand extends InstantCommand {
     public void initialize() {
         if (shootingSuperstructure.getStoredShotDistance().isPresent())
             shooterSubsystem.modifyShooterStateForDistance(
-                    shootingSuperstructure.getStoredShotDistance().getAsDouble(), modificationFactor);
+                    shootingSuperstructure.getStoredShotDistance().getAsDouble(), rearModificationFactor, frontModificationFactor);
 
         shooterMapEntry.setString(Regressions.stringifyMap(shooterSubsystem.getShooterMap()));
     }
