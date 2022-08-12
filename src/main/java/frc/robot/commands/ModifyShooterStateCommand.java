@@ -32,7 +32,9 @@ public class ModifyShooterStateCommand extends InstantCommand {
     public void initialize() {
         if (shootingSuperstructure.getStoredShotDistance().isPresent())
             shooterSubsystem.modifyShooterStateForDistance(
-                    shootingSuperstructure.getStoredShotDistance().getAsDouble(), rearModificationFactor, frontModificationFactor);
+                    shootingSuperstructure.getStoredShotDistance().getAsDouble(),
+                    rearModificationFactor,
+                    frontModificationFactor);
 
         shooterMapEntry.setString(Regressions.stringifyMap(shooterSubsystem.getShooterMap()));
     }
