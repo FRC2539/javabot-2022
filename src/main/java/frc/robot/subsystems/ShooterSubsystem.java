@@ -177,6 +177,7 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
     public void modifyShooterStateForDistance(double distance, double rearModification, double frontModification) {
         ShooterState ceilingShooterState =
                 farShotStateMap.ceilingEntry(distance).getValue();
+
         ceilingShooterState.rearShooterRPM += rearModification;
         ceilingShooterState.frontShooterRPM += frontModification;
     }
