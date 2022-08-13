@@ -120,9 +120,11 @@ public class AutonomousManager {
     public Command getAccelerationTestCommand() {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, trajectoryLoader.getAccelerationTesting());
+        resetRobotPose(command, trajectoryLoader.getAccelTesting1());
 
-        follow(command, trajectoryLoader.getAccelerationTesting());
+        follow(command, trajectoryLoader.getAccelTesting1());
+
+        follow(command, trajectoryLoader.getAccelTesting2());
 
         return command;
     }
