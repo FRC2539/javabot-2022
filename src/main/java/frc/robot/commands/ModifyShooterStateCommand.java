@@ -13,7 +13,8 @@ public class ModifyShooterStateCommand extends InstantCommand {
     private double rearModificationFactor;
     private double frontModificationFactor;
 
-    private NetworkTableEntry shooterMapEntry;
+    private NetworkTableEntry shooterMapEntry =
+            NetworkTableInstance.getDefault().getTable("Commands").getEntry("shooterMap");
 
     public ModifyShooterStateCommand(
             ShooterSubsystem shooterSubsystem,
@@ -24,17 +25,14 @@ public class ModifyShooterStateCommand extends InstantCommand {
         this.shootingSuperstructure = shootingSuperstructure;
         this.rearModificationFactor = rearModificationFactor;
         this.frontModificationFactor = frontModificationFactor;
-
-        shooterMapEntry = NetworkTableInstance.getDefault().getTable("Commands").getEntry("shooterMap");
     }
 
     @Override
     public void initialize() {
-        if (shootingSuperstructure.getStoredShotDistance().isPresent())
-            shooterSubsystem.modifyShooterStateForDistance(
-                    shootingSuperstructure.getStoredShotDistance().getAsDouble(),
-                    rearModificationFactor,
-                    frontModificationFactor);
+        shooterSubsystem.modifyShooterStateForDistance(
+                shootingSuperstructure.getStoredShotDistance().orElse(0),
+                rearModificationFactor,
+                frontModificationFactor);
 
         shooterMapEntry.setString(Regressions.stringifyMap(shooterSubsystem.getShooterMap()));
     }
