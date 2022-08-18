@@ -55,8 +55,9 @@ public class ObjectTracker {
         Translation2d changeInPosition = new Translation2d(
                         lastKnownVelocity.vxMetersPerSecond, lastKnownVelocity.vyMetersPerSecond)
                 .times(seconds);
-        objectPosition = objectPosition.transformBy(new Transform2d(changeInPosition, new Rotation2d()));
-        robotRotation = robotRotation.rotateBy(new Rotation2d(lastKnownVelocity.omegaRadiansPerSecond * seconds));
-        return objectPosition.transformBy(new Transform2d(new Translation2d(), robotRotation));
+        Pose2d tempObjectPosition = objectPosition.transformBy(new Transform2d(changeInPosition, new Rotation2d()));
+        Rotation2d tempRobotRotation =
+                robotRotation.rotateBy(new Rotation2d(lastKnownVelocity.omegaRadiansPerSecond * seconds));
+        return tempObjectPosition.transformBy(new Transform2d(new Translation2d(), tempRobotRotation));
     }
 }
