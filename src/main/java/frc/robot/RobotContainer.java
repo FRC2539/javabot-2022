@@ -79,10 +79,7 @@ public class RobotContainer {
 
         LimelightShootCommand limelightShootCommand = new LimelightShootCommand(shootingSuperstructure);
 
-        leftDriveController
-                .getTrigger()
-                .whileHeld(
-                        limelightShootCommand);
+        leftDriveController.getTrigger().whileHeld(limelightShootCommand);
         rightDriveController
                 .getTrigger()
                 .whileHeld(
