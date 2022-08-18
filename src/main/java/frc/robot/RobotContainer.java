@@ -77,14 +77,16 @@ public class RobotContainer {
 
         leftDriveController.getLeftTopRight().whenPressed(new SeizureModeCommand(lightsSubsystem));
 
+        LimelightShootCommand limelightShootCommand = new LimelightShootCommand(shootingSuperstructure);
+
         leftDriveController
                 .getTrigger()
                 .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderHighGoalShot()));
+                        limelightShootCommand);
         rightDriveController
                 .getTrigger()
                 .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderLowGoalShot()));
+                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderHighGoalShot()));
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
         rightDriveController
@@ -95,7 +97,7 @@ public class RobotContainer {
                 .getRightThumb()
                 .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
 
-        operatorController.getRightTrigger().whileHeld(new LimelightShootCommand(shootingSuperstructure));
+        operatorController.getRightTrigger().whileHeld(limelightShootCommand);
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
         operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
 
