@@ -10,8 +10,8 @@ public class TrajectoryLoader {
     private static final String FIVE_BALL_1_PATH = "fiveball 1";
     private static final String FIVE_BALL_2_PATH = "fiveball 2";
     private static final String FOUR_BALL_PATH = "fourball 1";
-    private static final String TEST_ACCEL_1_PATH = "test accel 1";
-    private static final String TEST_ACCEL_2_PATH = "test accel 2";
+    private static final String TEST_ACCEL_1_PATH = "testing 1";
+    private static final String TEST_ACCEL_2_PATH = "testing 2";
 
     private LazyPathPlannerTrajectory threeBall;
     private LazyPathPlannerTrajectory twoBall;
@@ -24,9 +24,9 @@ public class TrajectoryLoader {
     private LazyPathPlannerTrajectory accelTesting2;
 
     public TrajectoryLoader() {
-        threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 2.5);
-        twoBall = new LazyPathPlannerTrajectory(TWO_BALL_PATH, 5, 2.5);
-        twoBallFar = new LazyPathPlannerTrajectory(TWO_BALL_FAR_PATH, 5, 2.5);
+        threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 8.0);
+        twoBall = new LazyPathPlannerTrajectory(TWO_BALL_PATH, 5, 8.0); //lower accel
+        twoBallFar = new LazyPathPlannerTrajectory(TWO_BALL_FAR_PATH, 5, 8.0);
         fiveBall = new LazyPathPlannerTrajectory(FIVE_BALL_PATH, 5, 2.5);
         fourBall = new LazyPathPlannerTrajectory(FOUR_BALL_PATH, 5, 2.5);
         fiveBall1 = new LazyPathPlannerTrajectory(FIVE_BALL_1_PATH, 5, 2.5);
