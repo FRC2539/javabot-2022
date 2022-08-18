@@ -67,12 +67,6 @@ public class ShootingSuperstructure {
         shooterSubsystem.setFarShot(limelightSubsystem.getMeasuredDistanceSupplier());
     }
 
-    public void spinupShooterWithLimelightPrediction() {
-        activateShootingPipeline();
-
-        shooterSubsystem.setFarShot(limelightSubsystem.getPredictedDistanceSupplier());
-    }
-
     public void prepareBallsToShoot() {
         balltrackSubsystem.setBalltrackMode(BalltrackMode.PREPARE);
     }

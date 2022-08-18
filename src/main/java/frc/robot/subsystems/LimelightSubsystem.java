@@ -3,10 +3,6 @@ package frc.robot.subsystems;
 import com.team2539.cougarlib.MathUtils;
 import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;
@@ -31,16 +27,10 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private double xOffset = 0.2;
     private double yOffset = 0;
 
-    private static double lookaheadTime = 0.1; // tune this number to improve shooting with moving
-
-    private OptionalDouble predictedDistanceToTarget = OptionalDouble.empty();
-    private OptionalDouble predictedHorizontalAngle = OptionalDouble.empty();
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
-    private OptionalDouble predictedTargetAngleOffset = OptionalDouble.empty();
     private Pose2d robotRelativePoseEstimate = null;
 
     private boolean isAimed = false;
-    private boolean isAimedToPrediction = false;
 
     private double horizontalAngle = Double.NaN;
     private double verticalAngle = Double.NaN;
@@ -53,9 +43,6 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private NetworkTableEntry xOffsetEntry;
     private NetworkTableEntry yOffsetEntry;
     private NetworkTableEntry distanceEntry;
-    private NetworkTableEntry predictedDistanceEntry;
-    private NetworkTableEntry predictedAngleEntry;
-    private NetworkTableEntry predictedTargetAngleOffsetEntry;
 
     public LimelightSubsystem() {
         super("limelight");
@@ -68,9 +55,6 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         xOffsetEntry = getEntry("xOffset");
         yOffsetEntry = getEntry("yOffset");
         distanceEntry = getEntry("distance");
-        predictedDistanceEntry = getEntry("predictedDistance");
-        predictedAngleEntry = getEntry("predictedAngle");
-        predictedTargetAngleOffsetEntry = getEntry("predictedTargetAngleOffsetEntry");
 
         xOffsetEntry.setDouble(xOffset);
         yOffsetEntry.setDouble(yOffset);
@@ -90,10 +74,6 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         return this.isAimed;
     }
 
-    public boolean isAimedToPrediction() {
-        return this.isAimedToPrediction;
-    }
-
     public OptionalDouble calculateDistanceToTarget() {
         if (hasTarget())
             return OptionalDouble.of(
@@ -105,67 +85,12 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         return distanceToTarget;
     }
 
-    public OptionalDouble getPredictedDistanceToTarget() {
-        return predictedDistanceToTarget;
-    }
-
-    public OptionalDouble getPredictedHorizontalAngle() {
-        return predictedHorizontalAngle;
-    }
-
-    public OptionalDouble getPredictedTargetAngleOffset() {
-        return predictedTargetAngleOffset;
-    }
-
     public Pose2d getRobotRelativePoseEstimate() {
         return robotRelativePoseEstimate;
     }
 
     public DoubleSupplier getMeasuredDistanceSupplier() {
         return () -> getDistanceToTarget().orElse(0);
-    }
-
-    public DoubleSupplier getPredictedDistanceSupplier() {
-        return () -> getPredictedDistanceToTarget().orElse(0);
-    }
-
-    public void updatePredictedLimelightMeasurements() {
-        if (hasTarget() && getDistanceToTarget().isPresent()) {
-            // Create a pose object that represents the robot relative to the target
-            robotRelativePoseEstimate = new Pose2d(
-                    new Translation2d(getDistanceToTarget().getAsDouble(), new Rotation2d(getHorizontalAngle())),
-                    new Rotation2d());
-
-            ChassisSpeeds robotRelativeVelocity = shootingSuperstructure.getSmoothedRobotVelocity();
-
-            // Using the current velocity, estimate how the pose of the robot will change `lookaheadTime` seconds in the
-            // future
-            Transform2d estimatedTransform = new Transform2d(
-                            new Translation2d(
-                                    robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond),
-                            new Rotation2d(robotRelativeVelocity.omegaRadiansPerSecond))
-                    .times(lookaheadTime);
-
-            Pose2d predictedPoseEstimate = robotRelativePoseEstimate.transformBy(estimatedTransform);
-
-            predictedDistanceToTarget =
-                    OptionalDouble.of(predictedPoseEstimate.getTranslation().getNorm());
-
-            double predictedChangeInRobotAngle =
-                    predictedPoseEstimate.getRotation().getRadians();
-            double predictedChangeInAngleToTarget =
-                    new Rotation2d(predictedPoseEstimate.getX(), predictedPoseEstimate.getY()).getRadians();
-
-            // Predict the horizontal offset the limelight will see `lookaheadTime` seconds in the future
-            predictedHorizontalAngle = OptionalDouble.of(predictedChangeInAngleToTarget - predictedChangeInRobotAngle);
-
-            // Calculate the angle that the robot would need to face to be aimed at the predicted target
-            predictedTargetAngleOffset = OptionalDouble.of(getHorizontalAngle() - predictedHorizontalAngle.orElse(0));
-
-            isAimedToPrediction = hasTarget()
-                    && MathUtils.equalsWithinError(
-                            predictedTargetAngleOffset.getAsDouble(), getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
-        }
     }
 
     public void setPipeline(LimelightPipeline pipeline) {
@@ -206,18 +131,11 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
         distanceToTarget = calculateDistanceToTarget();
         isAimed = hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
-
-        updatePredictedLimelightMeasurements();
     }
 
     @Override
     public void periodic() {
         distanceEntry.setDouble(distanceToTarget.orElse(0));
-
-        predictedDistanceEntry.setDouble(predictedDistanceToTarget.orElse(0));
-        predictedAngleEntry.setDouble(predictedHorizontalAngle.orElse(0));
-
-        predictedTargetAngleOffsetEntry.setDouble(predictedTargetAngleOffset.orElse(0));
     }
 
     public void incrementXOffset() {
