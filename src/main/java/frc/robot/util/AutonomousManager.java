@@ -23,7 +23,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "acceleration test"};
+    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball"};
 
     // private Command selectedAutonomousCommand;
 
@@ -117,18 +117,6 @@ public class AutonomousManager {
         return command;
     }
 
-    public Command getAccelerationTestCommand() {
-        SequentialCommandGroup command = new SequentialCommandGroup();
-
-        resetRobotPose(command, trajectoryLoader.getAccelTesting1());
-
-        follow(command, trajectoryLoader.getAccelTesting1());
-
-        follow(command, trajectoryLoader.getAccelTesting2());
-
-        return command;
-    }
-
     private void shootBalls(SequentialCommandGroup command, double timeout) {
         command.addCommands(
                 new LimelightShootCommand(container.getShootingSuperstructure(), true).withTimeout(timeout));
@@ -192,8 +180,6 @@ public class AutonomousManager {
                 return getFiveBallCommand();
             case "fourball":
                 return getFourBallCommand();
-            case "acceleration test":
-                return getAccelerationTestCommand();
         }
 
         // Return an empty command group if no auto is specified
