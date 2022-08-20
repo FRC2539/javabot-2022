@@ -23,7 +23,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball"};
+    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal"};
 
     // private Command selectedAutonomousCommand;
 
@@ -117,6 +117,19 @@ public class AutonomousManager {
         return command;
     }
 
+    private Command getTwoBallStealCommand() {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, trajectoryLoader.getTwoBallFar());
+
+        followAndIntake(command, trajectoryLoader.getTwoBallFar());
+        shootBallsAndAim(command, 2, true);
+
+        followAndIntake(command, trajectoryLoader.getTwoBallSteal());
+
+        return command;
+    }
+
     private void shootBalls(SequentialCommandGroup command, double timeout) {
         command.addCommands(
                 new LimelightShootCommand(container.getShootingSuperstructure(), true).withTimeout(timeout));
@@ -180,6 +193,8 @@ public class AutonomousManager {
                 return getFiveBallCommand();
             case "fourball":
                 return getFourBallCommand();
+            case "twoballsteal":
+                return getTwoBallStealCommand();
         }
 
         // Return an empty command group if no auto is specified
