@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-/**THIS CLASS REQUIRES TESTING!!!!*/
 public class ObjectTracker {
 
     private double period;
@@ -18,7 +17,7 @@ public class ObjectTracker {
     private Rotation2d robotRotation;
 
     public ObjectTracker() {
-        this(0.005);
+        this(0.05);
     }
 
     public ObjectTracker(double period) {
@@ -34,30 +33,38 @@ public class ObjectTracker {
 
     public Pose2d calculate(ChassisSpeeds robotVelocityRelative) {
         lastKnownVelocity = robotVelocityRelative;
-        Translation2d changeInPosition = new Translation2d(
-                        lastKnownVelocity.vxMetersPerSecond, lastKnownVelocity.vyMetersPerSecond)
-                .times(period);
-        objectPosition = objectPosition.transformBy(new Transform2d(changeInPosition, new Rotation2d()));
-        robotRotation = robotRotation.rotateBy(new Rotation2d(lastKnownVelocity.omegaRadiansPerSecond * period));
-        return objectPosition.transformBy(new Transform2d(new Translation2d(), robotRotation));
+        return calculate();
     }
 
     public Pose2d calculate() {
-        Translation2d changeInPosition = new Translation2d(
-                        lastKnownVelocity.vxMetersPerSecond, lastKnownVelocity.vyMetersPerSecond)
-                .times(period);
-        objectPosition = objectPosition.transformBy(new Transform2d(changeInPosition, new Rotation2d()));
-        robotRotation = robotRotation.rotateBy(new Rotation2d(lastKnownVelocity.omegaRadiansPerSecond * period));
-        return objectPosition.transformBy(new Transform2d(new Translation2d(), robotRotation));
+        objectPosition = getFutureObjectTranslation(lastKnownVelocity, period);
+        robotRotation = getFutureObjectRotation(lastKnownVelocity, period);
+        return rotatePoseByRotation(objectPosition, robotRotation);
     }
 
     public Pose2d predict(double seconds) {
-        Translation2d changeInPosition = new Translation2d(
-                        lastKnownVelocity.vxMetersPerSecond, lastKnownVelocity.vyMetersPerSecond)
-                .times(seconds);
-        Pose2d tempObjectPosition = objectPosition.transformBy(new Transform2d(changeInPosition, new Rotation2d()));
+        Pose2d tempObjectPosition = getFutureObjectTranslation(lastKnownVelocity, seconds);
+        Rotation2d tempRobotRotation = getFutureObjectRotation(lastKnownVelocity, seconds);
+        return rotatePoseByRotation(tempObjectPosition, tempRobotRotation);
+    }
+
+    private Pose2d rotatePoseByRotation(Pose2d pose, Rotation2d rotation) {
+        return new Pose2d(
+                pose.getTranslation().rotateBy(rotation.times(-1)),
+                pose.getRotation().minus(rotation));
+    }
+
+    private Pose2d getFutureObjectTranslation(ChassisSpeeds velocity, double seconds) {
+        Translation2d changeInObjectPosition =
+                new Translation2d(velocity.vxMetersPerSecond, velocity.vyMetersPerSecond).times(seconds * -1);
+        Pose2d tempObjectPosition =
+                objectPosition.transformBy(new Transform2d(changeInObjectPosition, new Rotation2d()));
+        return tempObjectPosition;
+    }
+
+    private Rotation2d getFutureObjectRotation(ChassisSpeeds velocity, double seconds) {
         Rotation2d tempRobotRotation =
                 robotRotation.rotateBy(new Rotation2d(lastKnownVelocity.omegaRadiansPerSecond * seconds));
-        return tempObjectPosition.transformBy(new Transform2d(new Translation2d(), tempRobotRotation));
+        return tempRobotRotation;
     }
 }
