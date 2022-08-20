@@ -25,7 +25,7 @@ public class TrajectoryLoader {
 
     public TrajectoryLoader() {
         threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 8.0);
-        twoBall = new LazyPathPlannerTrajectory(TWO_BALL_PATH, 5, 8.0); //lower accel
+        twoBall = new LazyPathPlannerTrajectory(TWO_BALL_PATH, 5, 6.0);
         twoBallFar = new LazyPathPlannerTrajectory(TWO_BALL_FAR_PATH, 5, 8.0);
         fiveBall = new LazyPathPlannerTrajectory(FIVE_BALL_PATH, 5, 2.5);
         fourBall = new LazyPathPlannerTrajectory(FOUR_BALL_PATH, 5, 2.5);
