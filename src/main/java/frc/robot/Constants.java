@@ -1,9 +1,12 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 public final class Constants {
     public static final class GlobalConstants {
         public static final String CANIVORE_NAME = "CANivore";
         public static final int PCM_ID = 17;
+        public static final Translation2d goalLocation = new Translation2d(8.23, 4.115);
     }
 
     public static final class SwerveConstants {

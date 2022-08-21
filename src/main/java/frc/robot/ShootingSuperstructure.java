@@ -1,7 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.robot.Constants.GlobalConstants;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -102,6 +104,16 @@ public class ShootingSuperstructure {
 
     public ChassisSpeeds getSmoothedRobotVelocity() {
         return swerveDriveSubsystem.getSmoothedVelocity();
+    }
+
+    public Optional<Translation2d> getLimelightPositionEstimate() {
+        if(!limelightSubsystem.hasTarget()) return Optional.empty();
+        else {
+            Rotation2d robotAngle = swerveDriveSubsystem.getGyroRotation2d().plus(Rotation2d.fromDegrees(-limelightSubsystem.getHorizontalAngle()));
+            Translation2d originBasedRobotTranslation = new Translation2d(limelightSubsystem.getDistanceToTarget().orElse(0), robotAngle);
+            
+            return Optional.of(GlobalConstants.goalLocation.plus(originBasedRobotTranslation));
+        }
     }
 
     public void rotateAroundTarget() {
