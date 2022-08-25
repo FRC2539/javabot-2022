@@ -1,8 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.BalltrackSubsystem.BalltrackMode;
@@ -106,13 +108,30 @@ public class ShootingSuperstructure {
         return swerveDriveSubsystem.getSmoothedVelocity();
     }
 
-    public Optional<Translation2d> getLimelightPositionEstimate() {
-        if(!limelightSubsystem.hasTarget()) return Optional.empty();
+    public Optional<Pose2d> getLimelightPoseEstimate() {
+        if (!limelightSubsystem.hasTarget()) return Optional.empty();
         else {
-            Rotation2d robotAngle = swerveDriveSubsystem.getGyroRotation2d().plus(Rotation2d.fromDegrees(-limelightSubsystem.getHorizontalAngle()));
-            Translation2d originBasedRobotTranslation = new Translation2d(limelightSubsystem.getDistanceToTarget().orElse(0), robotAngle);
-            
-            return Optional.of(GlobalConstants.goalLocation.plus(originBasedRobotTranslation));
+            Rotation2d robotAngle = swerveDriveSubsystem
+                    .getGyroRotation2d()
+                    .plus(Rotation2d.fromDegrees(-limelightSubsystem.getHorizontalAngle()));
+            Translation2d originBasedRobotTranslation =
+                    new Translation2d(limelightSubsystem.getDistanceToTarget().orElse(0), robotAngle);
+
+            return Optional.of(new Pose2d(
+                    GlobalConstants.goalLocation.plus(originBasedRobotTranslation),
+                    swerveDriveSubsystem.getGyroRotation2d()));
+        }
+    }
+
+    public void updatePoseEstimateWithLimelightData() {
+        if (limelightSubsystem.isAimed()) {
+            Optional<Pose2d> limelightPose = getLimelightPoseEstimate();
+
+            if (limelightPose.isPresent()) {
+                swerveDriveSubsystem
+                        .getPoseEstimator()
+                        .addVisionMeasurement(limelightPose.get(), Timer.getFPGATimestamp());
+            }
         }
     }
 

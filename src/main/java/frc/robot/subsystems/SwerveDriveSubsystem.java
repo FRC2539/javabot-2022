@@ -8,20 +8,23 @@ import com.team2539.cougarswervelib.Mk4ModuleConfiguration;
 import com.team2539.cougarswervelib.Mk4SwerveModuleHelper;
 import com.team2539.cougarswervelib.SdsModuleConfigurations;
 import com.team2539.cougarswervelib.SwerveModule;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TimesliceConstants;
@@ -69,8 +72,16 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     private final AHRS gyroscope = new AHRS();
 
-    private final SwerveDriveOdometry swerveOdometry =
-            new SwerveDriveOdometry(swerveKinematics, new Rotation2d(), new Pose2d());
+    // private final SwerveDriveOdometry swerveOdometry =
+    //         new SwerveDriveOdometry(swerveKinematics, new Rotation2d(), new Pose2d());
+
+    private final SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
+            getGyroRotation2d(),
+            new Pose2d(),
+            swerveKinematics,
+            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
+            VecBuilder.fill(Units.degreesToRadians(0.01)),
+            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)));
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
 
@@ -165,6 +176,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vy.setDouble(0);
 
         startLoggingTemperatures();
+
+        SmartDashboard.putData(fieldWidget);
     }
 
     public void startLoggingTemperatures() {
@@ -183,6 +196,10 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         TEMPERATURE_LOGGING_ENABLED = true;
 
         startLoggingTemperatures();
+    }
+
+    public SwerveDrivePoseEstimator getPoseEstimator() {
+        return swervePoseEstimator;
     }
 
     public Pose2d getPose() {
@@ -219,7 +236,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     public void resetPose(Pose2d pose) {
         this.pose = pose;
-        swerveOdometry.resetPosition(pose, getGyroRotation2d());
+        swervePoseEstimator.resetPosition(pose, getGyroRotation2d());
     }
 
     public void resetDriveEncoders() {
@@ -268,7 +285,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
         velocityEstimator.add(velocity);
 
-        pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
+        pose = swervePoseEstimator.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
     }
 
     private void updateModules(SwerveDriveSignal driveSignal) {
@@ -378,7 +395,9 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             steerTemperaturesLogEntry.append(steerTemperatures);
         }
 
-        fieldWidget.setRobotPose(swerveOdometry.getPoseMeters());
+        // fieldWidget.setRobotPose(swervePoseEstimator.getEstimatedPosition());
+        fieldWidget.setRobotPose(
+                shootingSuperstructure.getLimelightPoseEstimate().orElse(new Pose2d()));
     }
 
     public TrajectoryFollower getFollower() {
