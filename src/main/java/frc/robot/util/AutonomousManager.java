@@ -14,6 +14,8 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LimelightDriveCommand;
 import frc.robot.commands.LimelightShootCommand;
 import frc.robot.commands.PrepareToShootCommand;
+import frc.robot.command.ReverseBalltrackCommand;
+import frc.robot.command.SimpleShootCommand;
 
 public class AutonomousManager {
     private TrajectoryLoader trajectoryLoader;
@@ -23,7 +25,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal"};
+    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"};
 
     // private Command selectedAutonomousCommand;
 
@@ -126,8 +128,34 @@ public class AutonomousManager {
         shootBallsAndAim(command, 2, true);
 
         followAndIntake(command, trajectoryLoader.getTwoBallSteal());
+        shootWithoutLimelight(command, 2);
 
         return command;
+    }
+
+    private Command getOneBallStealCommand() {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, trajectoryLoader.getTwoBallFar());
+
+        followAndIntake(command, trajectoryLoader.getTwoBallFar());
+        shootBallsAndAim(command, 2, true);
+
+        followAndIntakeWithTimeout(command, trajectoryLoader.getOneBallSteal(), 2);
+        reverseIntake(command, 2);
+
+        return command;
+    }
+
+    private void shootWithoutLimelight(SequentialCommandGroup command, double timeout) {
+        command.addCommands(
+            new SimpleShootCommand(container.getShootingSuperstructure(), () -> shooterSubsystem.setFenderLowGoalShot())
+            .withTimeout(timeout)
+        );
+    }
+
+    private void reverseIntake(SequentialCommandGroup command, double timeout) {
+        command.addCommands(new ReverseBalltrackCommand(container.getBalltrackSubsystem()).withTimeout(timeout));
     }
 
     private void shootBalls(SequentialCommandGroup command, double timeout) {
@@ -195,6 +223,8 @@ public class AutonomousManager {
                 return getFourBallCommand();
             case "twoballsteal":
                 return getTwoBallStealCommand();
+            case "oneballsteal":
+                return getOneBallStealCommand();
         }
 
         // Return an empty command group if no auto is specified
