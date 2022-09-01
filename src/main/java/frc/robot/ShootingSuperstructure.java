@@ -149,4 +149,8 @@ public class ShootingSuperstructure {
     public void stopRotatingAroundTarget() {
         swerveDriveSubsystem.setAxisOfRotation(Optional.empty());
     }
+
+    public boolean hasTarget() {
+        return limelightSubsystem.hasTarget();
+    }
 }

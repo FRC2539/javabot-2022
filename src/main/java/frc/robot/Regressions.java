@@ -1,9 +1,9 @@
 package frc.robot;
 
 import com.team2539.cougarlib.control.InterpolatingMap;
+import frc.robot.util.InterpolatableDouble;
 import frc.robot.util.ShooterState;
 import java.util.stream.Collectors;
-import frc.robot.util.InterpolatableDouble;
 
 public class Regressions {
     public static double[][] practiceRegression = {
@@ -22,12 +22,12 @@ public class Regressions {
         {6.03, 4200, 2000},
     };
 
-    //this is test data, we have not gotten actual data yet
+    // this is test data, we have not gotten actual data yet
     public static double[][] shootingTimeRegression = {
         {0, 0},
-        {1,1},
-        {2,2},
-        {10,11}
+        {1, 1},
+        {2, 2},
+        {10, 11}
     };
 
     public static InterpolatingMap<ShooterState> loadShootingMap(double[][] regression) {

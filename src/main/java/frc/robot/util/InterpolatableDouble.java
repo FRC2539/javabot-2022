@@ -16,8 +16,7 @@ public class InterpolatableDouble implements Interpolatable<InterpolatableDouble
 
     public InterpolatableDouble interpolate(InterpolatableDouble otherState, double t) {
         // Linearly interpolate between the values
-        return new InterpolatableDouble(
-                MathUtil.interpolate(this.value, otherState.value, t));
+        return new InterpolatableDouble(MathUtil.interpolate(this.value, otherState.value, t));
     }
 
     @Override
