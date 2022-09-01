@@ -32,7 +32,7 @@ public class ShootingSuperstructure {
             case "Shooter":
                 shooterSubsystem = (ShooterSubsystem) component;
                 break;
-            case "Swerve Drive":
+            case "Swerve":
                 swerveDriveSubsystem = (SwerveDriveSubsystem) component;
                 break;
             default:

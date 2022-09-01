@@ -17,7 +17,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.Constants.TimesliceConstants;
 import frc.robot.SwerveModule;
@@ -80,10 +79,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
     private boolean TEMPERATURE_LOGGING_ENABLED = false;
 
-    private Field2d fieldWidget = new Field2d();
-
     public SwerveDriveSubsystem() {
-        super("Swerve Drive");
+        super("Swerve");
 
         modules = new SwerveModule[] {
             new SwerveModule(0, Constants.SwerveConstants.Mod0.constants),
@@ -277,13 +274,13 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     @Override
     public void periodic() {
+        Pose2d pose = getPose();
+
+        odometryXEntry.setDouble(pose.getX());
+        odometryYEntry.setDouble(pose.getY());
+        odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
+
         if (LOG_TRAJECTORY_INFO) {
-            Pose2d pose = getPose();
-
-            odometryXEntry.setDouble(pose.getX());
-            odometryYEntry.setDouble(pose.getY());
-            odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
-
             if (follower.getLastState() == null) {
                 trajectoryXEntry.setDouble(0);
                 trajectoryYEntry.setDouble(0);
@@ -308,8 +305,6 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             driveTemperaturesLogEntry.append(driveTemperatures);
             steerTemperaturesLogEntry.append(steerTemperatures);
         }
-
-        fieldWidget.setRobotPose(swerveOdometry.getPoseMeters());
     }
 
     public TrajectoryFollower getFollower() {
