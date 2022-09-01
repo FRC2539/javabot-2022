@@ -24,12 +24,19 @@ public class SwerveModuleConstants {
         this.angleOffset = angleOffset;
     }
 
-    public SwerveModuleConstants(int driveMotorID, int angleMotorID, int canCoderID, double angleOffset, String canivoreName) {
+    public SwerveModuleConstants(
+            int driveMotorID, int angleMotorID, int canCoderID, double angleOffset, String canivoreName) {
         this(driveMotorID, angleMotorID, canCoderID, angleOffset);
         this.canivoreName = Optional.of(canivoreName);
     }
 
-    public SwerveModuleConstants(int driveMotorID, int angleMotorID, int canCoderID, double angleOffset, String canivoreName, boolean inverted) {
+    public SwerveModuleConstants(
+            int driveMotorID,
+            int angleMotorID,
+            int canCoderID,
+            double angleOffset,
+            String canivoreName,
+            boolean inverted) {
         this(driveMotorID, angleMotorID, canCoderID, angleOffset, canivoreName);
         this.inverted = inverted;
     }

@@ -16,18 +16,10 @@ public class BallCollectCommand extends LoggingCommand {
     private BalltrackSubsystem balltrackSubsystem;
 
     private ProfiledPIDController forwardController = new ProfiledPIDController(
-            4,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                    SwerveConstants.maxSpeed / 2, SwerveConstants.maxSpeed / 6));
+            4, 0, 0, new TrapezoidProfile.Constraints(SwerveConstants.maxSpeed / 2, SwerveConstants.maxSpeed / 6));
 
     private ProfiledPIDController strafeController = new ProfiledPIDController(
-            1,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                SwerveConstants.maxSpeed / 2, SwerveConstants.maxSpeed / 4));
+            1, 0, 0, new TrapezoidProfile.Constraints(SwerveConstants.maxSpeed / 2, SwerveConstants.maxSpeed / 4));
 
     private TrapezoidProfile.State forwardGoal = new TrapezoidProfile.State(0, 0);
 

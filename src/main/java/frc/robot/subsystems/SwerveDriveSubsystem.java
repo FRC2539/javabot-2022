@@ -4,7 +4,6 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team2539.cougarlib.control.MovingAverageVelocity;
 import com.team2539.cougarlib.control.SwerveDriveSignal;
 import com.team2539.cougarlib.util.Updatable;
-import frc.robot.SwerveModule;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,6 +20,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.Constants.TimesliceConstants;
+import frc.robot.SwerveModule;
 import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
@@ -37,7 +37,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
                     0.17,
                     0,
                     0.07,
-                    new TrapezoidProfile.Constraints(Constants.SwerveConstants.maxSpeed, Constants.SwerveConstants.maxAngularVelocity),
+                    new TrapezoidProfile.Constraints(
+                            Constants.SwerveConstants.maxSpeed, Constants.SwerveConstants.maxAngularVelocity),
                     TimesliceConstants.CONTROLLER_PERIOD));
 
     private frc.robot.SwerveModule[] modules;
@@ -203,9 +204,9 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
     }
 
-    public SwerveModuleState[] getModuleStates(){
+    public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for(SwerveModule module : modules){
+        for (SwerveModule module : modules) {
             states[module.moduleNumber] = module.getState();
         }
         return states;
@@ -229,18 +230,19 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vx.setDouble(chassisVelocity.vxMetersPerSecond);
         vy.setDouble(chassisVelocity.vyMetersPerSecond);
 
-        SwerveModuleState[] moduleStates = Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(chassisVelocity);
+        SwerveModuleState[] moduleStates =
+                Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(chassisVelocity);
 
         setModuleStates(moduleStates);
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
-        
-        for(SwerveModule module : modules){
+
+        for (SwerveModule module : modules) {
             module.setDesiredState(desiredStates[module.moduleNumber], true);
         }
-    }    
+    }
 
     public void setAxisOfRotation(Optional<Supplier<Translation2d>> axisOfRotationSupplier) {
         this.axisOfRotationSupplier = axisOfRotationSupplier;
