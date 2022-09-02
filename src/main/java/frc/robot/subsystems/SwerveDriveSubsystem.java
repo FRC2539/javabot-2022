@@ -8,7 +8,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -23,7 +22,6 @@ import frc.robot.SwerveModule;
 import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * SwerveDriveSubsystem
@@ -52,8 +50,6 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private Pose2d pose = new Pose2d();
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = null;
-
-    private Optional<Supplier<Translation2d>> axisOfRotationSupplier = Optional.empty();
 
     private final boolean LOG_TRAJECTORY_INFO = false;
 
@@ -241,14 +237,6 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         }
     }
 
-    public void setAxisOfRotation(Optional<Supplier<Translation2d>> axisOfRotationSupplier) {
-        this.axisOfRotationSupplier = axisOfRotationSupplier;
-    }
-
-    public Translation2d getAxisOfRotation() {
-        return (axisOfRotationSupplier.orElse(() -> new Translation2d())).get();
-    }
-
     @Override
     public void update() {
         updateOdometry();
@@ -279,6 +267,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         odometryXEntry.setDouble(pose.getX());
         odometryYEntry.setDouble(pose.getY());
         odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
+
+        // Log gyro angle as well; there is a discrepancy
 
         if (LOG_TRAJECTORY_INFO) {
             if (follower.getLastState() == null) {

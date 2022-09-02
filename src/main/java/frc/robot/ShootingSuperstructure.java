@@ -101,18 +101,10 @@ public class ShootingSuperstructure {
         return swerveDriveSubsystem.getSmoothedVelocity();
     }
 
-    public void rotateAroundTarget() {
-        swerveDriveSubsystem.setAxisOfRotation(Optional.of(() -> getTranslationToTarget()));
-    }
-
     public Translation2d getTranslationToTarget() {
         return limelightSubsystem
                 .getRobotRelativePoseEstimate()
                 .getTranslation()
                 .unaryMinus();
-    }
-
-    public void stopRotatingAroundTarget() {
-        swerveDriveSubsystem.setAxisOfRotation(Optional.empty());
     }
 }
