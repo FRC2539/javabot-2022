@@ -120,6 +120,10 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         storedLimelightDistance = getDistanceToTarget();
     }
 
+    public void storeCurrentShotDistance(double distanceToTarget) {
+        storedLimelightDistance = OptionalDouble.of(distanceToTarget);
+    }
+
     public OptionalDouble getStoredShotDistance() {
         return storedLimelightDistance;
     }

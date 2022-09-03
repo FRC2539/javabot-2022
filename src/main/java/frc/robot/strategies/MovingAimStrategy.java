@@ -12,10 +12,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Regressions;
 import frc.robot.ShootingSuperstructure;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.InterpolatableDouble;
-import frc.robot.util.ShooterState;
 import java.util.Optional;
 
 public class MovingAimStrategy implements LimelightAimStrategy {
@@ -24,7 +22,6 @@ public class MovingAimStrategy implements LimelightAimStrategy {
 
     private ShootingSuperstructure shootingSuperstructure;
     private SwerveDriveSubsystem swerveDriveSubsystem;
-    private ShooterSubsystem shooterSubsystem;
     private PIDController pidController;
     private Pose2d robotFieldPosition;
     private Rotation2d currentTargetRotation = new Rotation2d();
@@ -33,7 +30,7 @@ public class MovingAimStrategy implements LimelightAimStrategy {
 
     public MovingAimStrategy(ShootingSuperstructure shootingSuperstructure, PIDController pidController) {
         this.shootingSuperstructure = shootingSuperstructure;
-        //PID controller should wrap, if it doesn't things will break
+        // PID controller should wrap, if it doesn't things will break
         this.pidController = pidController;
         swerveDriveSubsystem = shootingSuperstructure.getSwerveDriveSubsystem();
     }

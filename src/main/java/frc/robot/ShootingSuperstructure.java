@@ -100,6 +100,10 @@ public class ShootingSuperstructure {
         limelightSubsystem.storeCurrentShotDistance();
     }
 
+    public void storeCurrentShotDistance(double distanceToTarget) {
+        limelightSubsystem.storeCurrentShotDistance(distanceToTarget);
+    }
+
     public OptionalDouble getStoredShotDistance() {
         return limelightSubsystem.getStoredShotDistance();
     }
