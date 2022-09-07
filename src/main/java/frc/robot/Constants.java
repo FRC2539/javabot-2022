@@ -19,7 +19,7 @@ public final class Constants {
         public static final double wheelDiameter = 0.10033;
         public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-        public static final double openLoopRamp = 0.25;
+        public static final double openLoopRamp = 0.0; // 0.25
         public static final double closedLoopRamp = 0.0;
 
         public static final double driveGearRatio = (6.75 / 1.0); // 6.75:1

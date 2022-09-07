@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -27,23 +28,25 @@ import java.util.Optional;
  * SwerveDriveSubsystem
  */
 public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements Updatable {
-    private final TrajectoryFollower follower = new TrajectoryFollower(
-            new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD),
-            new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD),
-            new ProfiledPIDController(
-                    0.17,
-                    0,
-                    0.07,
-                    new TrapezoidProfile.Constraints(
-                            Constants.SwerveConstants.maxSpeed, Constants.SwerveConstants.maxAngularVelocity),
-                    TimesliceConstants.CONTROLLER_PERIOD));
+    public final PIDController autoXController = new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD);
+    public final PIDController autoYController = new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD);
+    public final ProfiledPIDController autoThetaController = new ProfiledPIDController(
+            0.17,
+            0,
+            0.07,
+            new TrapezoidProfile.Constraints(
+                    Constants.SwerveConstants.maxSpeed, Constants.SwerveConstants.maxAngularVelocity),
+            TimesliceConstants.CONTROLLER_PERIOD);
+
+    private final TrajectoryFollower follower =
+            new TrajectoryFollower(autoXController, autoYController, autoThetaController);
 
     private frc.robot.SwerveModule[] modules;
 
     private final AHRS gyro = new AHRS();
 
     private final SwerveDriveOdometry swerveOdometry =
-            new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, getGyroRotation2d());
+            new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, new Rotation2d(), new Pose2d());
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
 
@@ -103,6 +106,10 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vy.setDouble(0);
 
         startLoggingTemperatures();
+
+        // Flip the initial pose estimate to match the practice pose estimate to the post-auto pose estimate
+        resetGyroAngle(new Rotation2d());
+        resetPose(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(180)));
     }
 
     public void startLoggingTemperatures() {
@@ -266,9 +273,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
         odometryXEntry.setDouble(pose.getX());
         odometryYEntry.setDouble(pose.getY());
-        odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
-
-        // Log gyro angle as well; there is a discrepancy
+        odometryAngleEntry.setDouble(getGyroRotation2d().getDegrees());
 
         if (LOG_TRAJECTORY_INFO) {
             if (follower.getLastState() == null) {

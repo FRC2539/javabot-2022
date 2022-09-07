@@ -9,7 +9,6 @@ import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.ShootingComponent;
-import java.util.Optional;
 
 public class ShootingSuperstructure {
     private BalltrackSubsystem balltrackSubsystem;
