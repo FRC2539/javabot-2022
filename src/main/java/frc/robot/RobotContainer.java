@@ -3,6 +3,8 @@ package frc.robot;
 import com.team2539.cougarlib.controller.Axis;
 import com.team2539.cougarlib.controller.LogitechController;
 import com.team2539.cougarlib.controller.ThrustmasterJoystick;
+
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ControllerConstants;
@@ -10,6 +12,7 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
+import frc.robot.util.XboxControllerBetter;
 
 public class RobotContainer {
     private final ThrustmasterJoystick leftDriveController =
@@ -18,6 +21,8 @@ public class RobotContainer {
             new ThrustmasterJoystick(ControllerConstants.RIGHT_DRIVE_CONTROLLER);
     private final LogitechController operatorController =
             new LogitechController(ControllerConstants.OPERATOR_CONTROLLER);
+    private final XboxControllerBetter temporaryController =
+            new XboxControllerBetter(ControllerConstants.TEMPORARY_CONTROLLER);
 
     private final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -65,9 +70,9 @@ public class RobotContainer {
     }
 
     private void configureControllerLayout() {
-        leftDriveController.getXAxis().setScale(Constants.SwerveConstants.maxSpeed);
-        leftDriveController.getYAxis().setScale(Constants.SwerveConstants.maxSpeed);
-        rightDriveController.getXAxis().setScale(Constants.SwerveConstants.maxAngularVelocity);
+        leftDriveController.getXAxis().setScale(SwerveDriveSubsystem.MAX_VELOCITY);
+        leftDriveController.getYAxis().setScale(SwerveDriveSubsystem.MAX_VELOCITY);
+        rightDriveController.getXAxis().setScale(SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY);
 
         leftDriveController.getLeftTopLeft().whenPressed(() -> swerveDriveSubsystem.resetGyroAngle());
 
@@ -77,14 +82,13 @@ public class RobotContainer {
 
         leftDriveController.getLeftTopRight().whenPressed(new SeizureModeCommand(lightsSubsystem));
 
-        leftDriveController
-                .getTrigger()
-                .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderHighGoalShot()));
+        LimelightShootCommand limelightShootCommand = new LimelightShootCommand(shootingSuperstructure);
+
+        leftDriveController.getTrigger().whileHeld(limelightShootCommand);
         rightDriveController
                 .getTrigger()
                 .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderLowGoalShot()));
+                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderHighGoalShot()));
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
         rightDriveController
@@ -95,17 +99,28 @@ public class RobotContainer {
                 .getRightThumb()
                 .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
 
-        operatorController.getRightTrigger().whileHeld(new LimelightShootCommand(shootingSuperstructure));
+        operatorController.getRightTrigger().whileHeld(limelightShootCommand);
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
         operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
 
-        operatorController.getA().whenPressed(() -> limelightSubsystem.decrementYOffset(), limelightSubsystem);
-        operatorController.getX().whenPressed(() -> limelightSubsystem.incrementXOffset(), limelightSubsystem);
-        operatorController.getB().whenPressed(() -> limelightSubsystem.decrementXOffset(), limelightSubsystem);
-        operatorController.getY().whenPressed(() -> limelightSubsystem.incrementYOffset(), limelightSubsystem);
+        operatorController
+                .getY()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 100, 0));
+        operatorController
+                .getA()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, -100, 0));
+        operatorController
+                .getX()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, 100));
+        operatorController
+                .getB()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, -100));
 
         operatorController.getStart().whenPressed(new EnableTemperatureLogging(swerveDriveSubsystem));
         operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));
+
+        temporaryController.getRightBumper().whileHeld(limelightShootCommand);
+
     }
 
     public Command getAutonomousCommand() {
