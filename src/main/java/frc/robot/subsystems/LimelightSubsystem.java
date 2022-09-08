@@ -9,7 +9,9 @@ import java.util.function.DoubleSupplier;
 
 public class LimelightSubsystem extends ShootingComponentSubsystem implements Updatable {
     private static double TARGET_HEIGHT = 2.62;
-    private static double LIMELIGHT_HEIGHT = 0.75819;
+    public static double LIMELIGHT_HEIGHT = 0.75819;
+    public static double LIMELIGHT_FORWARD_OFFSET = -0.10426;
+    public static double LIMELIGHT_SIDEWAYS_OFFSET = 0.18015;
     private static double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
     public static double TARGET_RADIUS = 0.678;
 
