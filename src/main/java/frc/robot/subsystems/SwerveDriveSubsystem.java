@@ -4,10 +4,6 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team2539.cougarlib.control.MovingAverageVelocity;
 import com.team2539.cougarlib.control.SwerveDriveSignal;
 import com.team2539.cougarlib.util.Updatable;
-import com.team2539.cougarswervelib.Mk4ModuleConfiguration;
-import com.team2539.cougarswervelib.Mk4SwerveModuleHelper;
-import com.team2539.cougarswervelib.SdsModuleConfigurations;
-import com.team2539.cougarswervelib.SwerveModule;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,64 +17,42 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Constants.GlobalConstants;
-import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants;
 import frc.robot.Constants.TimesliceConstants;
+import frc.robot.SwerveModule;
 import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * SwerveDriveSubsystem
  */
 public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements Updatable {
-    // Measured in meters (ask CAD dept. for this information in new robots)
-    public static final double TRACKWIDTH = 0.5969;
-    public static final double WHEELBASE = 0.5969;
+    public final PIDController autoXController = new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD);
+    public final PIDController autoYController = new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD);
+    public final ProfiledPIDController autoThetaController = new ProfiledPIDController(
+            0.17,
+            0,
+            0.07,
+            new TrapezoidProfile.Constraints(
+                    Constants.SwerveConstants.maxSpeed, Constants.SwerveConstants.maxAngularVelocity),
+            TimesliceConstants.CONTROLLER_PERIOD);
 
-    public static final double MAX_VOLTAGE = 12.0;
+    private final TrajectoryFollower follower =
+            new TrajectoryFollower(autoXController, autoYController, autoThetaController);
 
-    private final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-            new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front left
-            new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front right
-            new Translation2d(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Back left
-            new Translation2d(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back right
-            );
+    private frc.robot.SwerveModule[] modules;
 
-    public static final double MAX_VELOCITY = 6380.0
-            / 60
-            * SdsModuleConfigurations.MK4_L2.getDriveReduction()
-            * SdsModuleConfigurations.MK4_L2.getWheelDiameter()
-            * Math.PI;
-
-    public static final double MAX_ANGULAR_VELOCITY = MAX_VELOCITY / Math.hypot(TRACKWIDTH / 2.0, WHEELBASE / 2.0);
-
-    private final TrajectoryFollower follower = new TrajectoryFollower(
-            new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD),
-            new PIDController(1, 0, 0, TimesliceConstants.CONTROLLER_PERIOD),
-            new ProfiledPIDController(
-                    0.17,
-                    0,
-                    0.07,
-                    new TrapezoidProfile.Constraints(MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY),
-                    TimesliceConstants.CONTROLLER_PERIOD));
-
-    private SwerveModule[] modules;
-
-    private final AHRS gyroscope = new AHRS();
+    private final AHRS gyro = new AHRS();
 
     private final SwerveDriveOdometry swerveOdometry =
-            new SwerveDriveOdometry(swerveKinematics, new Rotation2d(), new Pose2d());
+            new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, new Rotation2d(), new Pose2d());
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
 
     private Pose2d pose = new Pose2d();
     private ChassisSpeeds velocity = new ChassisSpeeds();
     private SwerveDriveSignal driveSignal = null;
-
-    private Optional<Supplier<Translation2d>> axisOfRotationSupplier = Optional.empty();
 
     private final boolean LOG_TRAJECTORY_INFO = false;
 
@@ -104,48 +78,15 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
     private boolean TEMPERATURE_LOGGING_ENABLED = false;
 
-    private Field2d fieldWidget = new Field2d();
-
     public SwerveDriveSubsystem() {
-        super("Swerve Drive");
+        super("Swerve");
 
-        Mk4ModuleConfiguration moduleConfiguration = new Mk4ModuleConfiguration();
-        moduleConfiguration.setCanivoreName(GlobalConstants.CANIVORE_NAME);
-
-        Mk4ModuleConfiguration invertedConfiguration = new Mk4ModuleConfiguration();
-        invertedConfiguration.setCanivoreName(GlobalConstants.CANIVORE_NAME);
-        invertedConfiguration.setDriveInverted(true);
-
-        SwerveModule frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-                moduleConfiguration,
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                SwerveConstants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
-                SwerveConstants.DRIVETRAIN_FRONT_LEFT_TURN_MOTOR,
-                SwerveConstants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
-                SwerveConstants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET);
-        SwerveModule frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
-                invertedConfiguration,
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
-                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_TURN_MOTOR,
-                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
-                SwerveConstants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
-        SwerveModule backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
-                moduleConfiguration,
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                SwerveConstants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
-                SwerveConstants.DRIVETRAIN_BACK_LEFT_TURN_MOTOR,
-                SwerveConstants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
-                SwerveConstants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET);
-        SwerveModule backRightModule = Mk4SwerveModuleHelper.createFalcon500(
-                invertedConfiguration,
-                Mk4SwerveModuleHelper.GearRatio.L2,
-                SwerveConstants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
-                SwerveConstants.DRIVETRAIN_BACK_RIGHT_TURN_MOTOR,
-                SwerveConstants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
-                SwerveConstants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET);
-
-        modules = new SwerveModule[] {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
+        modules = new SwerveModule[] {
+            new SwerveModule(0, Constants.SwerveConstants.Mod0.constants),
+            new SwerveModule(1, Constants.SwerveConstants.Mod1.constants),
+            new SwerveModule(2, Constants.SwerveConstants.Mod2.constants),
+            new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
+        };
 
         odometryXEntry = getEntry("X");
         odometryYEntry = getEntry("Y");
@@ -165,6 +106,10 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         vy.setDouble(0);
 
         startLoggingTemperatures();
+
+        // Flip the initial pose estimate to match the practice pose estimate to the post-auto pose estimate
+        resetGyroAngle(new Rotation2d());
+        resetPose(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(180)));
     }
 
     public void startLoggingTemperatures() {
@@ -198,15 +143,15 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     }
 
     public Rotation2d getGyroRotation2d() {
-        return gyroscope.getRotation2d();
+        return gyro.getRotation2d();
     }
 
     public double getGyroAngle() {
-        return gyroscope.getAngle() % 360;
+        return gyro.getAngle() % 360;
     }
 
     public double getRawGyroAngle() {
-        return gyroscope.getAngle();
+        return gyro.getAngle();
     }
 
     public void drive(ChassisSpeeds velocity, boolean isFieldOriented) {
@@ -222,15 +167,9 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         swerveOdometry.resetPosition(pose, getGyroRotation2d());
     }
 
-    public void resetDriveEncoders() {
-        for (SwerveModule module : modules) {
-            module.getRawDriveMotor().setSelectedSensorPosition(0);
-        }
-    }
-
     public void resetGyroAngle(Rotation2d angle) {
-        gyroscope.reset();
-        gyroscope.setAngleAdjustment(angle.getDegrees());
+        gyro.reset();
+        gyro.setAngleAdjustment(angle.getDegrees());
     }
 
     public void resetGyroAngle() {
@@ -256,19 +195,21 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     }
 
     private void updateOdometry() {
-        SwerveModuleState[] moduleStates = new SwerveModuleState[modules.length];
+        SwerveModuleState[] moduleStates = getModuleStates();
 
-        for (int i = 0; i < modules.length; i++) {
-            var module = modules[i];
-
-            moduleStates[i] = new SwerveModuleState(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
-        }
-
-        velocity = swerveKinematics.toChassisSpeeds(moduleStates);
+        velocity = Constants.SwerveConstants.swerveKinematics.toChassisSpeeds(moduleStates);
 
         velocityEstimator.add(velocity);
 
         pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for (SwerveModule module : modules) {
+            states[module.moduleNumber] = module.getState();
+        }
+        return states;
     }
 
     private void updateModules(SwerveDriveSignal driveSignal) {
@@ -286,38 +227,20 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
                     driveSignal.vxMetersPerSecond, driveSignal.vyMetersPerSecond, driveSignal.omegaRadiansPerSecond);
         }
 
-        if (chassisVelocity.vxMetersPerSecond == 0
-                && chassisVelocity.vyMetersPerSecond == 0
-                && chassisVelocity.omegaRadiansPerSecond == 0) {
-            stopModules();
-            return;
-        }
-
         vx.setDouble(chassisVelocity.vxMetersPerSecond);
         vy.setDouble(chassisVelocity.vyMetersPerSecond);
 
-        SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(chassisVelocity, getAxisOfRotation());
-        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, MAX_VELOCITY);
-        for (int i = 0; i < moduleStates.length; i++) {
-            var module = modules[i];
-            module.set(
-                    moduleStates[i].speedMetersPerSecond / MAX_VELOCITY * MAX_VOLTAGE,
-                    moduleStates[i].angle.getRadians());
-        }
+        SwerveModuleState[] moduleStates =
+                Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(chassisVelocity);
+
+        setModuleStates(moduleStates);
     }
 
-    public void setAxisOfRotation(Optional<Supplier<Translation2d>> axisOfRotationSupplier) {
-        this.axisOfRotationSupplier = axisOfRotationSupplier;
-    }
+    public void setModuleStates(SwerveModuleState[] desiredStates) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
 
-    public Translation2d getAxisOfRotation() {
-        return (axisOfRotationSupplier.orElse(() -> new Translation2d())).get();
-    }
-
-    public void stopModules() {
-        for (int i = 0; i < modules.length; i++) {
-            var module = modules[i];
-            module.set(0, module.getSteerAngle());
+        for (SwerveModule module : modules) {
+            module.setDesiredState(desiredStates[module.moduleNumber], true);
         }
     }
 
@@ -346,13 +269,13 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     @Override
     public void periodic() {
+        Pose2d pose = getPose();
+
+        odometryXEntry.setDouble(pose.getX());
+        odometryYEntry.setDouble(pose.getY());
+        odometryAngleEntry.setDouble(getGyroRotation2d().getDegrees());
+
         if (LOG_TRAJECTORY_INFO) {
-            Pose2d pose = getPose();
-
-            odometryXEntry.setDouble(pose.getX());
-            odometryYEntry.setDouble(pose.getY());
-            odometryAngleEntry.setDouble(pose.getRotation().getDegrees());
-
             if (follower.getLastState() == null) {
                 trajectoryXEntry.setDouble(0);
                 trajectoryYEntry.setDouble(0);
@@ -377,8 +300,6 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             driveTemperaturesLogEntry.append(driveTemperatures);
             steerTemperaturesLogEntry.append(steerTemperatures);
         }
-
-        fieldWidget.setRobotPose(swerveOdometry.getPoseMeters());
     }
 
     public TrajectoryFollower getFollower() {

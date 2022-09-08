@@ -73,7 +73,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
 
     implementation 'com.team2539:cougarlib:2022.0.2'
-    implementation 'com.team2539:cougar-swerve-lib:1.1.1'
 }
 
 // Simulation configuration (e.g. environment variables).
