@@ -17,7 +17,7 @@ public class ObjectTracker {
     private Rotation2d robotRotation;
 
     public ObjectTracker() {
-        this(0.05);
+        this(0.02);
     }
 
     public ObjectTracker(double period) {
