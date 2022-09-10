@@ -14,8 +14,8 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LimelightDriveCommand;
 import frc.robot.commands.LimelightShootCommand;
 import frc.robot.commands.PrepareToShootCommand;
-import frc.robot.command.ReverseBalltrackCommand;
-import frc.robot.command.SimpleShootCommand;
+import frc.robot.commands.ReverseBalltrackCommand;
+import frc.robot.commands.SimpleShootCommand;
 
 public class AutonomousManager {
     private TrajectoryLoader trajectoryLoader;
@@ -138,13 +138,13 @@ public class AutonomousManager {
 
     private void shootWithoutLimelight(SequentialCommandGroup command, double timeout) {
         command.addCommands(
-            new SimpleShootCommand(container.getShootingSuperstructure(), () -> shooterSubsystem.setFenderLowGoalShot())
+            new SimpleShootCommand(container.getShootingSuperstructure(), () -> container.getShooterSubsystem().setFenderLowGoalShot())
             .withTimeout(timeout)
         );
     }
 
     private void reverseIntake(SequentialCommandGroup command, double timeout) {
-        command.addCommands(new ReverseBalltrackCommand(container.getBalltrackSubsystem()).withTimeout(timeout));
+        command.addCommands(new ReverseBalltrackCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem()).withTimeout(timeout));
     }
 
     private void shootBalls(SequentialCommandGroup command, double timeout) {

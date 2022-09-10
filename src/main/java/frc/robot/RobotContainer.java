@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
@@ -70,9 +71,9 @@ public class RobotContainer {
     }
 
     private void configureControllerLayout() {
-        leftDriveController.getXAxis().setScale(SwerveDriveSubsystem.MAX_VELOCITY);
-        leftDriveController.getYAxis().setScale(SwerveDriveSubsystem.MAX_VELOCITY);
-        rightDriveController.getXAxis().setScale(SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY);
+        leftDriveController.getXAxis().setScale(SwerveConstants.maxSpeed);
+        leftDriveController.getYAxis().setScale(SwerveConstants.maxSpeed);
+        rightDriveController.getXAxis().setScale(SwerveConstants.maxAngularVelocity);
 
         leftDriveController.getLeftTopLeft().whenPressed(() -> swerveDriveSubsystem.resetGyroAngle());
 
@@ -102,19 +103,6 @@ public class RobotContainer {
         operatorController.getRightTrigger().whileHeld(limelightShootCommand);
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
         operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
-
-        operatorController
-                .getY()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 100, 0));
-        operatorController
-                .getA()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, -100, 0));
-        operatorController
-                .getX()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, 100));
-        operatorController
-                .getB()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, -100));
 
         operatorController.getStart().whenPressed(new EnableTemperatureLogging(swerveDriveSubsystem));
         operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));
