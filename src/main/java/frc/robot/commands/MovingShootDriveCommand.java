@@ -25,7 +25,8 @@ public class MovingShootDriveCommand extends CommandBase {
             DoubleSupplier forward,
             DoubleSupplier strafe,
             ShootingSuperstructure shootingSuperstructure,
-            LightsSubsystem lightsSubsystem) {
+            LightsSubsystem lightsSubsystem,
+            MovingAimStrategy movingAimStrategy) {
         this.forward = forward;
         this.strafe = strafe;
 
@@ -35,13 +36,13 @@ public class MovingShootDriveCommand extends CommandBase {
 
         addRequirements(swerveDriveSubsystem, lightsSubsystem);
 
-        pidController.enableContinuousInput(-Math.PI, Math.PI);
-
-        aimStrategy = new MovingAimStrategy(shootingSuperstructure, pidController);
+        aimStrategy = movingAimStrategy;
     }
 
     @Override
     public void initialize() {
+        shootingSuperstructure.getLimelightSubsystem().bindUpdatable(aimStrategy);
+
         pidController.reset();
 
         shootingSuperstructure.activateShootingPipeline();
@@ -51,6 +52,8 @@ public class MovingShootDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
+        // of all the moving shoot stuff, this should be the only one to call the calculateRotationalVelocity method, so
+        // it isnt overclocked
         swerveDriveSubsystem.drive(
                 new ChassisSpeeds(
                         forward.getAsDouble(), strafe.getAsDouble(), aimStrategy.calculateRotationalVelocity()),
@@ -58,5 +61,7 @@ public class MovingShootDriveCommand extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        shootingSuperstructure.getLimelightSubsystem().freeUpdatable();
+    }
 }

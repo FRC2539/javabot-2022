@@ -2,6 +2,7 @@ package frc.robot.strategies;
 
 import com.team2539.cougarlib.MathUtils;
 import com.team2539.cougarlib.control.InterpolatingMap;
+import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,7 +16,7 @@ import frc.robot.ShootingSuperstructure;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.InterpolatableDouble;
 
-public class MovingAimStrategy {
+public class MovingAimStrategy implements Updatable {
     // for using, call update before using other functions
 
     private static double LIMELIGHT_HORIZONTAL_ERROR = 0.1;

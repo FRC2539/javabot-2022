@@ -4,6 +4,7 @@ import com.team2539.cougarlib.MathUtils;
 import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;
 
@@ -45,6 +46,9 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private NetworkTableEntry xOffsetEntry;
     private NetworkTableEntry yOffsetEntry;
     private NetworkTableEntry distanceEntry;
+
+    private Optional<Updatable> updatableAimStrategy = Optional.empty();
+    private int updatableAimStrategySemaphore = 0;
 
     public LimelightSubsystem() {
         super("limelight");
@@ -137,6 +141,32 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
         distanceToTarget = calculateDistanceToTarget();
         isAimed = hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
+
+        if (updatableAimStrategy.isPresent()) {
+            updatableAimStrategy.orElseThrow().update();
+        }
+    }
+
+    // do not try to bind multiple things or you will get errors
+    public void bindUpdatable(Updatable updatable) {
+        if (updatableAimStrategySemaphore <= 0) {
+            updatableAimStrategy = Optional.of(updatable);
+            updatableAimStrategySemaphore = 1;
+        } else {
+            updatableAimStrategySemaphore++;
+        }
+    }
+
+    public void freeUpdatable() {
+        updatableAimStrategySemaphore--;
+        if (updatableAimStrategySemaphore <= 0) {
+            updatableAimStrategySemaphore = 0;
+            updatableAimStrategy = Optional.empty();
+        }
+    }
+
+    public boolean isUpdatableFree() {
+        return updatableAimStrategySemaphore <= 0;
     }
 
     @Override
