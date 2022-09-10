@@ -118,11 +118,11 @@ public class ShootingSuperstructure {
             Rotation2d robotAngle = swerveDriveSubsystem
                     .getGyroRotation2d()
                     .plus(Rotation2d.fromDegrees(-limelightSubsystem.getHorizontalAngle()));
-            Translation2d originBasedRobotTranslation = new Translation2d(
-                            limelightSubsystem.getDistanceToTarget().orElse(0)
-                                    - LimelightSubsystem.LIMELIGHT_FORWARD_OFFSET,
-                            -LimelightSubsystem.LIMELIGHT_SIDEWAYS_OFFSET)
-                    .rotateBy(robotAngle);
+            Translation2d originBasedLimelightTranslation =
+                    new Translation2d(limelightSubsystem.getDistanceToTarget().orElse(0), robotAngle);
+            Translation2d originBasedRobotTranslation = originBasedLimelightTranslation.minus(new Translation2d(
+                            LimelightSubsystem.LIMELIGHT_FORWARD_OFFSET, LimelightSubsystem.LIMELIGHT_SIDEWAYS_OFFSET)
+                    .rotateBy(robotAngle));
 
             return Optional.of(new Pose2d(
                     GlobalConstants.goalLocation.plus(originBasedRobotTranslation),
