@@ -4,16 +4,18 @@ import com.kauailabs.navx.frc.AHRS;
 import com.team2539.cougarlib.control.MovingAverageVelocity;
 import com.team2539.cougarlib.control.SwerveDriveSignal;
 import com.team2539.cougarlib.util.Updatable;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -45,8 +47,13 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     private final AHRS gyro = new AHRS();
 
-    private final SwerveDriveOdometry swerveOdometry =
-            new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, new Rotation2d(), new Pose2d());
+    private final SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
+            new Rotation2d(),
+            new Pose2d(),
+            Constants.SwerveConstants.swerveKinematics,
+            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
+            VecBuilder.fill(Units.degreesToRadians(0.01)),
+            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)));
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
 
@@ -164,7 +171,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     public void resetPose(Pose2d pose) {
         this.pose = pose;
-        swerveOdometry.resetPosition(pose, getGyroRotation2d());
+        swervePoseEstimator.resetPosition(pose, getGyroRotation2d());
     }
 
     public void resetGyroAngle(Rotation2d angle) {
@@ -201,7 +208,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
         velocityEstimator.add(velocity);
 
-        pose = swerveOdometry.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
+        pose = swervePoseEstimator.updateWithTime(Timer.getFPGATimestamp(), getGyroRotation2d(), moduleStates);
     }
 
     public SwerveModuleState[] getModuleStates() {
