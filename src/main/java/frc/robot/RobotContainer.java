@@ -3,10 +3,12 @@ package frc.robot;
 import com.team2539.cougarlib.controller.Axis;
 import com.team2539.cougarlib.controller.LogitechController;
 import com.team2539.cougarlib.controller.ThrustmasterJoystick;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.*;
+import frc.robot.strategies.MovingAimStrategy;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
@@ -93,6 +95,26 @@ public class RobotContainer {
         rightDriveController
                 .getRightThumb()
                 .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
+
+        {
+            PIDController pidController = new PIDController(1, 0, 0.04, 0.02);
+            pidController.enableContinuousInput(-Math.PI, Math.PI);
+            MovingAimStrategy movingAimStrategy = new MovingAimStrategy(shootingSuperstructure, pidController);
+            rightDriveController
+                    .getRightTopLeft()
+                    .whileHeld(new MovingShootDriveCommand(
+                            getDriveForwardAxis(),
+                            getDriveStrafeAxis(),
+                            shootingSuperstructure,
+                            lightsSubsystem,
+                            movingAimStrategy));
+            // rightDriveController
+            //         .getRightTopMiddle()
+            //         .whileHeld(new MovingSpinUpCommand(shootingSuperstructure, movingAimStrategy));
+            rightDriveController
+                    .getRightTopRight()
+                    .whileHeld(new MovingShootCommand(shootingSuperstructure, movingAimStrategy));
+        }
 
         operatorController.getRightTrigger().whileHeld(limelightShootCommand);
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
