@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.TimesliceConstants;
 
 public class Robot extends TimesliceRobot {
+    public static CTREConfigs ctreConfigs = new CTREConfigs();
+
     private RobotContainer robotContainer = new RobotContainer();
 
     // Create an object to manage the timeslices for the subsystems

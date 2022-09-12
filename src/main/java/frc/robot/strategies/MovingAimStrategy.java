@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants.GlobalConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.Regressions;
 import frc.robot.ShootingSuperstructure;
 import frc.robot.subsystems.SwerveDriveSubsystem;
@@ -52,7 +53,7 @@ public class MovingAimStrategy implements Updatable {
     public double calculateRotationalVelocity() {
         double robotRotation = swerveDriveSubsystem.getGyroRotation2d().getRadians();
         double rotationOutput = pidController.calculate(robotRotation, currentTargetRotation.getRadians());
-        return rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY;
+        return rotationOutput * SwerveConstants.maxAngularVelocity;
     }
 
     public boolean isAimed() {

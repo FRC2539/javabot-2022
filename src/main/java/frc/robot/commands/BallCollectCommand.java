@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
@@ -15,18 +16,10 @@ public class BallCollectCommand extends LoggingCommand {
     private BalltrackSubsystem balltrackSubsystem;
 
     private ProfiledPIDController forwardController = new ProfiledPIDController(
-            4,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 6));
+            4, 0, 0, new TrapezoidProfile.Constraints(SwerveConstants.maxSpeed / 2, SwerveConstants.maxSpeed / 6));
 
     private ProfiledPIDController strafeController = new ProfiledPIDController(
-            1,
-            0,
-            0,
-            new TrapezoidProfile.Constraints(
-                    SwerveDriveSubsystem.MAX_VELOCITY / 2, SwerveDriveSubsystem.MAX_VELOCITY / 4));
+            1, 0, 0, new TrapezoidProfile.Constraints(SwerveConstants.maxSpeed / 2, SwerveConstants.maxSpeed / 4));
 
     private TrapezoidProfile.State forwardGoal = new TrapezoidProfile.State(0, 0);
 

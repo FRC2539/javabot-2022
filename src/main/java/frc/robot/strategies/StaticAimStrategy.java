@@ -2,6 +2,7 @@ package frc.robot.strategies;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.ShootingSuperstructure;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
@@ -30,7 +31,7 @@ public class StaticAimStrategy implements LimelightAimStrategy {
             rotationOutput = pidController.calculate(currentAngle);
         }
 
-        return -1 * rotationOutput * SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY;
+        return -1 * rotationOutput * SwerveConstants.maxAngularVelocity;
     }
 
     public boolean isAimed() {

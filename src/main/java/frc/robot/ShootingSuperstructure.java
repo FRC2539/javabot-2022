@@ -37,7 +37,7 @@ public class ShootingSuperstructure {
             case "Shooter":
                 shooterSubsystem = (ShooterSubsystem) component;
                 break;
-            case "Swerve Drive":
+            case "Swerve":
                 swerveDriveSubsystem = (SwerveDriveSubsystem) component;
                 break;
             default:
@@ -142,19 +142,11 @@ public class ShootingSuperstructure {
         }
     }
 
-    public void rotateAroundTarget() {
-        swerveDriveSubsystem.setAxisOfRotation(Optional.of(() -> getTranslationToTarget()));
-    }
-
     public Translation2d getTranslationToTarget() {
         return limelightSubsystem
                 .getRobotRelativePoseEstimate()
                 .getTranslation()
                 .unaryMinus();
-    }
-
-    public void stopRotatingAroundTarget() {
-        swerveDriveSubsystem.setAxisOfRotation(Optional.empty());
     }
 
     public boolean hasTarget() {
