@@ -13,7 +13,6 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
-import frc.robot.util.XboxControllerBetter;
 
 public class RobotContainer {
     private final ThrustmasterJoystick leftDriveController =
@@ -22,8 +21,6 @@ public class RobotContainer {
             new ThrustmasterJoystick(ControllerConstants.RIGHT_DRIVE_CONTROLLER);
     private final LogitechController operatorController =
             new LogitechController(ControllerConstants.OPERATOR_CONTROLLER);
-    private final XboxControllerBetter temporaryController =
-            new XboxControllerBetter(ControllerConstants.TEMPORARY_CONTROLLER);
 
     private final SwerveDriveSubsystem swerveDriveSubsystem = new SwerveDriveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -106,8 +103,6 @@ public class RobotContainer {
 
         operatorController.getStart().whenPressed(new EnableTemperatureLogging(swerveDriveSubsystem));
         operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));
-
-        temporaryController.getRightBumper().whileHeld(limelightShootCommand);
 
     }
 
