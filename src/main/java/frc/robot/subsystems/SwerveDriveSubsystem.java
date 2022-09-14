@@ -63,9 +63,10 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     private final boolean LOG_TRAJECTORY_INFO = false;
 
-    private NetworkTableEntry odometryXEntry;
-    private NetworkTableEntry odometryYEntry;
-    private NetworkTableEntry odometryAngleEntry;
+    private NetworkTableEntry robotPoseEntry;
+
+    private NetworkTableEntry enableGhostPose;
+    private NetworkTableEntry ghostPoseEntry;
 
     private NetworkTableEntry trajectoryXEntry;
     private NetworkTableEntry trajectoryYEntry;
@@ -95,9 +96,11 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
         };
 
-        odometryXEntry = getEntry("X");
-        odometryYEntry = getEntry("Y");
-        odometryAngleEntry = getEntry("Angle");
+        robotPoseEntry = getEntry("robotPose");
+
+        enableGhostPose = getEntry("enableGhostPose");
+        enableGhostPose.setBoolean(false);
+        ghostPoseEntry = getEntry("ghostPose");
 
         trajectoryXEntry = getEntry("Trajectory X");
         trajectoryYEntry = getEntry("Trajectory Y");
@@ -278,9 +281,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     public void periodic() {
         Pose2d pose = getPose();
 
-        odometryXEntry.setDouble(pose.getX());
-        odometryYEntry.setDouble(pose.getY());
-        odometryAngleEntry.setDouble(getGyroRotation2d().getDegrees());
+        robotPoseEntry.setDoubleArray(new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});
 
         if (LOG_TRAJECTORY_INFO) {
             if (follower.getLastState() == null) {
