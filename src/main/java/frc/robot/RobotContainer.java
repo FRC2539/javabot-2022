@@ -4,6 +4,7 @@ import com.team2539.cougarlib.controller.Axis;
 import com.team2539.cougarlib.controller.LogitechController;
 import com.team2539.cougarlib.controller.ThrustmasterJoystick;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ControllerConstants;
@@ -72,12 +73,13 @@ public class RobotContainer {
         rightDriveController.getXAxis().setScale(Constants.SwerveConstants.maxAngularVelocity);
 
         leftDriveController.getLeftTopLeft().whenPressed(() -> swerveDriveSubsystem.resetGyroAngle());
+        leftDriveController.getLeftTopRight().whenPressed(() -> swerveDriveSubsystem.resetPose(new Pose2d()));
 
         leftDriveController.getLeftThumb().whileHeld(new LowerClimberCommand(climberSubsystem));
         leftDriveController.getRightThumb().whileHeld(new RaiseClimberCommand(climberSubsystem));
         leftDriveController.getBottomThumb().whenPressed(() -> climberSubsystem.toggleClimberArm(), climberSubsystem);
 
-        leftDriveController.getLeftTopRight().whenPressed(new SeizureModeCommand(lightsSubsystem));
+        leftDriveController.getLeftBottomMiddle().whenPressed(new SeizureModeCommand(lightsSubsystem));
 
         LimelightShootCommand limelightShootCommand = new LimelightShootCommand(shootingSuperstructure);
 
