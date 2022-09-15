@@ -258,6 +258,19 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         }
     }
 
+    public void setGhostPosition(Pose2d ghostPosition) {
+        setGhostPositionState(true);
+        ghostPoseEntry.setDoubleArray(new double[] {
+            ghostPosition.getX(),
+            ghostPosition.getY(),
+            ghostPosition.getRotation().getDegrees()
+        });
+    }
+
+    public void setGhostPositionState(boolean ghostPositionState) {
+        enableGhostPose.setBoolean(ghostPositionState);
+    }
+
     @Override
     public void update() {
         updateOdometry();
@@ -285,7 +298,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     public void periodic() {
         Pose2d pose = getPose();
 
-        robotPoseEntry.setDoubleArray(new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});
+        robotPoseEntry.setDoubleArray(
+                new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});
 
         if (LOG_TRAJECTORY_INFO) {
             if (follower.getLastState() == null) {

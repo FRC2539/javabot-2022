@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ShootingSuperstructure;
@@ -16,8 +15,6 @@ public class MovingShootDriveCommand extends CommandBase {
 
     private DoubleSupplier forward;
     private DoubleSupplier strafe;
-
-    private PIDController pidController = new PIDController(1, 0, 0.04, 0.02);
 
     private MovingAimStrategy aimStrategy;
 
@@ -43,7 +40,7 @@ public class MovingShootDriveCommand extends CommandBase {
     public void initialize() {
         shootingSuperstructure.getLimelightSubsystem().bindUpdatable(aimStrategy);
 
-        pidController.reset();
+        aimStrategy.resetPIDController();
 
         shootingSuperstructure.activateShootingPipeline();
 

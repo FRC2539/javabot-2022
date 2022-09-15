@@ -97,7 +97,7 @@ public class RobotContainer {
                 .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
 
         {
-            PIDController pidController = new PIDController(1, 0, 0.04, 0.02);
+            PIDController pidController = new PIDController(1, 0, 0, 0.02);
             pidController.enableContinuousInput(-Math.PI, Math.PI);
             MovingAimStrategy movingAimStrategy = new MovingAimStrategy(shootingSuperstructure, pidController);
             rightDriveController
