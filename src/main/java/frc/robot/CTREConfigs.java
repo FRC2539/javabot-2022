@@ -21,6 +21,7 @@ public final class CTREConfigs {
         swerveAngleFXConfig.slot0.kD = Constants.SwerveConstants.angleKD;
         swerveAngleFXConfig.slot0.kF = Constants.SwerveConstants.angleKF;
         swerveAngleFXConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
+        swerveAngleFXConfig.voltageCompSaturation = 12.0;
 
         swerveDriveFXConfig.slot0.kP = Constants.SwerveConstants.driveKP;
         swerveDriveFXConfig.slot0.kI = Constants.SwerveConstants.driveKI;
@@ -29,6 +30,7 @@ public final class CTREConfigs {
         swerveDriveFXConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
         swerveDriveFXConfig.openloopRamp = Constants.SwerveConstants.openLoopRamp;
         swerveDriveFXConfig.closedloopRamp = Constants.SwerveConstants.closedLoopRamp;
+        swerveDriveFXConfig.voltageCompSaturation = 12.0;
 
         /* Swerve CANCoder Configuration */
         swerveCanCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;

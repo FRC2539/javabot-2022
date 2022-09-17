@@ -3,6 +3,7 @@ package frc.robot;
 import com.team2539.cougarlib.util.UpdateManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimesliceRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.TimesliceConstants;
 
@@ -19,6 +20,9 @@ public class Robot extends TimesliceRobot {
 
         // Prevents the logging of many errors with our controllers
         DriverStation.silenceJoystickConnectionWarning(true);
+
+        // Send as little data as possible with live window
+        LiveWindow.disableAllTelemetry();
     }
 
     @Override
