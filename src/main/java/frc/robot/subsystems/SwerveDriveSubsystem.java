@@ -53,7 +53,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             Constants.SwerveConstants.swerveKinematics,
             VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
             VecBuilder.fill(Units.degreesToRadians(0.01)),
-            VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(0.1)),
+            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
             TimesliceConstants.CONTROLLER_PERIOD);
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);

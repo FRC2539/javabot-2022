@@ -16,7 +16,6 @@ import frc.robot.Regressions;
 import frc.robot.ShootingSuperstructure;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.InterpolatableDouble;
-import java.util.Optional;
 
 public class MovingAimStrategy implements Updatable {
     // for using, call update before using other functions
@@ -70,10 +69,8 @@ public class MovingAimStrategy implements Updatable {
     }
 
     public void update() {
-        Optional<Pose2d> limelightPoseEstimate = shootingSuperstructure.getLimelightPoseEstimate();
-
-        // updates the field position
-        Pose2d robotFieldPosition = limelightPoseEstimate.orElse(swerveDriveSubsystem.getPose());
+        // updates the field position for 0.02 seconds in the future
+        Pose2d robotFieldPosition = swerveDriveSubsystem.getPose();
 
         // claculates the relative virtual goal position
         Translation2d relativeGoalPosition = GlobalConstants.goalLocation.minus(robotFieldPosition.getTranslation());
@@ -84,9 +81,6 @@ public class MovingAimStrategy implements Updatable {
         // this has - to accound for the fact that 180 is shooter
         double robotGoalAngle = Math.atan2(-relativeVirtualGoalPosition.getY(), -relativeVirtualGoalPosition.getX());
         currentTargetRotation = new Rotation2d(robotGoalAngle);
-
-        // if (limelightPoseEstimate.isPresent() && isAimed())
-        //     shootingSuperstructure.updatePoseEstimateWithVision(limelightPoseEstimate.get());
 
         swerveDriveSubsystem.setGhostPosition(new Pose2d(robotFieldPosition.getTranslation(), currentTargetRotation));
     }

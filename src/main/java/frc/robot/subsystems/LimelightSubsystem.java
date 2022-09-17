@@ -145,6 +145,10 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         if (updatableAimStrategy.isPresent()) {
             updatableAimStrategy.orElseThrow().update();
         }
+
+        Optional<Pose2d> limelightPoseEstimate = shootingSuperstructure.getLimelightPoseEstimate();
+        if (limelightPoseEstimate.isPresent() && isAimed())
+            shootingSuperstructure.updatePoseEstimateWithVision(limelightPoseEstimate.get());
     }
 
     // do not try to bind multiple things or you will get errors
