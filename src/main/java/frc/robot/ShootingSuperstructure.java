@@ -130,16 +130,12 @@ public class ShootingSuperstructure {
         }
     }
 
-    public void updatePoseEstimateWithLimelightData() {
-        if (limelightSubsystem.isAimed()) {
-            Optional<Pose2d> limelightPose = getLimelightPoseEstimate();
+    public void updatePoseEstimateWithVision(Pose2d visionPose) {
+        updatePoseEstimateWithVision(visionPose, Timer.getFPGATimestamp());
+    }
 
-            if (limelightPose.isPresent()) {
-                swerveDriveSubsystem
-                        .getPoseEstimator()
-                        .addVisionMeasurement(limelightPose.get(), Timer.getFPGATimestamp());
-            }
-        }
+    public void updatePoseEstimateWithVision(Pose2d visionPose, double timestamp) {
+        swerveDriveSubsystem.getPoseEstimator().addVisionMeasurement(visionPose, timestamp);
     }
 
     public Translation2d getTranslationToTarget() {

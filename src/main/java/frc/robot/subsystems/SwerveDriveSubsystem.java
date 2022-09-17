@@ -7,7 +7,6 @@ import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import frc.lib.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,6 +18,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
+import frc.lib.estimator.SwerveDrivePoseEstimator;
 import frc.robot.Constants;
 import frc.robot.Constants.TimesliceConstants;
 import frc.robot.SwerveModule;
@@ -53,7 +53,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             Constants.SwerveConstants.swerveKinematics,
             VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
             VecBuilder.fill(Units.degreesToRadians(0.01)),
-            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
+            VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(0.1)),
             TimesliceConstants.CONTROLLER_PERIOD);
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);

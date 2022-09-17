@@ -5,6 +5,8 @@ import com.team2539.cougarlib.controller.LogitechController;
 import com.team2539.cougarlib.controller.ThrustmasterJoystick;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ControllerConstants;
@@ -73,7 +75,11 @@ public class RobotContainer {
         rightDriveController.getXAxis().setScale(Constants.SwerveConstants.maxAngularVelocity);
 
         leftDriveController.getLeftTopLeft().whenPressed(() -> swerveDriveSubsystem.resetGyroAngle());
-        leftDriveController.getLeftTopRight().whenPressed(() -> swerveDriveSubsystem.resetPose(new Pose2d()));
+        leftDriveController
+                .getLeftTopRight()
+                .whenPressed(() -> swerveDriveSubsystem.resetPose(new Pose2d(
+                        new Translation2d(),
+                        swerveDriveSubsystem.getGyroRotation2d().rotateBy(Rotation2d.fromDegrees(180)))));
 
         leftDriveController.getLeftThumb().whileHeld(new LowerClimberCommand(climberSubsystem));
         leftDriveController.getRightThumb().whileHeld(new RaiseClimberCommand(climberSubsystem));
