@@ -12,10 +12,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ModifyShooterStateCommand;
 import frc.robot.Regressions;
 import frc.robot.util.ShooterState;
 import java.util.Optional;
@@ -90,16 +89,7 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         customFrontShooterRPMEntry.setDouble(0);
         customShooterAngleEntry.setBoolean(true);
 
-        Shuffleboard.getTab("Testing")
-                .addNumber("Front RPM", () -> getMotorRPM(frontShooterMotor))
-                .withPosition(3, 0)
-                .withSize(1, 1)
-                .withWidget(BuiltInWidgets.kGraph);
-        Shuffleboard.getTab("Testing")
-                .addNumber("Rear RPM", () -> getMotorRPM(rearShooterMotor))
-                .withPosition(5, 0)
-                .withSize(1, 1)
-                .withWidget(BuiltInWidgets.kGraph);
+        ModifyShooterStateCommand.sendShooterMapToNetworkTables(getShooterMap());
     }
 
     public InterpolatingMap<ShooterState> getShooterMap() {

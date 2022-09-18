@@ -1,11 +1,14 @@
 package frc.robot.commands;
 
+import com.team2539.cougarlib.control.InterpolatingMap;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Regressions;
 import frc.robot.ShootingSuperstructure;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.util.ShooterState;
 
 public class ModifyShooterStateCommand extends InstantCommand {
     private ShooterSubsystem shooterSubsystem;
@@ -13,7 +16,7 @@ public class ModifyShooterStateCommand extends InstantCommand {
     private double rearModificationFactor;
     private double frontModificationFactor;
 
-    private NetworkTableEntry shooterMapEntry =
+    private static NetworkTableEntry shooterMapEntry =
             NetworkTableInstance.getDefault().getTable("Commands").getEntry("shooterMap");
 
     public ModifyShooterStateCommand(
@@ -34,6 +37,10 @@ public class ModifyShooterStateCommand extends InstantCommand {
                 rearModificationFactor,
                 frontModificationFactor);
 
-        shooterMapEntry.setString(Regressions.stringifyMap(shooterSubsystem.getShooterMap()));
+        sendShooterMapToNetworkTables(shooterSubsystem.getShooterMap());
+    }
+
+    public static void sendShooterMapToNetworkTables(InterpolatingMap<ShooterState> shooterMap) {
+        shooterMapEntry.setString(Regressions.stringifyMap(shooterMap));
     }
 }
