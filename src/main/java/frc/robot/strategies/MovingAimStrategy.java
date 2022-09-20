@@ -22,16 +22,14 @@ public class MovingAimStrategy implements Updatable {
 
     private static double LIMELIGHT_HORIZONTAL_ERROR = 0.1;
 
-    private ShootingSuperstructure shootingSuperstructure;
     private SwerveDriveSubsystem swerveDriveSubsystem;
     private PIDController pidController;
-    private Translation2d relativeVirtualGoalPosition;
+    private Translation2d relativeVirtualGoalPosition = new Translation2d();
     private Rotation2d currentTargetRotation = new Rotation2d();
 
     private InterpolatingMap<InterpolatableDouble> timingMap = Regressions.getShootingTimeMap();
 
     public MovingAimStrategy(ShootingSuperstructure shootingSuperstructure, PIDController pidController) {
-        this.shootingSuperstructure = shootingSuperstructure;
         // PID controller should wrap, if it doesn't things will break
         this.pidController = pidController;
         swerveDriveSubsystem = shootingSuperstructure.getSwerveDriveSubsystem();
@@ -51,8 +49,8 @@ public class MovingAimStrategy implements Updatable {
     }
 
     public double calculateRotationalVelocity() {
-        double robotRotation = swerveDriveSubsystem.getGyroRotation2d().getRadians();
-        double rotationOutput = pidController.calculate(robotRotation, currentTargetRotation.getRadians());
+        Rotation2d robotRotation = swerveDriveSubsystem.getGyroRotation2d();
+        double rotationOutput = pidController.calculate(robotRotation.getRadians(), currentTargetRotation.getRadians());
         return -rotationOutput * SwerveConstants.maxAngularVelocity * 0.5;
     }
 
@@ -74,9 +72,17 @@ public class MovingAimStrategy implements Updatable {
 
         // claculates the relative virtual goal position
         Translation2d relativeGoalPosition = GlobalConstants.goalLocation.minus(robotFieldPosition.getTranslation());
-        double distance = relativeGoalPosition.getNorm();
-        double predictedShotTime = timingMap.getInterpolated(distance).orElse(new InterpolatableDouble(0.84)).value;
-        relativeVirtualGoalPosition = estimateRelativeFutureGoalTranslation(predictedShotTime, robotFieldPosition);
+        relativeVirtualGoalPosition = relativeGoalPosition;
+        double predictedShotTime;
+
+        // narrows in on the final value
+        for (int i = 0; i < 5; i++) {
+            predictedShotTime = timingMap
+                    .getInterpolated(relativeVirtualGoalPosition.getNorm())
+                    .orElse(new InterpolatableDouble(1))
+                    .value;
+            relativeVirtualGoalPosition = estimateRelativeFutureGoalTranslation(predictedShotTime, robotFieldPosition);
+        }
 
         // this has - to accound for the fact that 180 is shooter
         double robotGoalAngle = Math.atan2(-relativeVirtualGoalPosition.getY(), -relativeVirtualGoalPosition.getX());

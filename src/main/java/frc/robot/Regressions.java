@@ -24,11 +24,12 @@ public class Regressions {
 
     // this is test data, we have not gotten actual data yet
     public static double[][] shootingTimeRegression = {
-        {2.032, 0.78},
-        {3.302, 0.80},
-        {4.826, 0.81},
-        {6.096, 0.82},
-        {7.112, 0.83}
+        {3.00, 0.70},
+        {3.50, 1.02},
+        {4.00, 1.17},
+        {5.00, 1.37},
+        {5.60, 1.4},
+        {6.03, 1.45}
     };
 
     public static InterpolatingMap<ShooterState> loadShootingMap(double[][] regression) {

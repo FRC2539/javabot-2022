@@ -22,6 +22,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     private static double LIMELIGHT_HORIZONTAL_ERROR = 2;
 
+    private static double LIMELIGHT_FRAME_LATENCY = 0.011;
+
     private static double X_OFFSET_STEP = 0.2;
     private static double Y_OFFSET_STEP = 0.2;
 
@@ -46,6 +48,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private NetworkTableEntry xOffsetEntry;
     private NetworkTableEntry yOffsetEntry;
     private NetworkTableEntry distanceEntry;
+    private NetworkTableEntry latencyEntry;
 
     private Optional<Updatable> updatableAimStrategy = Optional.empty();
     private int updatableAimStrategySemaphore = 0;
@@ -61,6 +64,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         xOffsetEntry = getEntry("xOffset");
         yOffsetEntry = getEntry("yOffset");
         distanceEntry = getEntry("distance");
+        latencyEntry = getEntry("tl");
 
         xOffsetEntry.setDouble(xOffset);
         yOffsetEntry.setDouble(yOffset);
@@ -171,6 +175,10 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     public boolean isUpdatableFree() {
         return updatableAimStrategySemaphore <= 0;
+    }
+
+    public double getLatency() {
+        return LIMELIGHT_FRAME_LATENCY + latencyEntry.getDouble(0);
     }
 
     @Override
