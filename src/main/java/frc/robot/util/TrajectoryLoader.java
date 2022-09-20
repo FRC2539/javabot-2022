@@ -5,7 +5,8 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 public class TrajectoryLoader {
     private static final String TWO_BALL_PATH = "twoball";
     private static final String TWO_BALL_FAR_PATH = "twoball far";
-    private static final String THREE_BALL_PATH = "threeball alt";
+    private static final String THREE_BALL_PATH = "threeball";
+    private static final String THREE_BALL_2_PATH = "threeball 2";
     private static final String FIVE_BALL_PATH = "fiveball alt";
     private static final String FIVE_BALL_1_PATH = "fiveball 1";
     private static final String FIVE_BALL_2_PATH = "fiveball 2";
@@ -14,6 +15,7 @@ public class TrajectoryLoader {
     private static final String ONE_BALL_STEAL_PATH = "oneball far steal";
 
     private LazyPathPlannerTrajectory threeBall;
+    private LazyPathPlannerTrajectory threeBall2;
     private LazyPathPlannerTrajectory twoBall;
     private LazyPathPlannerTrajectory twoBallFar;
     private LazyPathPlannerTrajectory fiveBall;
@@ -24,7 +26,8 @@ public class TrajectoryLoader {
     private LazyPathPlannerTrajectory oneBallSteal;
 
     public TrajectoryLoader() {
-        threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 8.0);
+        threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 2.5);
+        threeBall2 = new LazyPathPlannerTrajectory(THREE_BALL_2_PATH, 5, 2.5);
         twoBall = new LazyPathPlannerTrajectory(TWO_BALL_PATH, 5, 6.0);
         twoBallFar = new LazyPathPlannerTrajectory(TWO_BALL_FAR_PATH, 5, 8.0);
         fiveBall = new LazyPathPlannerTrajectory(FIVE_BALL_PATH, 5, 2.5);
@@ -38,6 +41,10 @@ public class TrajectoryLoader {
 
     public PathPlannerTrajectory getThreeBall() {
         return threeBall.getTrajectory();
+    }
+
+    public PathPlannerTrajectory getThreeBall2() {
+        return threeBall2.getTrajectory();
     }
 
     public PathPlannerTrajectory getTwoBall() {
