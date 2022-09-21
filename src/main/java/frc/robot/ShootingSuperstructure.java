@@ -131,7 +131,7 @@ public class ShootingSuperstructure {
     }
 
     public void updatePoseEstimateWithVision(Pose2d visionPose) {
-        updatePoseEstimateWithVision(visionPose, Timer.getFPGATimestamp() - limelightSubsystem.getLatency());
+        updatePoseEstimateWithVision(visionPose, Timer.getFPGATimestamp());
     }
 
     public void updatePoseEstimateWithVision(Pose2d visionPose, double timestamp) {
