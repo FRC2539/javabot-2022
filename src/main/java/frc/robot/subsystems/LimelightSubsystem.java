@@ -53,6 +53,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private Optional<Updatable> updatableAimStrategy = Optional.empty();
     private int updatableAimStrategySemaphore = 0;
 
+    private int ticksAimed;
+
     public LimelightSubsystem() {
         super("limelight");
 
@@ -82,6 +84,10 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     public boolean isAimed() {
         return this.isAimed;
+    }
+
+    public int getTicksAimed() {
+        return ticksAimed;
     }
 
     public OptionalDouble calculateDistanceToTarget() {
@@ -148,6 +154,12 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
         if (updatableAimStrategy.isPresent()) {
             updatableAimStrategy.orElseThrow().update();
+        }
+
+        if (isAimed()) {
+            ticksAimed++;
+        } else {
+            ticksAimed = 0;
         }
 
         Optional<Pose2d> limelightPoseEstimate = shootingSuperstructure.getLimelightPoseEstimate();
