@@ -26,14 +26,14 @@ public class TrajectoryLoader {
     private LazyPathPlannerTrajectory oneBallSteal;
 
     public TrajectoryLoader() {
-        threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 2.5);
+        threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 6.0);
         threeBall2 = new LazyPathPlannerTrajectory(THREE_BALL_2_PATH, 5, 2.5);
         twoBall = new LazyPathPlannerTrajectory(TWO_BALL_PATH, 5, 6.0);
         twoBallFar = new LazyPathPlannerTrajectory(TWO_BALL_FAR_PATH, 5, 8.0);
         fiveBall = new LazyPathPlannerTrajectory(FIVE_BALL_PATH, 5, 2.5);
         fourBall = new LazyPathPlannerTrajectory(FOUR_BALL_PATH, 5, 2.5);
-        fiveBall1 = new LazyPathPlannerTrajectory(FIVE_BALL_1_PATH, 5, 2.5);
-        fiveBall2 = new LazyPathPlannerTrajectory(FIVE_BALL_2_PATH, 5, 2.5);
+        fiveBall1 = new LazyPathPlannerTrajectory(FIVE_BALL_1_PATH, 5, 6.0);
+        fiveBall2 = new LazyPathPlannerTrajectory(FIVE_BALL_2_PATH, 5, 6.0);
         twoBallSteal = new LazyPathPlannerTrajectory(TWO_BALL_STEAL_PATH, 5, 2.5);
         oneBallSteal = new LazyPathPlannerTrajectory(ONE_BALL_STEAL_PATH, 5, 2.5);
         

@@ -70,11 +70,11 @@ public class AutonomousManager {
 
         resetRobotPose(command, trajectoryLoader.getThreeBall());
 
-        followAndIntakeWithTimeout(command, trajectoryLoader.getThreeBall(), 2.5);
-        shootBallsAndAim(command, 2.0, false);
+        followAndIntake(command, trajectoryLoader.getThreeBall());
+        shootBallsAndAim(command, 1.5, true);
 
         followAndIntake(command, trajectoryLoader.getThreeBall2());
-        shootAndIntake(command, 2.7);
+        shootBallsAndAim(command, 2.0, true);
 
         return command;
     }
@@ -83,7 +83,7 @@ public class AutonomousManager {
         SequentialCommandGroup command = (SequentialCommandGroup) getThreeBallCommand();
 
         followAndIntake(command, trajectoryLoader.getFiveBall1());
-        intakeInPlace(command, 0.5);
+        intakeInPlace(command, 0.7);
         followAndIntake(command, trajectoryLoader.getFiveBall2());
         shootBallsAndAim(command, 3.0, true);
 
@@ -167,6 +167,14 @@ public class AutonomousManager {
                 .alongWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()))
                 .withTimeout(timeout));
     }
+
+    // private void aimAndShootBallsWithIntake(SequentialCommandGroup command, double timeout, boolean stopShooting) {
+    //     command.addCommands(new LimelightShootCommand(container.getShootingSuperstructure(), stopShooting)
+    //             .alongWith(new LimelightDriveCommand(
+    //                     () -> 0.0, () -> 0.0, container.getShootingSuperstructure(), container.getLightsSubsystem()))
+    //             .alongWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()))
+    //             .withTimeout(timeout));
+    // }
 
     private void follow(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory));
