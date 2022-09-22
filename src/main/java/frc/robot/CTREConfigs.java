@@ -6,6 +6,7 @@ import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
+import frc.robot.Constants.GlobalConstants;
 
 public final class CTREConfigs {
     public TalonFXConfiguration swerveAngleFXConfig;
@@ -30,7 +31,7 @@ public final class CTREConfigs {
         swerveAngleFXConfig.slot0.kF = Constants.SwerveConstants.angleKF;
         swerveAngleFXConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
         swerveAngleFXConfig.supplyCurrLimit = angleSupplyLimit;
-        swerveAngleFXConfig.voltageCompSaturation = 12.0;
+        swerveAngleFXConfig.voltageCompSaturation = GlobalConstants.targetVoltage;
 
         /* Swerve Drive Motor Configuration */
         SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(
@@ -47,7 +48,7 @@ public final class CTREConfigs {
         swerveDriveFXConfig.openloopRamp = Constants.SwerveConstants.openLoopRamp;
         swerveDriveFXConfig.closedloopRamp = Constants.SwerveConstants.closedLoopRamp;
         swerveDriveFXConfig.supplyCurrLimit = driveSupplyLimit;
-        swerveDriveFXConfig.voltageCompSaturation = 12.0;
+        swerveDriveFXConfig.voltageCompSaturation = GlobalConstants.targetVoltage;
 
         /* Swerve CANCoder Configuration */
         swerveCanCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;

@@ -69,6 +69,7 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         shooterConfiguration.slot0.kD = SHOOTER_D;
         shooterConfiguration.primaryPID.selectedFeedbackSensor =
                 TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
+        shooterConfiguration.voltageCompSaturation = GlobalConstants.targetVoltage;
 
         rearShooterMotor.configAllSettings(shooterConfiguration);
         frontShooterMotor.configAllSettings(shooterConfiguration);

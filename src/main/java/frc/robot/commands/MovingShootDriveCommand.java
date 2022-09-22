@@ -18,6 +18,8 @@ public class MovingShootDriveCommand extends CommandBase {
 
     private MovingAimStrategy aimStrategy;
 
+    private final double SPEED_CAP = 2;
+
     public MovingShootDriveCommand(
             DoubleSupplier forward,
             DoubleSupplier strafe,
@@ -53,7 +55,9 @@ public class MovingShootDriveCommand extends CommandBase {
         // it isnt overclocked
         swerveDriveSubsystem.drive(
                 new ChassisSpeeds(
-                        forward.getAsDouble(), strafe.getAsDouble(), aimStrategy.calculateRotationalVelocity()),
+                        Math.min(SPEED_CAP, Math.max(forward.getAsDouble(), -SPEED_CAP)),
+                        Math.min(SPEED_CAP, Math.max(strafe.getAsDouble(), -SPEED_CAP)),
+                        aimStrategy.calculateRotationalVelocity()),
                 true);
     }
 

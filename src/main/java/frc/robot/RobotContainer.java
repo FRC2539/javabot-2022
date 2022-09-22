@@ -9,6 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.*;
 import frc.robot.strategies.MovingAimStrategy;
@@ -97,7 +100,7 @@ public class RobotContainer {
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
         rightDriveController
-                .getBottomThumb()
+                .getRightTopLeft()
                 .whileHeld(new LimelightDriveCommand(
                         getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem));
         rightDriveController
@@ -105,23 +108,24 @@ public class RobotContainer {
                 .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
 
         {
-            PIDController pidController = new PIDController(1, 0, 0, 0.02);
+            PIDController pidController = new PIDController(1.9, 0, 0.06, 0.02);
             pidController.enableContinuousInput(-Math.PI, Math.PI);
             MovingAimStrategy movingAimStrategy = new MovingAimStrategy(shootingSuperstructure, pidController);
             rightDriveController
-                    .getRightTopLeft()
-                    .whileHeld(new MovingShootDriveCommand(
-                            getDriveForwardAxis(),
-                            getDriveStrafeAxis(),
-                            shootingSuperstructure,
-                            lightsSubsystem,
-                            movingAimStrategy));
+                    .getBottomThumb()
+                    .whileHeld(new ParallelCommandGroup(
+                            new MovingShootDriveCommand(
+                                    getDriveForwardAxis(),
+                                    getDriveStrafeAxis(),
+                                    shootingSuperstructure,
+                                    lightsSubsystem,
+                                    movingAimStrategy),
+                            new SequentialCommandGroup(
+                                    new WaitCommand(0.5),
+                                    new MovingShootCommand(shootingSuperstructure, movingAimStrategy))));
             // rightDriveController
             //         .getRightTopMiddle()
             //         .whileHeld(new MovingSpinUpCommand(shootingSuperstructure, movingAimStrategy));
-            rightDriveController
-                    .getRightTopRight()
-                    .whileHeld(new MovingShootCommand(shootingSuperstructure, movingAimStrategy));
         }
 
         operatorController.getRightTrigger().whileHeld(limelightShootCommand);

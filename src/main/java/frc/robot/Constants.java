@@ -10,6 +10,7 @@ public final class Constants {
         public static final String CANIVORE_NAME = "CANivore";
         public static final int PCM_ID = 17;
         public static final Translation2d goalLocation = new Translation2d(8.23, 4.115);
+        public static final double targetVoltage = 12.0; // Used for voltage compensation
     }
 
     public static final class SwerveConstants {

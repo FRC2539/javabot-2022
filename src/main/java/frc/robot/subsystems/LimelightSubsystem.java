@@ -21,6 +21,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private static double LIMELIGHT_ANGLE = Math.toRadians(90 - LIMELIGHT_MOUNTING_ANGLE);
 
     private static double LIMELIGHT_HORIZONTAL_ERROR = 2;
+    private static double LIMELIGHT_HORIZONTAL_ERROR_TIGHTER = 0.5;
 
     private static double LIMELIGHT_FRAME_LATENCY = 0.011;
 
@@ -36,6 +37,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private Pose2d robotRelativePoseEstimate = null;
 
     private boolean isAimed = false;
+    private boolean isAimedTigher = false;
 
     private double horizontalAngle = Double.NaN;
     private double verticalAngle = Double.NaN;
@@ -54,6 +56,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private int updatableAimStrategySemaphore = 0;
 
     private int ticksAimed;
+    private int ticksAimedTighter;
 
     public LimelightSubsystem() {
         super("limelight");
@@ -84,6 +87,14 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     public boolean isAimed() {
         return this.isAimed;
+    }
+
+    public boolean isAimedTighter() {
+        return this.isAimedTigher;
+    }
+
+    public int getTicksAimedTighter() {
+        return ticksAimedTighter;
     }
 
     public int getTicksAimed() {
@@ -121,7 +132,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     }
 
     public boolean hasTarget() {
-        return hasTargetEntry.getNumber(0).doubleValue() == 1;
+        return pipelineEntry.getNumber(0).doubleValue() == 1
+                && hasTargetEntry.getNumber(0).doubleValue() == 1;
     }
 
     public void takeSnapshots() {
@@ -151,6 +163,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
         distanceToTarget = calculateDistanceToTarget();
         isAimed = hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
+        isAimedTigher =
+                hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR_TIGHTER);
 
         if (updatableAimStrategy.isPresent()) {
             updatableAimStrategy.orElseThrow().update();
@@ -162,8 +176,14 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
             ticksAimed = 0;
         }
 
+        if (isAimedTighter()) {
+            ticksAimedTighter++;
+        } else {
+            ticksAimedTighter = 0;
+        }
+
         Optional<Pose2d> limelightPoseEstimate = shootingSuperstructure.getLimelightPoseEstimate();
-        if (limelightPoseEstimate.isPresent() && isAimed())
+        if (limelightPoseEstimate.isPresent() && isAimedTighter())
             shootingSuperstructure.updatePoseEstimateWithVision(limelightPoseEstimate.get());
     }
 

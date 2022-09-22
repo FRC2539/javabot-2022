@@ -120,7 +120,7 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
     }
 
     public void retractIntake() {
-        intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+        // intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     public boolean isConveyorBallPresent() {
