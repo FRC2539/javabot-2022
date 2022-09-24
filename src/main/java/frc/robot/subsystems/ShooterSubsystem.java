@@ -77,6 +77,9 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         rearShooterMotor.setNeutralMode(NeutralMode.Coast);
         frontShooterMotor.setNeutralMode(NeutralMode.Coast);
 
+        rearShooterMotor.enableVoltageCompensation(false);
+        frontShooterMotor.enableVoltageCompensation(false);
+
         frontShooterMotor.setInverted(true);
 
         rearShooterRPMEntry = getEntry("Shooter RPM");

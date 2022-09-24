@@ -91,44 +91,34 @@ public class RobotContainer {
         leftDriveController.getLeftBottomMiddle().whenPressed(new SeizureModeCommand(lightsSubsystem));
 
         LimelightShootCommand limelightShootCommand = new LimelightShootCommand(shootingSuperstructure);
+        LimelightDriveCommand limelightDriveCommand = new LimelightDriveCommand(
+                getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem);
 
-        leftDriveController.getTrigger().whileHeld(limelightShootCommand);
-        rightDriveController
-                .getTrigger()
-                .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderHighGoalShot()));
+        rightDriveController.getTrigger().whileHeld(new ParallelCommandGroup(limelightShootCommand, limelightDriveCommand));
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
-        rightDriveController
-                .getRightTopLeft()
-                .whileHeld(new LimelightDriveCommand(
-                        getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem));
         rightDriveController
                 .getRightThumb()
                 .whileHeld(new BallCollectCommand(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem));
 
         {
-            PIDController pidController = new PIDController(1.9, 0, 0.06, 0.02);
+            PIDController pidController = new PIDController(1.9, 0, 0.08, 0.02);
             pidController.enableContinuousInput(-Math.PI, Math.PI);
             MovingAimStrategy movingAimStrategy = new MovingAimStrategy(shootingSuperstructure, pidController);
-            rightDriveController
-                    .getBottomThumb()
-                    .whileHeld(new ParallelCommandGroup(
-                            new MovingShootDriveCommand(
-                                    getDriveForwardAxis(),
-                                    getDriveStrafeAxis(),
-                                    shootingSuperstructure,
-                                    lightsSubsystem,
-                                    movingAimStrategy),
-                            new SequentialCommandGroup(
-                                    new WaitCommand(0.5),
-                                    new MovingShootCommand(shootingSuperstructure, movingAimStrategy))));
-            // rightDriveController
-            //         .getRightTopMiddle()
-            //         .whileHeld(new MovingSpinUpCommand(shootingSuperstructure, movingAimStrategy));
+
+            ParallelCommandGroup movingShootingCommand = new ParallelCommandGroup(
+                    new MovingShootDriveCommand(
+                            getDriveForwardAxis(),
+                            getDriveStrafeAxis(),
+                            shootingSuperstructure,
+                            lightsSubsystem,
+                            movingAimStrategy),
+                    new SequentialCommandGroup(
+                            new WaitCommand(0.25), new MovingShootCommand(shootingSuperstructure, movingAimStrategy)));
+
+            leftDriveController.getTrigger().whileHeld(movingShootingCommand);
         }
 
-        operatorController.getRightTrigger().whileHeld(limelightShootCommand);
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
         operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
 
@@ -153,15 +143,15 @@ public class RobotContainer {
         return autonomousManager.getAutonomousCommand();
     }
 
-    private Axis getDriveForwardAxis() {
+    public Axis getDriveForwardAxis() {
         return leftDriveController.getYAxis();
     }
 
-    private Axis getDriveStrafeAxis() {
+    public Axis getDriveStrafeAxis() {
         return leftDriveController.getXAxis();
     }
 
-    private Axis getDriveRotationAxis() {
+    public Axis getDriveRotationAxis() {
         return rightDriveController.getXAxis();
     }
 

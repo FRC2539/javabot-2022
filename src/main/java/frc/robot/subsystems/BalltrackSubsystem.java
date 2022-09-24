@@ -7,6 +7,7 @@ import com.revrobotics.ColorSensorV3;
 import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C;
@@ -16,6 +17,8 @@ import frc.robot.Constants.BalltrackConstants;
 import frc.robot.Constants.GlobalConstants;
 
 public class BalltrackSubsystem extends ShootingComponentSubsystem implements Updatable {
+    private Compressor compressor = new Compressor(GlobalConstants.PCM_ID, PneumaticsModuleType.REVPH);
+
     private WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_CONVEYOR_MOTOR_PORT);
     private WPI_TalonSRX chamberMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_CHAMBER_MOTOR_PORT);
     private WPI_TalonSRX intakeMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_INTAKE_MOTOR_PORT);
@@ -44,6 +47,8 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
     private NetworkTableEntry conveyorBallPresentEntry;
     private NetworkTableEntry chamberBallPresentEntry;
 
+    private NetworkTableEntry pressureEntry;
+
     private BalltrackMode balltrackMode = BalltrackMode.DISABLED;
 
     private boolean conveyorBallIsPresent = false;
@@ -67,6 +72,8 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
 
         conveyorBallPresentEntry = getEntry("Conveyor Ball");
         chamberBallPresentEntry = getEntry("Chamber Ball");
+
+        pressureEntry = getEntry("pressure");
     }
 
     public void intakeWithConveyorMotor() {
@@ -120,7 +127,7 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
     }
 
     public void retractIntake() {
-        // intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+        intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     public boolean isConveyorBallPresent() {
@@ -252,6 +259,8 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
     public void periodic() {
         conveyorBallPresentEntry.setBoolean(conveyorBallIsPresent);
         chamberBallPresentEntry.setBoolean(chamberBallIsPresent);
+
+        pressureEntry.setDouble(compressor.getCurrent());
     }
 
     public enum BalltrackMode {

@@ -13,7 +13,7 @@ public class DriveCommand extends CommandBase {
     private Axis strafe;
     private Axis rotation;
 
-    private static final double INTAKE_FACTOR = 1; // 0.5
+    private static final double INTAKE_FACTOR = 0.85; // 0.5
 
     public DriveCommand(
             SwerveDriveSubsystem drivetrain,

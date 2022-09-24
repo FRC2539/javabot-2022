@@ -53,7 +53,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             Constants.SwerveConstants.swerveKinematics,
             VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
             VecBuilder.fill(Units.degreesToRadians(0.01)),
-            VecBuilder.fill(0.03, 0.03, Units.degreesToRadians(0.03)),
+            VecBuilder.fill(0.02, 0.02, Units.degreesToRadians(0.02)),
             TimesliceConstants.CONTROLLER_PERIOD);
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
@@ -63,6 +63,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private SwerveDriveSignal driveSignal = null;
 
     private final boolean LOG_TRAJECTORY_INFO = false;
+
+    private NetworkTableEntry stationaryEntry;
 
     private NetworkTableEntry robotPoseEntry;
 
@@ -96,6 +98,13 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             new SwerveModule(2, Constants.SwerveConstants.Mod2.constants),
             new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
         };
+
+        // Reset each module using its absolute encoder to avoid having modules fail to align
+        for (SwerveModule module : modules) {
+            module.resetToAbsolute();
+        }
+
+        stationaryEntry = getEntry("stationary");
 
         robotPoseEntry = getEntry("robotPose");
 
@@ -139,6 +148,13 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         TEMPERATURE_LOGGING_ENABLED = true;
 
         startLoggingTemperatures();
+    }
+
+    public boolean isStationary() {
+        return driveSignal != null
+                && Math.abs(driveSignal.vxMetersPerSecond) < 0.15
+                && Math.abs(driveSignal.vyMetersPerSecond) < 0.15
+                && Math.abs(driveSignal.omegaRadiansPerSecond) < 0.15;
     }
 
     public SwerveDrivePoseEstimator getPoseEstimator() {
@@ -298,6 +314,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     @Override
     public void periodic() {
         Pose2d pose = getPose();
+
+        stationaryEntry.setBoolean(isStationary());
 
         robotPoseEntry.setDoubleArray(
                 new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});
