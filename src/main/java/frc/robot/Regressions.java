@@ -2,24 +2,26 @@ package frc.robot;
 
 import frc.lib.control.InterpolatingMap;
 import frc.lib.interpolation.InterpolatableDouble;
+import frc.robot.subsystems.ShooterSubsystem.ShooterAngle;
 import frc.robot.util.ShooterState;
 import java.util.stream.Collectors;
 
 public class Regressions {
+    // {Distance, Rear RPM, Front RPM, (0 = close angle, 1 = far angle)}
     public static double[][] practiceRegression = {
-        {3, 2300, 1550},
-        {3.6, 2600, 1550},
-        {4.3, 3150, 1550},
-        {5.57, 3700, 1800},
-        {6.03, 4200, 2000},
+        {3, 2300, 1550, 1},
+        {3.6, 2600, 1550, 1},
+        {4.3, 3150, 1550, 1},
+        {5.57, 3700, 1800, 1},
+        {6.03, 4200, 2000, 1},
     };
 
     public static double[][] competitionRegression = {
-        {3, 2300, 1550},
-        {3.6, 2550, 1550},
-        {4.3, 3150, 1550},
-        {5.57, 3700, 1800},
-        {6.03, 4200, 2000},
+        {3, 2300, 1550, 1},
+        {3.6, 2600, 1550, 1},
+        {4.3, 3150, 1550, 1},
+        {5.57, 3700, 1800, 1},
+        {6.03, 4200, 2000, 1},
     };
 
     // this is test data, we have not gotten actual data yet
@@ -36,7 +38,10 @@ public class Regressions {
         InterpolatingMap<ShooterState> shootingMap = new InterpolatingMap<ShooterState>();
 
         for (double[] state : regression) {
-            shootingMap.put(state[0], new ShooterState(state[1], state[2]));
+            shootingMap.put(
+                    state[0],
+                    new ShooterState(
+                            state[1], state[2], state[3] == 1 ? ShooterAngle.FAR_SHOT : ShooterAngle.CLOSE_SHOT));
         }
 
         return shootingMap;

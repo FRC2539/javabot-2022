@@ -94,9 +94,10 @@ public class RobotContainer {
         LimelightDriveCommand limelightDriveCommand = new LimelightDriveCommand(
                 getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem);
 
-        rightDriveController
-                .getTrigger()
-                .whileHeld(new ParallelCommandGroup(limelightShootCommand, limelightDriveCommand));
+        ParallelCommandGroup defaultShootCommand =
+                new ParallelCommandGroup(limelightShootCommand, limelightDriveCommand);
+
+        rightDriveController.getTrigger().whileHeld(defaultShootCommand);
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
         rightDriveController
@@ -120,6 +121,8 @@ public class RobotContainer {
 
             leftDriveController.getTrigger().whileHeld(movingShootingCommand);
         }
+
+        operatorController.getRightTrigger().whileHeld(defaultShootCommand);
 
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
         operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));

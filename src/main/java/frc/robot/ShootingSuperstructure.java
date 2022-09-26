@@ -104,6 +104,10 @@ public class ShootingSuperstructure {
         limelightSubsystem.storeCurrentShotDistance(distanceToTarget);
     }
 
+    public double getFieldBasedDistance() {
+        return swerveDriveSubsystem.getPose().getTranslation().getDistance(GlobalConstants.goalLocation);
+    }
+
     public OptionalDouble getStoredShotDistance() {
         return limelightSubsystem.getStoredShotDistance();
     }
