@@ -9,7 +9,6 @@ import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.ShootingComponent;
-import java.util.Optional;
 
 public class ShootingSuperstructure {
     private BalltrackSubsystem balltrackSubsystem;
@@ -32,7 +31,7 @@ public class ShootingSuperstructure {
             case "Shooter":
                 shooterSubsystem = (ShooterSubsystem) component;
                 break;
-            case "Swerve Drive":
+            case "Swerve":
                 swerveDriveSubsystem = (SwerveDriveSubsystem) component;
                 break;
             default:
@@ -101,18 +100,10 @@ public class ShootingSuperstructure {
         return swerveDriveSubsystem.getSmoothedVelocity();
     }
 
-    public void rotateAroundTarget() {
-        swerveDriveSubsystem.setAxisOfRotation(Optional.of(() -> getTranslationToTarget()));
-    }
-
     public Translation2d getTranslationToTarget() {
         return limelightSubsystem
                 .getRobotRelativePoseEstimate()
                 .getTranslation()
                 .unaryMinus();
-    }
-
-    public void stopRotatingAroundTarget() {
-        swerveDriveSubsystem.setAxisOfRotation(Optional.empty());
     }
 }

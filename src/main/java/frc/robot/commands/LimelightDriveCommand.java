@@ -18,8 +18,6 @@ public class LimelightDriveCommand extends CommandBase {
     private DoubleSupplier forward;
     private DoubleSupplier strafe;
 
-    private static boolean ROTATE_AROUND_TARGET = false;
-
     private PIDController pidController = new PIDController(1, 0, 0.04, 0.02);
 
     private LimelightAimStrategy aimStrategy;
@@ -49,8 +47,6 @@ public class LimelightDriveCommand extends CommandBase {
 
         shootingSuperstructure.activateShootingPipeline();
 
-        if (ROTATE_AROUND_TARGET) shootingSuperstructure.rotateAroundTarget();
-
         lightsSubsystem.setAimingMode(() -> aimStrategy.isAimed());
     }
 
@@ -60,10 +56,5 @@ public class LimelightDriveCommand extends CommandBase {
                 new ChassisSpeeds(
                         forward.getAsDouble(), strafe.getAsDouble(), aimStrategy.calculateRotationalVelocity()),
                 true);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        if (ROTATE_AROUND_TARGET) shootingSuperstructure.stopRotatingAroundTarget();
     }
 }

@@ -25,8 +25,6 @@ public class AutonomousManager {
 
     private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball"};
 
-    // private Command selectedAutonomousCommand;
-
     public AutonomousManager(TrajectoryLoader trajectoryLoader, RobotContainer container) {
         this.trajectoryLoader = trajectoryLoader;
         this.container = container;
@@ -41,15 +39,6 @@ public class AutonomousManager {
 
         // Choose the first auto as the default
         selectedAuto.setString(autoStrings[0]);
-
-        // Automatically load the selected auto and print a success message
-        // selectedAuto.addListener(
-        //         event -> {
-        //             selectedAutonomousCommand = loadAutonomousCommand();
-
-        //             System.out.println("\nAuto loaded: " + event.getEntry().getString("null") + "\n");
-        //         },
-        //         EntryListenerFlags.kNew | EntryListenerFlags.kUpdate | EntryListenerFlags.kImmediate);
     }
 
     public Command getTwoBallCommand() {
@@ -162,8 +151,9 @@ public class AutonomousManager {
     }
 
     private void resetRobotPose(SequentialCommandGroup command, Trajectory trajectory) {
-        command.addCommands(
-                new InstantCommand(() -> container.getSwerveDriveSubsystem().resetGyroAngle()));
+        command.addCommands(new InstantCommand(() -> container
+                .getSwerveDriveSubsystem()
+                .resetGyroAngle(trajectory.getInitialPose().getRotation())));
         command.addCommands(
                 new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(trajectory.getInitialPose())));
     }
