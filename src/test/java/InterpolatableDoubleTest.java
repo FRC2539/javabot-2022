@@ -1,7 +1,7 @@
 import static org.junit.Assert.*;
 
-import com.team2539.cougarlib.control.InterpolatingMap;
-import frc.robot.util.InterpolatableDouble;
+import frc.lib.control.InterpolatingMap;
+import frc.lib.interpolation.InterpolatableDouble;
 import org.junit.*;
 
 public class InterpolatableDoubleTest {

@@ -1,8 +1,5 @@
 package frc.robot;
 
-import com.team2539.cougarlib.controller.Axis;
-import com.team2539.cougarlib.controller.LogitechController;
-import com.team2539.cougarlib.controller.ThrustmasterJoystick;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.lib.controller.Axis;
+import frc.lib.controller.LogitechController;
+import frc.lib.controller.ThrustmasterJoystick;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.*;
 import frc.robot.strategies.MovingAimStrategy;
@@ -94,7 +94,9 @@ public class RobotContainer {
         LimelightDriveCommand limelightDriveCommand = new LimelightDriveCommand(
                 getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem);
 
-        rightDriveController.getTrigger().whileHeld(new ParallelCommandGroup(limelightShootCommand, limelightDriveCommand));
+        rightDriveController
+                .getTrigger()
+                .whileHeld(new ParallelCommandGroup(limelightShootCommand, limelightDriveCommand));
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
         rightDriveController

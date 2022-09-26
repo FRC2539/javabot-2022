@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
-import com.team2539.cougarlib.MathUtils;
-import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import frc.lib.MathUtils;
+import frc.lib.loops.Updatable;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;

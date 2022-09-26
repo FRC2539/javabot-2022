@@ -1,9 +1,6 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.team2539.cougarlib.control.MovingAverageVelocity;
-import com.team2539.cougarlib.control.SwerveDriveSignal;
-import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -18,7 +15,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
+import frc.lib.control.MovingAverageVelocity;
+import frc.lib.control.SwerveDriveSignal;
 import frc.lib.estimator.SwerveDrivePoseEstimator;
+import frc.lib.loops.Updatable;
 import frc.robot.Constants;
 import frc.robot.Constants.TimesliceConstants;
 import frc.robot.SwerveModule;

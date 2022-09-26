@@ -1,10 +1,10 @@
 package frc.robot;
 
-import com.team2539.cougarlib.util.UpdateManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.loops.UpdateManager;
 import frc.robot.Constants.TimesliceConstants;
 import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 

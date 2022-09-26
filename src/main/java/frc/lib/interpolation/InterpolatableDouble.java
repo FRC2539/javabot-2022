@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.lib.interpolation;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.Interpolatable;

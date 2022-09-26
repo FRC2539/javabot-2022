@@ -1,0 +1,141 @@
+package frc.lib.controller;
+
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+public class ThrustmasterJoystick {
+    private final Joystick joystick;
+
+    private final Button trigger;
+    private final Button bottomThumb;
+    private final Button leftThumb;
+    private final Button rightThumb;
+    private final Button leftTopLeft;
+    private final Button leftTopMiddle;
+    private final Button leftTopRight;
+    private final Button leftBottomRight;
+    private final Button leftBottomMiddle;
+    private final Button leftBottomLeft;
+    private final Button rightTopRight;
+    private final Button rightTopMiddle;
+    private final Button rightTopLeft;
+    private final Button rightBottomLeft;
+    private final Button rightBottomMiddle;
+    private final Button rightBottomRight;
+
+    private final Axis xAxis;
+    private final Axis yAxis;
+    private final Axis zAxis;
+    private final Axis sliderAxis;
+
+    /**
+     * @param port The port the controller is on
+     */
+    public ThrustmasterJoystick(int port) {
+        joystick = new Joystick(port);
+
+        trigger = new JoystickButton(joystick, 1);
+        bottomThumb = new JoystickButton(joystick, 2);
+        leftThumb = new JoystickButton(joystick, 3);
+        rightThumb = new JoystickButton(joystick, 4);
+        leftTopLeft = new JoystickButton(joystick, 5);
+        leftTopMiddle = new JoystickButton(joystick, 6);
+        leftTopRight = new JoystickButton(joystick, 7);
+        leftBottomRight = new JoystickButton(joystick, 8);
+        leftBottomMiddle = new JoystickButton(joystick, 9);
+        leftBottomLeft = new JoystickButton(joystick, 10);
+        rightTopRight = new JoystickButton(joystick, 11);
+        rightTopMiddle = new JoystickButton(joystick, 12);
+        rightTopLeft = new JoystickButton(joystick, 13);
+        rightBottomLeft = new JoystickButton(joystick, 14);
+        rightBottomMiddle = new JoystickButton(joystick, 15);
+        rightBottomRight = new JoystickButton(joystick, 16);
+
+        xAxis = new JoystickAxis(joystick, 0);
+        yAxis = new JoystickAxis(joystick, 1);
+        zAxis = new JoystickAxis(joystick, 2);
+        sliderAxis = new JoystickAxis(joystick, 3);
+        sliderAxis.setInverted(true);
+    }
+
+    public Button getTrigger() {
+        return trigger;
+    }
+
+    public Button getBottomThumb() {
+        return bottomThumb;
+    }
+
+    public Button getLeftThumb() {
+        return leftThumb;
+    }
+
+    public Button getRightThumb() {
+        return rightThumb;
+    }
+
+    public Button getLeftTopLeft() {
+        return leftTopLeft;
+    }
+
+    public Button getLeftTopMiddle() {
+        return leftTopMiddle;
+    }
+
+    public Button getLeftTopRight() {
+        return leftTopRight;
+    }
+
+    public Button getLeftBottomRight() {
+        return leftBottomRight;
+    }
+
+    public Button getLeftBottomMiddle() {
+        return leftBottomMiddle;
+    }
+
+    public Button getLeftBottomLeft() {
+        return leftBottomLeft;
+    }
+
+    public Button getRightTopLeft() {
+        return rightTopLeft;
+    }
+
+    public Button getRightTopMiddle() {
+        return rightTopMiddle;
+    }
+
+    public Button getRightTopRight() {
+        return rightTopRight;
+    }
+
+    public Button getRightBottomRight() {
+        return rightBottomRight;
+    }
+
+    public Button getRightBottomMiddle() {
+        return rightBottomMiddle;
+    }
+
+    public Button getRightBottomLeft() {
+        return rightBottomLeft;
+    }
+
+    public Axis getXAxis() {
+        return xAxis;
+    }
+
+    public Axis getYAxis() {
+        return yAxis;
+    }
+
+    public Axis getZAxis() {
+        return zAxis;
+    }
+
+    public Axis getSliderAxis() {
+        return sliderAxis;
+    }
+}

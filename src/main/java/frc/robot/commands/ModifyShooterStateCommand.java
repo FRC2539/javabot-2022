@@ -1,9 +1,9 @@
 package frc.robot.commands;
 
-import com.team2539.cougarlib.control.InterpolatingMap;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.lib.control.InterpolatingMap;
 import frc.robot.Regressions;
 import frc.robot.ShootingSuperstructure;
 import frc.robot.subsystems.ShooterSubsystem;

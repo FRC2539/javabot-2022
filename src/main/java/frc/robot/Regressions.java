@@ -1,7 +1,7 @@
 package frc.robot;
 
-import com.team2539.cougarlib.control.InterpolatingMap;
-import frc.robot.util.InterpolatableDouble;
+import frc.lib.control.InterpolatingMap;
+import frc.lib.interpolation.InterpolatableDouble;
 import frc.robot.util.ShooterState;
 import java.util.stream.Collectors;
 

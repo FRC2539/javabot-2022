@@ -1,8 +1,5 @@
 package frc.robot.strategies;
 
-import com.team2539.cougarlib.MathUtils;
-import com.team2539.cougarlib.control.InterpolatingMap;
-import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -10,12 +7,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import frc.lib.MathUtils;
+import frc.lib.control.InterpolatingMap;
+import frc.lib.interpolation.InterpolatableDouble;
+import frc.lib.loops.Updatable;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Regressions;
 import frc.robot.ShootingSuperstructure;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.util.InterpolatableDouble;
 
 public class MovingAimStrategy implements Updatable {
     // for using, call update before using other functions
