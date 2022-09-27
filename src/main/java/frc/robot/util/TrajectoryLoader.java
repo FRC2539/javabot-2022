@@ -10,7 +10,7 @@ public class TrajectoryLoader {
     private static final String FIVE_BALL_PATH = "fiveball alt";
     private static final String FIVE_BALL_1_PATH = "fiveball 1";
     private static final String FIVE_BALL_2_PATH = "fiveball 2";
-    private static final String FOUR_BALL_PATH = "fourball 1";
+    private static final String FOUR_BALL_PATH = "fourball";
     private static final String TWO_BALL_STEAL_PATH = "twoball far steal";
     private static final String ONE_BALL_STEAL_PATH = "oneball far steal";
 
@@ -31,7 +31,7 @@ public class TrajectoryLoader {
         twoBall = new LazyPathPlannerTrajectory(TWO_BALL_PATH, 5, 6.0);
         twoBallFar = new LazyPathPlannerTrajectory(TWO_BALL_FAR_PATH, 5, 8.0);
         fiveBall = new LazyPathPlannerTrajectory(FIVE_BALL_PATH, 5, 2.5);
-        fourBall = new LazyPathPlannerTrajectory(FOUR_BALL_PATH, 5, 2.5);
+        fourBall = new LazyPathPlannerTrajectory(FOUR_BALL_PATH, 5, 6.0);
         fiveBall1 = new LazyPathPlannerTrajectory(FIVE_BALL_1_PATH, 5, 6.0);
         fiveBall2 = new LazyPathPlannerTrajectory(FIVE_BALL_2_PATH, 5, 6.0);
         twoBallSteal = new LazyPathPlannerTrajectory(TWO_BALL_STEAL_PATH, 5, 2.5);
