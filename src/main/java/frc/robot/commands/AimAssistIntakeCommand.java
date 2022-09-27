@@ -4,6 +4,7 @@ import com.team2539.cougarlib.controller.Axis;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
@@ -20,7 +21,7 @@ public class AimAssistIntakeCommand extends LoggingCommand {
 
     private double speedModifier;
 
-    private static final double INTAKE_FACTOR = 0.5;
+    private static final double INTAKE_FACTOR = 0.85;
 
     private static final double INTAKE_DOWN_DISTANCE = 1.2;
 
@@ -29,7 +30,7 @@ public class AimAssistIntakeCommand extends LoggingCommand {
             0,
             0,
             new TrapezoidProfile.Constraints(
-                    SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY / 2, SwerveDriveSubsystem.MAX_ANGULAR_VELOCITY / 4));
+                    SwerveConstants.maxAngularVelocity / 2, SwerveConstants.maxAngularVelocity / 4));
 
     public AimAssistIntakeCommand(
             MachineLearningSubsystem machineLearningSubsystem,

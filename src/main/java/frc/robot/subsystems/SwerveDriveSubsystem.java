@@ -281,7 +281,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     public void periodic() {
         Pose2d pose = getPose();
 
-        robotPoseEntry.setDoubleArray(new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});
+        robotPoseEntry.setDoubleArray(
+                new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});
 
         if (LOG_TRAJECTORY_INFO) {
             if (follower.getLastState() == null) {
