@@ -182,9 +182,13 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
             ticksAimedTighter = 0;
         }
 
-        Optional<Pose2d> limelightPoseEstimate = shootingSuperstructure.getLimelightPoseEstimate();
-        if (limelightPoseEstimate.isPresent() && isAimedTighter())
-            shootingSuperstructure.updatePoseEstimateWithVision(limelightPoseEstimate.get());
+        shootingSuperstructure.getLimelightPoseEstimate().ifPresent((Pose2d e) -> {
+            if (isAimedTighter()) {
+                shootingSuperstructure.updatePoseEstimateWithVision(e);
+            }
+            shootingSuperstructure.setGhostPosition(e);
+            shootingSuperstructure.setGhostPositionState(true);
+        });
     }
 
     // do not try to bind multiple things or you will get errors

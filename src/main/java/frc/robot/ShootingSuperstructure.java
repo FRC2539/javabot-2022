@@ -116,21 +116,25 @@ public class ShootingSuperstructure {
         return swerveDriveSubsystem.getSmoothedVelocity();
     }
 
+    public static Pose2d getPoseEstimateFromLimelightValues(
+            Rotation2d gyroAngle, double limelightAngle, double limelightDistance) {
+
+        Rotation2d robotAngle = gyroAngle.plus(Rotation2d.fromDegrees(-limelightAngle));
+        Translation2d originBasedLimelightTranslation = new Translation2d(limelightDistance, robotAngle);
+        Translation2d originBasedRobotTranslation = originBasedLimelightTranslation.minus(new Translation2d(
+                        LimelightSubsystem.LIMELIGHT_FORWARD_OFFSET, LimelightSubsystem.LIMELIGHT_SIDEWAYS_OFFSET)
+                .rotateBy(gyroAngle));
+
+        return new Pose2d(GlobalConstants.goalLocation.plus(originBasedRobotTranslation), gyroAngle);
+    }
+
     public Optional<Pose2d> getLimelightPoseEstimate() {
         if (!limelightSubsystem.hasTarget()) return Optional.empty();
         else {
-            Rotation2d robotAngle = swerveDriveSubsystem
-                    .getGyroRotation2d()
-                    .plus(Rotation2d.fromDegrees(-limelightSubsystem.getHorizontalAngle()));
-            Translation2d originBasedLimelightTranslation =
-                    new Translation2d(limelightSubsystem.getDistanceToTarget().orElse(0), robotAngle);
-            Translation2d originBasedRobotTranslation = originBasedLimelightTranslation.minus(new Translation2d(
-                            LimelightSubsystem.LIMELIGHT_FORWARD_OFFSET, LimelightSubsystem.LIMELIGHT_SIDEWAYS_OFFSET)
-                    .rotateBy(robotAngle));
-
-            return Optional.of(new Pose2d(
-                    GlobalConstants.goalLocation.plus(originBasedRobotTranslation),
-                    swerveDriveSubsystem.getGyroRotation2d()));
+            return Optional.of(getPoseEstimateFromLimelightValues(
+                    swerveDriveSubsystem.getGyroRotation2d(),
+                    limelightSubsystem.getHorizontalAngle(),
+                    limelightSubsystem.getDistanceToTarget().orElse(0)));
         }
     }
 
@@ -140,6 +144,14 @@ public class ShootingSuperstructure {
 
     public void updatePoseEstimateWithVision(Pose2d visionPose, double timestamp) {
         swerveDriveSubsystem.getPoseEstimator().addVisionMeasurement(visionPose, timestamp);
+    }
+
+    public void setGhostPosition(Pose2d ghostPose) {
+        swerveDriveSubsystem.setGhostPosition(ghostPose);
+    }
+
+    public void setGhostPositionState(boolean state) {
+        swerveDriveSubsystem.setGhostPositionState(state);
     }
 
     public Translation2d getTranslationToTarget() {
