@@ -97,14 +97,13 @@ public class AutonomousManager {
 
         followAndIntake(command, trajectoryLoader.getFourBall());
 
-        shootBallsAndAim(command, 0.7, false);
-        shootAndIntake(command, 1.6);
+        shootBallsAndAim(command, 1.7, true);
 
-        followAndIntake(command, trajectoryLoader.getFiveBall1());
+        followAndIntake(command, trajectoryLoader.getFourBall2());
 
         intakeInPlace(command, 2.5);
 
-        followAndIntake(command, trajectoryLoader.getFiveBall2());
+        followAndIntake(command, trajectoryLoader.getFourBall3());
 
         shootBallsAndAim(command, 2.5, true);
 
@@ -168,13 +167,14 @@ public class AutonomousManager {
                 .withTimeout(timeout));
     }
 
-    // private void aimAndShootBallsWithIntake(SequentialCommandGroup command, double timeout, boolean stopShooting) {
-    //     command.addCommands(new LimelightShootCommand(container.getShootingSuperstructure(), stopShooting)
-    //             .alongWith(new LimelightDriveCommand(
-    //                     () -> 0.0, () -> 0.0, container.getShootingSuperstructure(), container.getLightsSubsystem()))
-    //             .alongWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()))
-    //             .withTimeout(timeout));
-    // }
+    //kinda janky
+    private void aimAndShootBallsWithIntake(SequentialCommandGroup command, double timeout, boolean stopShooting) {
+        command.addCommands(new LimelightShootCommand(container.getShootingSuperstructure(), stopShooting)
+                .alongWith(new LimelightDriveCommand(
+                    () -> 0.0, () -> 0.0, container.getShootingSuperstructure(), container.getLightsSubsystem()))
+                .alongWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()))
+                .withTimeout(timeout));
+    }
 
     private void follow(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory));
