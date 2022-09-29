@@ -77,8 +77,8 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         rearShooterMotor.setNeutralMode(NeutralMode.Coast);
         frontShooterMotor.setNeutralMode(NeutralMode.Coast);
 
-        rearShooterMotor.enableVoltageCompensation(false);
-        frontShooterMotor.enableVoltageCompensation(false);
+        rearShooterMotor.enableVoltageCompensation(true);
+        frontShooterMotor.enableVoltageCompensation(true);
 
         frontShooterMotor.setInverted(true);
 
@@ -106,11 +106,11 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
     }
 
     public void setShooterRPMs(double rearShooterRPM, double frontShooterRPM) {
-        double rearFeedforward = (rearShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
-        double frontFeedforward = (frontShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
+        // double rearFeedforward = (rearShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
+        // double frontFeedforward = (frontShooterRPM * SHOOTER_F) / RobotController.getBatteryVoltage();
 
-        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM) + rearFeedforward);
-        frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM) + frontFeedforward);
+        rearShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(rearShooterRPM));
+        frontShooterMotor.set(ControlMode.Velocity, rpmToTalonUnits(frontShooterRPM));
     }
 
     public void setShooterPercents(double rearShooterPercent, double frontShooterPercent) {
