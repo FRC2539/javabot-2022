@@ -123,9 +123,10 @@ public class RobotContainer {
         }
 
         operatorController.getRightTrigger().whileHeld(defaultShootCommand);
+        operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
 
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
-        operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
+        operatorController.getLeftBumper().whileHeld(new SimpleShootCommand(shootingSuperstructure, shooterSubsystem::setFenderHighGoalShot));
 
         operatorController
                 .getY()
