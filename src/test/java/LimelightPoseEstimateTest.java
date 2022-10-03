@@ -58,7 +58,5 @@ public class LimelightPoseEstimateTest {
         assertEquals(
                 unrealisticPose,
                 new Translation2d(13.23, 4.115).minus(limelightOffset.rotateBy(Rotation2d.fromDegrees(90))));
-
-        
     }
 }

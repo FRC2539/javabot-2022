@@ -18,7 +18,7 @@ public class MovingShootDriveCommand extends CommandBase {
 
     private MovingAimStrategy aimStrategy;
 
-    private final double SPEED_CAP = 2;
+    private final double SPEED_CAP = 1.5;
 
     public MovingShootDriveCommand(
             DoubleSupplier forward,

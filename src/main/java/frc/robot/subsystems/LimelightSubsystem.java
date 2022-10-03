@@ -178,7 +178,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
                 hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR_TIGHTER);
         isAimedLooser =
                 hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR_LOOSER);
-        
+
         if (updatableAimStrategy.isPresent()) {
             updatableAimStrategy.orElseThrow().update();
         }
