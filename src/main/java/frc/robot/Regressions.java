@@ -9,7 +9,10 @@ import java.util.stream.Collectors;
 public class Regressions {
     // {Distance, Rear RPM, Front RPM, (0 = close angle, 1 = far angle)}
     public static double[][] practiceRegression = {
-        {3, 2300, 1550, 1},
+        {1.2, 2100, 1550, 0},
+        {2, 2300, 1550, 0},
+        {2.5, 2400, 1550, 0},
+        {3, 2700, 1550, 1},
         {3.6, 2600, 1550, 1},
         {4.3, 3150, 1550, 1},
         {5.57, 3700, 1800, 1},

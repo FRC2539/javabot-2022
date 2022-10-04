@@ -20,6 +20,7 @@ import frc.lib.control.SwerveDriveSignal;
 import frc.lib.estimator.SwerveDrivePoseEstimator;
 import frc.lib.loops.Updatable;
 import frc.robot.Constants;
+import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.TimesliceConstants;
 import frc.robot.SwerveModule;
 import frc.robot.util.LoggingManager;
@@ -71,6 +72,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private NetworkTableEntry enableGhostPose;
     private NetworkTableEntry ghostPoseEntry;
 
+    private NetworkTableEntry calculatedDistanceEntry;
+
     private NetworkTableEntry trajectoryXEntry;
     private NetworkTableEntry trajectoryYEntry;
     private NetworkTableEntry trajectoryAngleEntry;
@@ -115,6 +118,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         trajectoryXEntry = getEntry("Trajectory X");
         trajectoryYEntry = getEntry("Trajectory Y");
         trajectoryAngleEntry = getEntry("Trajectory Angle");
+
+        calculatedDistanceEntry = getEntry("Swerve Based Target Distance");
 
         driveTemperaturesEntry = getEntry("Drive Temperatures");
         steerTemperaturesEntry = getEntry("Steer Temperatures");
@@ -316,6 +321,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         Pose2d pose = getPose();
 
         stationaryEntry.setBoolean(isStationary());
+
+        calculatedDistanceEntry.setDouble(getPose().getTranslation().getDistance(GlobalConstants.goalLocation));
 
         robotPoseEntry.setDoubleArray(
                 new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});

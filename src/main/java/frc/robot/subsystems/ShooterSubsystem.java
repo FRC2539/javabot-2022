@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -50,6 +51,9 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
     private final ShooterState fenderHighGoalShooterState = new ShooterState(980, 2480, ShooterAngle.CLOSE_SHOT);
 
     private final InterpolatingMap<ShooterState> farShotStateMap = Regressions.getPracticeShootingMap();
+
+    private Debouncer shooterAngleDebouncer = new Debouncer(0.3);
+    private ShooterAngle predebounceShooterAngle = ShooterAngle.FAR_SHOT;
 
     private NetworkTableEntry customRearShooterRPMEntry;
     private NetworkTableEntry customFrontShooterRPMEntry;
@@ -176,6 +180,12 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
     }
 
     public void setFarShot(double distance) {
+        ShooterState intendedShooterState = calculateShooterStateForDistance(distance);
+        predebounceShooterAngle = intendedShooterState.angle;
+        intendedShooterState.angle = shooterAngleDebouncer.calculate(
+                        intendedShooterState.angle == ShooterAngle.FAR_SHOT)
+                ? ShooterAngle.FAR_SHOT
+                : ShooterAngle.CLOSE_SHOT;
         setShooter(calculateShooterStateForDistance(distance));
     }
 
@@ -183,6 +193,10 @@ public class ShooterSubsystem extends ShootingComponentSubsystem implements Upda
         setFarShot(distanceSupplier.getAsDouble());
 
         this.distanceSupplier = Optional.of(distanceSupplier);
+    }
+
+    public boolean isShooterDebounceOver() {
+        return targetShooterAngle == predebounceShooterAngle;
     }
 
     public void setCustomShot() {
