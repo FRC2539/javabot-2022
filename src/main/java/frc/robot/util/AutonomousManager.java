@@ -1,6 +1,10 @@
 package frc.robot.util;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -25,7 +29,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"};
+    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal", "rotation test"};
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader, RobotContainer container) {
         this.trajectoryLoader = trajectoryLoader;
@@ -138,6 +142,14 @@ public class AutonomousManager {
         return command;
     }
 
+    private Command getRotationTestCommand() {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, trajectoryLoader.getRotationTest());
+
+        return command;
+    }
+
     private void shootWithoutLimelight(SequentialCommandGroup command, double timeout) {
         command.addCommands(
             new SimpleShootCommand(container.getShootingSuperstructure(), () -> container.getShooterSubsystem().setFenderLowGoalShot())
@@ -203,6 +215,9 @@ public class AutonomousManager {
     }
 
     private void resetRobotPose(SequentialCommandGroup command, Trajectory trajectory) {
+    
+        System.out.println(trajectory.getInitialPose().getRotation().getDegrees());
+        
         command.addCommands(new InstantCommand(() -> container
                 .getSwerveDriveSubsystem()
                 .resetGyroAngle(trajectory.getInitialPose().getRotation())));
@@ -226,6 +241,8 @@ public class AutonomousManager {
                 return getTwoBallStealCommand();
             case "oneballsteal":
                 return getOneBallStealCommand();
+            case "rotation test":
+                return getRotationTestCommand();
         }
 
         // Return an empty command group if no auto is specified

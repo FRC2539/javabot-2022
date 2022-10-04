@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import java.nio.file.Path;
+
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 public class TrajectoryLoader {
@@ -16,6 +18,8 @@ public class TrajectoryLoader {
     private static final String TWO_BALL_STEAL_PATH = "twoball far steal";
     private static final String ONE_BALL_STEAL_PATH = "oneball far steal";
 
+    private static final String ROTATION_TEST_PATH = "rotation test";
+
     private LazyPathPlannerTrajectory threeBall;
     private LazyPathPlannerTrajectory threeBall2;
     private LazyPathPlannerTrajectory twoBall;
@@ -28,6 +32,8 @@ public class TrajectoryLoader {
     private LazyPathPlannerTrajectory fiveBall2;
     private LazyPathPlannerTrajectory twoBallSteal;
     private LazyPathPlannerTrajectory oneBallSteal;
+    
+    private LazyPathPlannerTrajectory rotationTest;
 
     public TrajectoryLoader() {
         threeBall = new LazyPathPlannerTrajectory(THREE_BALL_PATH, 5, 6.0);
@@ -42,6 +48,7 @@ public class TrajectoryLoader {
         fiveBall2 = new LazyPathPlannerTrajectory(FIVE_BALL_2_PATH, 5, 6.0);
         twoBallSteal = new LazyPathPlannerTrajectory(TWO_BALL_STEAL_PATH, 5, 2.5);
         oneBallSteal = new LazyPathPlannerTrajectory(ONE_BALL_STEAL_PATH, 5, 2.5);
+        rotationTest = new LazyPathPlannerTrajectory(ROTATION_TEST_PATH, 5, 2.5);
         
     }
 
@@ -91,6 +98,10 @@ public class TrajectoryLoader {
 
     public PathPlannerTrajectory getOneBallSteal() {
         return oneBallSteal.getTrajectory();
+    }
+
+    public PathPlannerTrajectory getRotationTest() {
+        return rotationTest.getTrajectory();
     }
 
 
