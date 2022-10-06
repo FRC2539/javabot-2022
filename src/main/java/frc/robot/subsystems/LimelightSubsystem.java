@@ -26,6 +26,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     private static double LIMELIGHT_FRAME_LATENCY = 0.011;
 
+    private static double LIMELIGHT_HORIZONTAL_OFFSET = -0.174646 * 13.5;
+
     private static double X_OFFSET_STEP = 0.2;
     private static double Y_OFFSET_STEP = 0.2;
 
@@ -82,6 +84,10 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     public double getHorizontalAngle() {
         return horizontalAngle;
+    }
+
+    public double getUncorrectedHorizontalAngle() {
+        return getHorizontalAngle() + LIMELIGHT_HORIZONTAL_OFFSET;
     }
 
     public double getVerticalAngle() {

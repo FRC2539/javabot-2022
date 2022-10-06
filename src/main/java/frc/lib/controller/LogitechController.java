@@ -1,5 +1,7 @@
 package frc.lib.controller;
 
+import java.util.HashMap;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -30,6 +32,8 @@ public class LogitechController {
     private final Axis rightYAxis;
     private final Axis dPadXAxis;
     private final Axis dPadYAxis;
+
+    private HashMap<String, String> buttonPurposeHashMap = new HashMap<String,String>();
 
     /**
      * @param port The port the controller is on
@@ -151,5 +155,93 @@ public class LogitechController {
 
     public Axis getDPadYAxis() {
         return dPadYAxis;
+    }
+
+    public void nameA(String purpose) {
+        buttonPurposeHashMap.put("A", purpose);
+    }
+
+    public void nameB(String purpose) {
+        buttonPurposeHashMap.put("B", purpose);
+    }
+
+    public void nameX(String purpose) {
+        buttonPurposeHashMap.put("X", purpose);
+    }
+
+    public void nameY(String purpose) {
+        buttonPurposeHashMap.put("Y", purpose);
+    }
+
+    public void nameLeftBumper(String purpose) {
+        buttonPurposeHashMap.put("leftBumper", purpose);
+    }
+
+    public void nameRightBumper(String purpose) {
+        buttonPurposeHashMap.put("rightBumper", purpose);
+    }
+
+    public void nameLeftTrigger(String purpose) {
+        buttonPurposeHashMap.put("leftTrigger", purpose);
+    }
+
+    public void nameRightTrigger(String purpose) {
+        buttonPurposeHashMap.put("rightTrigger", purpose);
+    }
+
+    public void nameBack(String purpose) {
+        buttonPurposeHashMap.put("back", purpose);
+    }
+
+    public void nameStart(String purpose) {
+        buttonPurposeHashMap.put("start", purpose);
+    }
+
+    public void nameLeftJoystick(String purpose) {
+        buttonPurposeHashMap.put("leftJoystick", purpose);
+    }
+
+    public void nameRightJoystick(String purpose) {
+        buttonPurposeHashMap.put("rightJoystick", purpose);
+    }
+
+    public void nameDPadUp(String purpose) {
+        buttonPurposeHashMap.put("dPadUp", purpose);
+    }
+
+    public void nameDPadRight(String purpose) {
+        buttonPurposeHashMap.put("dPadRight", purpose);
+    }
+
+    public void nameDPadDown(String purpose) {
+        buttonPurposeHashMap.put("dPadDown", purpose);
+    }
+
+    public void nameDPadLeft(String purpose) {
+        buttonPurposeHashMap.put("dPadLeft", purpose);
+    }
+
+    public void namLftXAxis(String purpose) {
+        buttonPurposeHashMap.put("leftXAxis", purpose);
+    }
+
+    public void namLftYAxis(String purpose) {
+        buttonPurposeHashMap.put("leftYAxis", purpose);
+    }
+
+    public void namRghtXAxis(String purpose) {
+        buttonPurposeHashMap.put("rightXAxis", purpose);
+    }
+
+    public void namRghtYAxis(String purpose) {
+        buttonPurposeHashMap.put("rightYAxis", purpose);
+    }
+
+    public void namDadXAxis(String purpose) {
+        buttonPurposeHashMap.put("dPadXAxis", purpose);
+    }
+
+    public void namDadYAxis(String purpose) {
+        buttonPurposeHashMap.put("dPadYAxis", purpose);
     }
 }

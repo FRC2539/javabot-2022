@@ -1,6 +1,9 @@
 package frc.lib.controller;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+
+import java.util.HashMap;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -25,6 +28,8 @@ public class CustomXboxController {
     private final Axis rightTrigger;
     private final Axis rightXAxis;
     private final Axis rightYAxis;
+
+    private HashMap<String, String> buttonPurposeHashMap = new HashMap<String,String>();
 
     /**
      * @param port The port the controller is on
@@ -121,5 +126,69 @@ public class CustomXboxController {
 
     public void setRightRumble(double rumbleValue) {
         joystick.setRumble(RumbleType.kRightRumble, rumbleValue);
+    }
+
+    public void nameButtonA(String purpose) {
+        buttonPurposeHashMap.put("buttonA", purpose);
+    }
+
+    public void nameButtonB(String purpose) {
+        buttonPurposeHashMap.put("buttonA", purpose);
+    }
+
+    public void nameButtonX(String purpose) {
+        buttonPurposeHashMap.put("buttonX", purpose);
+    }
+
+    public void nameButtonY(String purpose) {
+        buttonPurposeHashMap.put("buttonY", purpose);
+    }
+
+    public void nameLeftBumper(String purpose) {
+        buttonPurposeHashMap.put("leftBumper", purpose);
+    }
+
+    public void nameRightBumper(String purpose) {
+        buttonPurposeHashMap.put("rightBumper", purpose);
+    }
+
+    public void nameLeftRhombus(String purpose) {
+        buttonPurposeHashMap.put("leftRhombus", purpose);
+    }
+
+    public void nameRightRhombus(String purpose) {
+        buttonPurposeHashMap.put("rightRhombus", purpose);
+    }
+
+    public void nameLeftThumb(String purpose) {
+        buttonPurposeHashMap.put("leftThumbButton", purpose);
+    }
+
+    public void nameRightThumb(String purpose) {
+        buttonPurposeHashMap.put("rightThumbButton", purpose);
+    }
+
+    public void nameLeftXAxis(String purpose) {
+        buttonPurposeHashMap.put("leftXAxis", purpose);
+    }
+
+    public void nameLeftYAxis(String purpose) {
+        buttonPurposeHashMap.put("leftYAxis", purpose);
+    }
+
+    public void nameLeftTrigger(String purpose) {
+        buttonPurposeHashMap.put("leftTrigger", purpose);
+    }
+
+    public void nameRightTrigger(String purpose) {
+        buttonPurposeHashMap.put("rightTrigger", purpose);
+    }
+
+    public void nameRightXAxis(String purpose) {
+        buttonPurposeHashMap.put("rightXAxis", purpose);
+    }
+
+    public void nameRightYAxis(String purpose) {
+        buttonPurposeHashMap.put("rightYAxis", purpose);
     }
 }

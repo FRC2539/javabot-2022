@@ -1,5 +1,7 @@
 package frc.lib.controller;
 
+import java.util.HashMap;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -28,6 +30,8 @@ public class ThrustmasterJoystick {
     private final Axis yAxis;
     private final Axis zAxis;
     private final Axis sliderAxis;
+
+    private HashMap<String, String> buttonPurposeHashMap = new HashMap<String,String>();
 
     /**
      * @param port The port the controller is on
@@ -137,5 +141,85 @@ public class ThrustmasterJoystick {
 
     public Axis getSliderAxis() {
         return sliderAxis;
+    }
+
+    public void nameTrigger(String purpose) {
+        buttonPurposeHashMap.put("trigger", purpose);
+    }
+
+    public void nameBottomThumb(String purpose) {
+        buttonPurposeHashMap.put("bottomThumb", purpose);
+    }
+
+    public void nameLeftThumb(String purpose) {
+        buttonPurposeHashMap.put("leftThumb", purpose);
+    }
+
+    public void nameRightThumb(String purpose) {
+        buttonPurposeHashMap.put("rightThumb", purpose);
+    }
+
+    public void nameLeftTopLeft(String purpose) {
+        buttonPurposeHashMap.put("leftTopLeft", purpose);
+    }
+
+    public void nameLeftTopMiddle(String purpose) {
+        buttonPurposeHashMap.put("leftTopMiddle", purpose);
+    }
+
+    public void nameLeftTopRight(String purpose) {
+        buttonPurposeHashMap.put("leftTopRight", purpose);
+    }
+
+    public void nameLeftBottomRight(String purpose) {
+        buttonPurposeHashMap.put("leftBottomRight", purpose);
+    }
+
+    public void nameLeftBottomMiddle(String purpose) {
+        buttonPurposeHashMap.put("leftBottomMiddle", purpose);
+    }
+
+    public void nameLeftBottomLeft(String purpose) {
+        buttonPurposeHashMap.put("leftBottomLeft", purpose);
+    }
+
+    public void nameRightTopLeft(String purpose) {
+        buttonPurposeHashMap.put("rightTopLeft", purpose);
+    }
+
+    public void nameRightTopMiddle(String purpose) {
+        buttonPurposeHashMap.put("rightTopMiddle", purpose);
+    }
+
+    public void nameRightTopRight(String purpose) {
+        buttonPurposeHashMap.put("rightTopRight", purpose);
+    }
+
+    public void nameRightBottomRight(String purpose) {
+        buttonPurposeHashMap.put("rightBottomRight", purpose);
+    }
+
+    public void nameRightBottomMiddle(String purpose) {
+        buttonPurposeHashMap.put("rightBottomMiddle", purpose);
+    }
+
+    public void nameRightBottomLeft(String purpose) {
+        buttonPurposeHashMap.put("rightBottomLeft", purpose);
+    }
+
+    public void nameXAxis(String purpose) {
+        buttonPurposeHashMap.put("xAxis", purpose);
+    }
+
+    public void nameYAxis(String purpose) {
+        buttonPurposeHashMap.put("yAxis", purpose);
+    }
+
+    public void nameZAxis(String purpose) {
+        buttonPurposeHashMap.put("zAxis", purpose);
+    }
+
+    public void nameSliderAxis(String purpose) {
+        buttonPurposeHashMap.put("sliderAxis", purpose);
     }
 }

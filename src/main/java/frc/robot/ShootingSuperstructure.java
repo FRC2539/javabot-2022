@@ -133,7 +133,7 @@ public class ShootingSuperstructure {
         else {
             return Optional.of(getPoseEstimateFromLimelightValues(
                     swerveDriveSubsystem.getGyroRotation2d(),
-                    limelightSubsystem.getHorizontalAngle(),
+                    limelightSubsystem.getUncorrectedHorizontalAngle(),
                     limelightSubsystem.getDistanceToTarget().orElse(0)));
         }
     }

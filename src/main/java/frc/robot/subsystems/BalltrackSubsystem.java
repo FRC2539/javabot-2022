@@ -34,7 +34,7 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
             BalltrackConstants.BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL,
             BalltrackConstants.BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL);
 
-    private final double INTAKE_MOTOR_SPEED = 0.9;
+    private final double INTAKE_MOTOR_SPEED = 1.0;
 
     private final double SHOOTING_CONVEYOR_SPEED = 0.9;
     private final double SHOOTING_CHAMBER_SPEED = 1;
