@@ -1,19 +1,18 @@
 package frc.robot.subsystems;
 
-import com.team2539.cougarlib.MathUtils;
-import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import frc.lib.MathUtils;
+import frc.lib.loops.Updatable;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;
 
 public class LimelightSubsystem extends ShootingComponentSubsystem implements Updatable {
     private static double TARGET_HEIGHT = 2.62;
-    private static double LIMELIGHT_HEIGHT = 0.75819;
+    public static double LIMELIGHT_HEIGHT = 0.75819;
+    public static double LIMELIGHT_FORWARD_OFFSET = -0.10426;
+    public static double LIMELIGHT_SIDEWAYS_OFFSET = 0.18015;
     private static double DELTA_HEIGHT = TARGET_HEIGHT - LIMELIGHT_HEIGHT;
     public static double TARGET_RADIUS = 0.678;
 
@@ -21,24 +20,28 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
     private static double LIMELIGHT_ANGLE = Math.toRadians(90 - LIMELIGHT_MOUNTING_ANGLE);
 
+    private static double LIMELIGHT_HORIZONTAL_ERROR_LOOSER = 5;
     private static double LIMELIGHT_HORIZONTAL_ERROR = 2;
+    private static double LIMELIGHT_HORIZONTAL_ERROR_TIGHTER = 0.5;
+
+    private static double LIMELIGHT_FRAME_LATENCY = 0.011;
+
+    private static double LIMELIGHT_HORIZONTAL_OFFSET = -0.174646 * 13.5;
 
     private static double X_OFFSET_STEP = 0.2;
     private static double Y_OFFSET_STEP = 0.2;
 
+    private OptionalDouble storedLimelightDistance = OptionalDouble.empty();
+
     private double xOffset = 0.2;
     private double yOffset = 0;
 
-    private static double lookaheadTime = 0.1; // tune this number to improve shooting with moving
-
-    private OptionalDouble predictedDistanceToTarget = OptionalDouble.empty();
-    private OptionalDouble predictedHorizontalAngle = OptionalDouble.empty();
     private OptionalDouble distanceToTarget = OptionalDouble.empty();
-    private OptionalDouble predictedTargetAngleOffset = OptionalDouble.empty();
     private Pose2d robotRelativePoseEstimate = null;
 
     private boolean isAimed = false;
-    private boolean isAimedToPrediction = false;
+    private boolean isAimedTigher = false;
+    private boolean isAimedLooser = false;
 
     private double horizontalAngle = Double.NaN;
     private double verticalAngle = Double.NaN;
@@ -51,9 +54,14 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private NetworkTableEntry xOffsetEntry;
     private NetworkTableEntry yOffsetEntry;
     private NetworkTableEntry distanceEntry;
-    private NetworkTableEntry predictedDistanceEntry;
-    private NetworkTableEntry predictedAngleEntry;
-    private NetworkTableEntry predictedTargetAngleOffsetEntry;
+    private NetworkTableEntry latencyEntry;
+
+    private Optional<Updatable> updatableAimStrategy = Optional.empty();
+    private int updatableAimStrategySemaphore = 0;
+
+    private int ticksAimed;
+    private int ticksAimedTighter;
+    private int ticksAimedLooser;
 
     public LimelightSubsystem() {
         super("limelight");
@@ -66,9 +74,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         xOffsetEntry = getEntry("xOffset");
         yOffsetEntry = getEntry("yOffset");
         distanceEntry = getEntry("distance");
-        predictedDistanceEntry = getEntry("predictedDistance");
-        predictedAngleEntry = getEntry("predictedAngle");
-        predictedTargetAngleOffsetEntry = getEntry("predictedTargetAngleOffsetEntry");
+        latencyEntry = getEntry("tl");
 
         xOffsetEntry.setDouble(xOffset);
         yOffsetEntry.setDouble(yOffset);
@@ -80,6 +86,10 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         return horizontalAngle;
     }
 
+    public double getUncorrectedHorizontalAngle() {
+        return getHorizontalAngle() + LIMELIGHT_HORIZONTAL_OFFSET;
+    }
+
     public double getVerticalAngle() {
         return verticalAngle;
     }
@@ -88,8 +98,24 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         return this.isAimed;
     }
 
-    public boolean isAimedToPrediction() {
-        return this.isAimedToPrediction;
+    public boolean isAimedTighter() {
+        return this.isAimedTigher;
+    }
+
+    public boolean isAimedLooser() {
+        return this.isAimedLooser;
+    }
+
+    public int getTicksAimedTighter() {
+        return ticksAimedTighter;
+    }
+
+    public int getTicksAimed() {
+        return ticksAimed;
+    }
+
+    public int getTicksAimedLooser() {
+        return ticksAimedLooser;
     }
 
     public OptionalDouble calculateDistanceToTarget() {
@@ -103,67 +129,12 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         return distanceToTarget;
     }
 
-    public OptionalDouble getPredictedDistanceToTarget() {
-        return predictedDistanceToTarget;
-    }
-
-    public OptionalDouble getPredictedHorizontalAngle() {
-        return predictedHorizontalAngle;
-    }
-
-    public OptionalDouble getPredictedTargetAngleOffset() {
-        return predictedTargetAngleOffset;
-    }
-
     public Pose2d getRobotRelativePoseEstimate() {
         return robotRelativePoseEstimate;
     }
 
     public DoubleSupplier getMeasuredDistanceSupplier() {
         return () -> getDistanceToTarget().orElse(0);
-    }
-
-    public DoubleSupplier getPredictedDistanceSupplier() {
-        return () -> getPredictedDistanceToTarget().orElse(0);
-    }
-
-    public void updatePredictedLimelightMeasurements() {
-        if (hasTarget() && getDistanceToTarget().isPresent()) {
-            // Create a pose object that represents the robot relative to the target
-            robotRelativePoseEstimate = new Pose2d(
-                    new Translation2d(getDistanceToTarget().getAsDouble(), new Rotation2d(getHorizontalAngle())),
-                    new Rotation2d());
-
-            ChassisSpeeds robotRelativeVelocity = shootingSuperstructure.getSmoothedRobotVelocity();
-
-            // Using the current velocity, estimate how the pose of the robot will change `lookaheadTime` seconds in the
-            // future
-            Transform2d estimatedTransform = new Transform2d(
-                            new Translation2d(
-                                    robotRelativeVelocity.vxMetersPerSecond, robotRelativeVelocity.vyMetersPerSecond),
-                            new Rotation2d(robotRelativeVelocity.omegaRadiansPerSecond))
-                    .times(lookaheadTime);
-
-            Pose2d predictedPoseEstimate = robotRelativePoseEstimate.transformBy(estimatedTransform);
-
-            predictedDistanceToTarget =
-                    OptionalDouble.of(predictedPoseEstimate.getTranslation().getNorm());
-
-            double predictedChangeInRobotAngle =
-                    predictedPoseEstimate.getRotation().getRadians();
-            double predictedChangeInAngleToTarget =
-                    new Rotation2d(predictedPoseEstimate.getX(), predictedPoseEstimate.getY()).getRadians();
-
-            // Predict the horizontal offset the limelight will see `lookaheadTime` seconds in the future
-            predictedHorizontalAngle = OptionalDouble.of(predictedChangeInAngleToTarget - predictedChangeInRobotAngle);
-
-            // Calculate the angle that the robot would need to face to be aimed at the predicted target
-            predictedTargetAngleOffset = OptionalDouble.of(getHorizontalAngle() - predictedHorizontalAngle.orElse(0));
-
-            isAimedToPrediction = hasTarget()
-                    && MathUtils.equalsWithinError(
-                            predictedTargetAngleOffset.getAsDouble(), getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
-        }
     }
 
     public void setPipeline(LimelightPipeline pipeline) {
@@ -178,7 +149,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     }
 
     public boolean hasTarget() {
-        return hasTargetEntry.getNumber(0).doubleValue() == 1;
+        return pipelineEntry.getNumber(0).doubleValue() == 1
+                && hasTargetEntry.getNumber(0).doubleValue() == 1;
     }
 
     public void takeSnapshots() {
@@ -189,6 +161,18 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         snapshotEntry.setNumber(0);
     }
 
+    public void storeCurrentShotDistance() {
+        storedLimelightDistance = getDistanceToTarget();
+    }
+
+    public void storeCurrentShotDistance(double distanceToTarget) {
+        storedLimelightDistance = OptionalDouble.of(distanceToTarget);
+    }
+
+    public OptionalDouble getStoredShotDistance() {
+        return storedLimelightDistance;
+    }
+
     @Override
     public void update() {
         horizontalAngle = xEntry.getDouble(0) + xOffset;
@@ -196,18 +180,73 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
         distanceToTarget = calculateDistanceToTarget();
         isAimed = hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR);
+        isAimedTigher =
+                hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR_TIGHTER);
+        isAimedLooser =
+                hasTarget() && MathUtils.equalsWithinError(0, getHorizontalAngle(), LIMELIGHT_HORIZONTAL_ERROR_LOOSER);
 
-        updatePredictedLimelightMeasurements();
+        if (updatableAimStrategy.isPresent()) {
+            updatableAimStrategy.orElseThrow().update();
+        }
+
+        if (isAimed()) {
+            ticksAimed++;
+        } else {
+            ticksAimed = 0;
+        }
+
+        if (isAimedTighter()) {
+            ticksAimedTighter++;
+        } else {
+            ticksAimedTighter = 0;
+        }
+
+        if (isAimedLooser()) {
+            ticksAimedLooser++;
+        } else {
+            ticksAimedLooser = 0;
+        }
+
+        Optional<Pose2d> limelightPoseEstimate = shootingSuperstructure.getLimelightPoseEstimate();
+
+        if (limelightPoseEstimate.isPresent()) {
+            if (getTicksAimedLooser() > 5) {
+                shootingSuperstructure.updatePoseEstimateWithVision(limelightPoseEstimate.get());
+            }
+            shootingSuperstructure.setGhostPosition(limelightPoseEstimate.get());
+            shootingSuperstructure.setGhostPositionState(true);
+        }
+    }
+
+    // do not try to bind multiple things or you will get errors
+    public void bindUpdatable(Updatable updatable) {
+        if (updatableAimStrategySemaphore <= 0) {
+            updatableAimStrategy = Optional.of(updatable);
+            updatableAimStrategySemaphore = 1;
+        } else {
+            updatableAimStrategySemaphore++;
+        }
+    }
+
+    public void freeUpdatable() {
+        updatableAimStrategySemaphore--;
+        if (updatableAimStrategySemaphore <= 0) {
+            updatableAimStrategySemaphore = 0;
+            updatableAimStrategy = Optional.empty();
+        }
+    }
+
+    public boolean isUpdatableFree() {
+        return updatableAimStrategySemaphore <= 0;
+    }
+
+    public double getLatency() {
+        return LIMELIGHT_FRAME_LATENCY + latencyEntry.getDouble(0);
     }
 
     @Override
     public void periodic() {
         distanceEntry.setDouble(distanceToTarget.orElse(0));
-
-        predictedDistanceEntry.setDouble(predictedDistanceToTarget.orElse(0));
-        predictedAngleEntry.setDouble(predictedHorizontalAngle.orElse(0));
-
-        predictedTargetAngleOffsetEntry.setDouble(predictedTargetAngleOffset.orElse(0));
     }
 
     public void incrementXOffset() {

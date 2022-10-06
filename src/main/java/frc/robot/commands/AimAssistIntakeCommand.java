@@ -1,9 +1,9 @@
 package frc.robot.commands;
 
-import com.team2539.cougarlib.controller.Axis;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import frc.lib.controller.Axis;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;

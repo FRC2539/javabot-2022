@@ -1,12 +1,20 @@
 package frc.robot;
 
-import com.team2539.cougarlib.controller.Axis;
-import com.team2539.cougarlib.controller.LogitechController;
-import com.team2539.cougarlib.controller.ThrustmasterJoystick;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.lib.controller.Axis;
+import frc.lib.controller.LogitechController;
+import frc.lib.controller.ThrustmasterJoystick;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.*;
+import frc.robot.strategies.MovingAimStrategy;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
@@ -70,27 +78,28 @@ public class RobotContainer {
         rightDriveController.getXAxis().setScale(Constants.SwerveConstants.maxAngularVelocity);
 
         leftDriveController.getLeftTopLeft().whenPressed(() -> swerveDriveSubsystem.resetGyroAngle());
+        leftDriveController
+                .getLeftTopRight()
+                .whenPressed(() -> swerveDriveSubsystem.resetPose(new Pose2d(
+                        new Translation2d(),
+                        swerveDriveSubsystem.getGyroRotation2d().rotateBy(Rotation2d.fromDegrees(180)))));
 
         leftDriveController.getLeftThumb().whileHeld(new LowerClimberCommand(climberSubsystem));
         leftDriveController.getRightThumb().whileHeld(new RaiseClimberCommand(climberSubsystem));
         leftDriveController.getBottomThumb().whenPressed(() -> climberSubsystem.toggleClimberArm(), climberSubsystem);
 
-        leftDriveController.getLeftTopRight().whenPressed(new SeizureModeCommand(lightsSubsystem));
+        leftDriveController.getLeftBottomMiddle().whenPressed(new SeizureModeCommand(lightsSubsystem));
 
-        leftDriveController
-                .getTrigger()
-                .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderHighGoalShot()));
-        rightDriveController
-                .getTrigger()
-                .whileHeld(
-                        new SimpleShootCommand(shootingSuperstructure, () -> shooterSubsystem.setFenderLowGoalShot()));
+        LimelightShootCommand limelightShootCommand = new LimelightShootCommand(shootingSuperstructure);
+        LimelightDriveCommand limelightDriveCommand = new LimelightDriveCommand(
+                getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem);
+
+        ParallelCommandGroup defaultShootCommand =
+                new ParallelCommandGroup(limelightShootCommand, limelightDriveCommand);
+
+        rightDriveController.getTrigger().whileHeld(defaultShootCommand);
 
         rightDriveController.getLeftThumb().whileHeld(new IntakeCommand(balltrackSubsystem, lightsSubsystem));
-        rightDriveController
-                .getBottomThumb()
-                .whileHeld(new LimelightDriveCommand(
-                        getDriveForwardAxis(), getDriveStrafeAxis(), shootingSuperstructure, lightsSubsystem));
         rightDriveController
                 .getRightThumb()
                 .whileHeld(new AimAssistIntakeCommand(
@@ -101,14 +110,44 @@ public class RobotContainer {
                         getDriveStrafeAxis(),
                         getDriveRotationAxis()));
 
-        operatorController.getRightTrigger().whileHeld(new LimelightShootCommand(shootingSuperstructure));
-        operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
+        {
+            PIDController pidController = new PIDController(1.7, 0, 0.1, 0.02);
+            pidController.enableContinuousInput(-Math.PI, Math.PI);
+            MovingAimStrategy movingAimStrategy = new MovingAimStrategy(shootingSuperstructure, pidController);
+
+            ParallelCommandGroup movingShootingCommand = new ParallelCommandGroup(
+                    new MovingShootDriveCommand(
+                            getDriveForwardAxis(),
+                            getDriveStrafeAxis(),
+                            shootingSuperstructure,
+                            lightsSubsystem,
+                            movingAimStrategy),
+                    new SequentialCommandGroup(
+                            new WaitCommand(0.25), new MovingShootCommand(shootingSuperstructure, movingAimStrategy)));
+
+            leftDriveController.getTrigger().whileHeld(movingShootingCommand);
+        }
+
+        operatorController.getRightTrigger().whileHeld(defaultShootCommand);
         operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
 
-        operatorController.getA().whenPressed(() -> limelightSubsystem.decrementYOffset(), limelightSubsystem);
-        operatorController.getX().whenPressed(() -> limelightSubsystem.incrementXOffset(), limelightSubsystem);
-        operatorController.getB().whenPressed(() -> limelightSubsystem.decrementXOffset(), limelightSubsystem);
-        operatorController.getY().whenPressed(() -> limelightSubsystem.incrementYOffset(), limelightSubsystem);
+        operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
+        operatorController
+                .getLeftBumper()
+                .whileHeld(new SimpleShootCommand(shootingSuperstructure, shooterSubsystem::setFenderHighGoalShot));
+
+        operatorController
+                .getY()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 100, 0));
+        operatorController
+                .getA()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, -100, 0));
+        operatorController
+                .getX()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, 100));
+        operatorController
+                .getB()
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, -100));
 
         operatorController.getStart().whenPressed(new EnableTemperatureLogging(swerveDriveSubsystem));
         operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));
@@ -118,15 +157,15 @@ public class RobotContainer {
         return autonomousManager.getAutonomousCommand();
     }
 
-    private Axis getDriveForwardAxis() {
+    public Axis getDriveForwardAxis() {
         return leftDriveController.getYAxis();
     }
 
-    private Axis getDriveStrafeAxis() {
+    public Axis getDriveStrafeAxis() {
         return leftDriveController.getXAxis();
     }
 
-    private Axis getDriveRotationAxis() {
+    public Axis getDriveRotationAxis() {
         return rightDriveController.getXAxis();
     }
 

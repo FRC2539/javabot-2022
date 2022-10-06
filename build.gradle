@@ -71,8 +71,6 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     testImplementation 'junit:junit:4.13.1'
-
-    implementation 'com.team2539:cougarlib:2022.0.2'
 }
 
 // Simulation configuration (e.g. environment variables).

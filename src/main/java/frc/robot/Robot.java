@@ -1,10 +1,12 @@
 package frc.robot;
 
-import com.team2539.cougarlib.util.UpdateManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimesliceRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.lib.loops.UpdateManager;
 import frc.robot.Constants.TimesliceConstants;
+import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 
 public class Robot extends TimesliceRobot {
     public static CTREConfigs ctreConfigs = new CTREConfigs();
@@ -19,6 +21,9 @@ public class Robot extends TimesliceRobot {
 
         // Prevents the logging of many errors with our controllers
         DriverStation.silenceJoystickConnectionWarning(true);
+
+        // Send as little data as possible with live window
+        LiveWindow.disableAllTelemetry();
     }
 
     @Override
@@ -47,10 +52,17 @@ public class Robot extends TimesliceRobot {
     public void autonomousPeriodic() {}
 
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+        robotContainer.getLimelightSubsystem().setPipeline(LimelightPipeline.SHOOT);
+    }
 
     @Override
     public void teleopPeriodic() {}
+
+    @Override
+    public void disabledInit() {
+        // robotContainer.getLimelightSubsystem().setPipeline(LimelightPipeline.DRIVE);
+    }
 
     @Override
     public void testInit() {}

@@ -81,7 +81,7 @@ public class SwerveModule {
         lastAngle = angle;
     }
 
-    private void resetToAbsolute() {
+    public void resetToAbsolute() {
         double absolutePosition = Conversions.degreesToFalcon(
                 getCanCoder().getDegrees() - angleOffset, Constants.SwerveConstants.angleGearRatio);
         mAngleMotor.setSelectedSensorPosition(absolutePosition);
@@ -97,15 +97,16 @@ public class SwerveModule {
         mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
         mAngleMotor.setInverted(Constants.SwerveConstants.angleMotorInvert);
         mAngleMotor.setNeutralMode(Constants.SwerveConstants.angleNeutralMode);
+        mAngleMotor.enableVoltageCompensation(true);
         resetToAbsolute();
     }
 
     private void configDriveMotor() {
         mDriveMotor.configFactoryDefault();
         mDriveMotor.configAllSettings(Robot.ctreConfigs.swerveDriveFXConfig);
-        // mDriveMotor.setInverted(Constants.SwerveConstants.driveMotorInvert);
         mDriveMotor.setNeutralMode(Constants.SwerveConstants.driveNeutralMode);
         mDriveMotor.setSelectedSensorPosition(0);
+        mDriveMotor.enableVoltageCompensation(true);
         mDriveMotor.setInverted(inverted);
     }
 

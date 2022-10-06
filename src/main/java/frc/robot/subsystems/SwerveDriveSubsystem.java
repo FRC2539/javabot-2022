@@ -1,13 +1,9 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.team2539.cougarlib.control.MovingAverageVelocity;
-import com.team2539.cougarlib.control.SwerveDriveSignal;
-import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,7 +15,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
+import frc.lib.control.MovingAverageVelocity;
+import frc.lib.control.SwerveDriveSignal;
+import frc.lib.estimator.SwerveDrivePoseEstimator;
+import frc.lib.loops.Updatable;
 import frc.robot.Constants;
+import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.TimesliceConstants;
 import frc.robot.SwerveModule;
 import frc.robot.util.LoggingManager;
@@ -53,7 +54,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             Constants.SwerveConstants.swerveKinematics,
             VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)),
             VecBuilder.fill(Units.degreesToRadians(0.01)),
-            VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)));
+            VecBuilder.fill(0.03, 0.03, Units.degreesToRadians(0.03)),
+            TimesliceConstants.CONTROLLER_PERIOD);
 
     private final MovingAverageVelocity velocityEstimator = new MovingAverageVelocity(50);
 
@@ -63,10 +65,14 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
 
     private final boolean LOG_TRAJECTORY_INFO = false;
 
+    private NetworkTableEntry stationaryEntry;
+
     private NetworkTableEntry robotPoseEntry;
 
     private NetworkTableEntry enableGhostPose;
     private NetworkTableEntry ghostPoseEntry;
+
+    private NetworkTableEntry calculatedDistanceEntry;
 
     private NetworkTableEntry trajectoryXEntry;
     private NetworkTableEntry trajectoryYEntry;
@@ -96,6 +102,13 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
             new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
         };
 
+        // Reset each module using its absolute encoder to avoid having modules fail to align
+        for (SwerveModule module : modules) {
+            module.resetToAbsolute();
+        }
+
+        stationaryEntry = getEntry("stationary");
+
         robotPoseEntry = getEntry("robotPose");
 
         enableGhostPose = getEntry("enableGhostPose");
@@ -105,6 +118,8 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         trajectoryXEntry = getEntry("Trajectory X");
         trajectoryYEntry = getEntry("Trajectory Y");
         trajectoryAngleEntry = getEntry("Trajectory Angle");
+
+        calculatedDistanceEntry = getEntry("Swerve Based Target Distance");
 
         driveTemperaturesEntry = getEntry("Drive Temperatures");
         steerTemperaturesEntry = getEntry("Steer Temperatures");
@@ -138,6 +153,17 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         TEMPERATURE_LOGGING_ENABLED = true;
 
         startLoggingTemperatures();
+    }
+
+    public boolean isStationary() {
+        return driveSignal != null
+                && Math.abs(driveSignal.vxMetersPerSecond) < 0.15
+                && Math.abs(driveSignal.vyMetersPerSecond) < 0.15
+                && Math.abs(driveSignal.omegaRadiansPerSecond) < 0.15;
+    }
+
+    public SwerveDrivePoseEstimator getPoseEstimator() {
+        return swervePoseEstimator;
     }
 
     public Pose2d getPose() {
@@ -254,6 +280,19 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         }
     }
 
+    public void setGhostPosition(Pose2d ghostPosition) {
+        setGhostPositionState(true);
+        ghostPoseEntry.setDoubleArray(new double[] {
+            ghostPosition.getX(),
+            ghostPosition.getY(),
+            ghostPosition.getRotation().getDegrees()
+        });
+    }
+
+    public void setGhostPositionState(boolean ghostPositionState) {
+        enableGhostPose.setBoolean(ghostPositionState);
+    }
+
     @Override
     public void update() {
         updateOdometry();
@@ -280,6 +319,10 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     @Override
     public void periodic() {
         Pose2d pose = getPose();
+
+        stationaryEntry.setBoolean(isStationary());
+
+        calculatedDistanceEntry.setDouble(getPose().getTranslation().getDistance(GlobalConstants.goalLocation));
 
         robotPoseEntry.setDoubleArray(
                 new double[] {pose.getX(), pose.getY(), getGyroRotation2d().getDegrees()});

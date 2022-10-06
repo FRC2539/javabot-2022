@@ -27,11 +27,15 @@ public class LimelightShootCommand extends CommandBase {
     @Override
     public void execute() {
         shootingSuperstructure.shootWithLimelight();
+
+        // shootingSuperstructure.updatePoseEstimateWithLimelightData();
     }
 
     @Override
     public void end(boolean interrupted) {
         if (stopShooting) shootingSuperstructure.stopShooting();
         else shootingSuperstructure.stopShootingMaintainSpeed();
+
+        shootingSuperstructure.storeCurrentShotDistance();
     }
 }

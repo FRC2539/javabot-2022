@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
-import com.team2539.cougarlib.controller.Axis;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.controller.Axis;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
@@ -13,7 +13,7 @@ public class DriveCommand extends CommandBase {
     private Axis strafe;
     private Axis rotation;
 
-    private static final double INTAKE_FACTOR = 0.5; // 1/3
+    private static final double INTAKE_FACTOR = 0.75; // 0.85
 
     public DriveCommand(
             SwerveDriveSubsystem drivetrain,

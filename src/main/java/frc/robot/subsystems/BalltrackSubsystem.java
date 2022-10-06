@@ -4,18 +4,21 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
-import com.team2539.cougarlib.util.Updatable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.lib.loops.Updatable;
 import frc.robot.Constants.BalltrackConstants;
 import frc.robot.Constants.GlobalConstants;
 
 public class BalltrackSubsystem extends ShootingComponentSubsystem implements Updatable {
+    private Compressor compressor = new Compressor(GlobalConstants.PCM_ID, PneumaticsModuleType.REVPH);
+
     private WPI_TalonSRX conveyorMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_CONVEYOR_MOTOR_PORT);
     private WPI_TalonSRX chamberMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_CHAMBER_MOTOR_PORT);
     private WPI_TalonSRX intakeMotor = new WPI_TalonSRX(BalltrackConstants.BALLTRACK_INTAKE_MOTOR_PORT);
@@ -31,7 +34,7 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
             BalltrackConstants.BALLTRACK_INTAKE_SOLENOID_FORWARD_CHANNEL,
             BalltrackConstants.BALLTRACK_INTAKE_SOLENOID_REVERSE_CHANNEL);
 
-    private final double INTAKE_MOTOR_SPEED = 0.9;
+    private final double INTAKE_MOTOR_SPEED = 1.0;
 
     private final double SHOOTING_CONVEYOR_SPEED = 0.9;
     private final double SHOOTING_CHAMBER_SPEED = 1;
@@ -43,6 +46,8 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
 
     private NetworkTableEntry conveyorBallPresentEntry;
     private NetworkTableEntry chamberBallPresentEntry;
+
+    private NetworkTableEntry pressureEntry;
 
     private BalltrackMode balltrackMode = BalltrackMode.DISABLED;
 
@@ -67,6 +72,8 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
 
         conveyorBallPresentEntry = getEntry("Conveyor Ball");
         chamberBallPresentEntry = getEntry("Chamber Ball");
+
+        pressureEntry = getEntry("pressure");
     }
 
     public void intakeWithConveyorMotor() {
@@ -252,6 +259,8 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
     public void periodic() {
         conveyorBallPresentEntry.setBoolean(conveyorBallIsPresent);
         chamberBallPresentEntry.setBoolean(chamberBallIsPresent);
+
+        pressureEntry.setDouble(compressor.getCurrent());
     }
 
     public enum BalltrackMode {

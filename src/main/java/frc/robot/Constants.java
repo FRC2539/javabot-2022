@@ -9,6 +9,8 @@ public final class Constants {
     public static final class GlobalConstants {
         public static final String CANIVORE_NAME = "CANivore";
         public static final int PCM_ID = 17;
+        public static final Translation2d goalLocation = new Translation2d(8.23, 4.115);
+        public static final double targetVoltage = 12.0; // Used for voltage compensation
     }
 
     public static final class SwerveConstants {
@@ -69,7 +71,6 @@ public final class Constants {
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
 
         /* Motor Inverts */
-        public static final boolean driveMotorInvert = false;
         public static final boolean angleMotorInvert = false;
 
         /* Angle Encoder Invert */
@@ -92,7 +93,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 6;
             public static final int canCoderID = 26;
-            public static final double angleOffset = 348.135;
+            public static final double angleOffset = 269.561; // 348.135;
             public static final String canivoreName = "CANivore";
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, canivoreName);
@@ -114,7 +115,7 @@ public final class Constants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 27;
-            public static final double angleOffset = 94.043;
+            public static final double angleOffset = 91.318; // 94.043;
             public static final String canivoreName = "CANivore";
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, canivoreName);
@@ -131,10 +132,10 @@ public final class Constants {
         public static final double ROBOT_PERIODIC_ALLOCATION = 0.002;
         public static final double CONTROLLER_PERIOD = 0.005;
 
-        public static final double DRIVETRAIN_PERIOD = 0.0017;
+        public static final double DRIVETRAIN_PERIOD = 0.0015;
         public static final double SHOOTER_PERIOD = 0.0003;
-        public static final double BALLTRACK_PERIOD = 0.0006;
-        public static final double LIMELIGHT_PERIOD = 0.0004;
+        public static final double BALLTRACK_PERIOD = 0.0005;
+        public static final double LIMELIGHT_PERIOD = 0.0006;
     }
 
     public static final class ShooterConstants {
