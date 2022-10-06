@@ -1,10 +1,9 @@
 package frc.lib.controller;
 
-import java.util.HashMap;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import java.util.HashMap;
 
 public class LogitechController {
     private final Joystick joystick;
@@ -33,7 +32,7 @@ public class LogitechController {
     private final Axis dPadXAxis;
     private final Axis dPadYAxis;
 
-    private HashMap<String, String> buttonPurposeHashMap = new HashMap<String,String>();
+    private HashMap<String, String> buttonPurposeHashMap = new HashMap<String, String>();
 
     /**
      * @param port The port the controller is on

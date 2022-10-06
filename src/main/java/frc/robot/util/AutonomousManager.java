@@ -14,6 +14,8 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LimelightDriveCommand;
 import frc.robot.commands.LimelightShootCommand;
 import frc.robot.commands.PrepareToShootCommand;
+import frc.robot.commands.ReverseBalltrackCommand;
+import frc.robot.commands.SimpleShootCommand;
 
 public class AutonomousManager {
     private TrajectoryLoader trajectoryLoader;
@@ -23,7 +25,7 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball"};
+    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"};
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader, RobotContainer container) {
         this.trajectoryLoader = trajectoryLoader;
@@ -68,9 +70,11 @@ public class AutonomousManager {
 
         resetRobotPose(command, trajectoryLoader.getThreeBall());
 
-        followAndIntakeWithTimeout(command, trajectoryLoader.getThreeBall(), 2.5);
-        shootBallsAndAim(command, 0.5, false);
-        shootAndIntake(command, 2.7);
+        followAndIntake(command, trajectoryLoader.getThreeBall());
+        shootBallsAndAim(command, 1.5, true);
+
+        followAndIntake(command, trajectoryLoader.getThreeBall2());
+        shootBallsAndAim(command, 2.0, true);
 
         return command;
     }
@@ -78,9 +82,10 @@ public class AutonomousManager {
     public Command getFiveBallCommand() {
         SequentialCommandGroup command = (SequentialCommandGroup) getThreeBallCommand();
 
-        followAndIntake(command, trajectoryLoader.getFiveBall());
-
-        shootBallsAndAim(command, 2.5, true);
+        followAndIntake(command, trajectoryLoader.getFiveBall1());
+        intakeInPlace(command, 0.7);
+        followAndIntake(command, trajectoryLoader.getFiveBall2());
+        shootBallsAndAim(command, 3.0, true);
 
         return command;
     }
@@ -92,18 +97,56 @@ public class AutonomousManager {
 
         followAndIntake(command, trajectoryLoader.getFourBall());
 
-        shootBallsAndAim(command, 0.7, false);
-        shootAndIntake(command, 1.6);
+        shootBallsAndAim(command, 1.7, true);
 
-        followAndIntake(command, trajectoryLoader.getFiveBall1());
+        followAndIntake(command, trajectoryLoader.getFourBall2());
 
         intakeInPlace(command, 2.5);
 
-        followAndIntake(command, trajectoryLoader.getFiveBall2());
+        followAndIntake(command, trajectoryLoader.getFourBall3());
 
         shootBallsAndAim(command, 2.5, true);
 
         return command;
+    }
+
+    private Command getTwoBallStealCommand() {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, trajectoryLoader.getTwoBallFar());
+
+        followAndIntake(command, trajectoryLoader.getTwoBallFar());
+        shootBallsAndAim(command, 2, true);
+
+        followAndIntake(command, trajectoryLoader.getTwoBallSteal());
+        shootWithoutLimelight(command, 2);
+
+        return command;
+    }
+
+    private Command getOneBallStealCommand() {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, trajectoryLoader.getTwoBallFar());
+
+        followAndIntake(command, trajectoryLoader.getTwoBallFar());
+        shootBallsAndAim(command, 2, true);
+
+        followAndIntakeWithTimeout(command, trajectoryLoader.getOneBallSteal(), 2);
+        reverseIntake(command, 2);
+
+        return command;
+    }
+
+    private void shootWithoutLimelight(SequentialCommandGroup command, double timeout) {
+        command.addCommands(
+            new SimpleShootCommand(container.getShootingSuperstructure(), () -> container.getShooterSubsystem().setFenderLowGoalShot())
+            .withTimeout(timeout)
+        );
+    }
+
+    private void reverseIntake(SequentialCommandGroup command, double timeout) {
+        command.addCommands(new ReverseBalltrackCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem()).withTimeout(timeout));
     }
 
     private void shootBalls(SequentialCommandGroup command, double timeout) {
@@ -170,6 +213,10 @@ public class AutonomousManager {
                 return getFiveBallCommand();
             case "fourball":
                 return getFourBallCommand();
+            case "twoballsteal":
+                return getTwoBallStealCommand();
+            case "oneballsteal":
+                return getOneBallStealCommand();
         }
 
         // Return an empty command group if no auto is specified
