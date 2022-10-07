@@ -25,7 +25,9 @@ public class AutonomousManager {
 
     private NetworkTableEntry selectedAuto;
 
-    private final String[] autoStrings = {"twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"};
+    private final String[] autoStrings = {
+        "twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"
+    };
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader, RobotContainer container) {
         this.trajectoryLoader = trajectoryLoader;
@@ -139,14 +141,16 @@ public class AutonomousManager {
     }
 
     private void shootWithoutLimelight(SequentialCommandGroup command, double timeout) {
-        command.addCommands(
-            new SimpleShootCommand(container.getShootingSuperstructure(), () -> container.getShooterSubsystem().setFenderLowGoalShot())
-            .withTimeout(timeout)
-        );
+        command.addCommands(new SimpleShootCommand(
+                        container.getShootingSuperstructure(),
+                        () -> container.getShooterSubsystem().setFenderLowGoalShot())
+                .withTimeout(timeout));
     }
 
     private void reverseIntake(SequentialCommandGroup command, double timeout) {
-        command.addCommands(new ReverseBalltrackCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem()).withTimeout(timeout));
+        command.addCommands(
+                new ReverseBalltrackCommand(container.getBalltrackSubsystem(), container.getShooterSubsystem())
+                        .withTimeout(timeout));
     }
 
     private void shootBalls(SequentialCommandGroup command, double timeout) {

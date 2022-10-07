@@ -6,6 +6,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.lib.controller.Axis;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.BalltrackSubsystem;
+import frc.robot.subsystems.LightsSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.util.LoggingCommand;
@@ -14,6 +15,7 @@ public class AimAssistIntakeCommand extends LoggingCommand {
     private MachineLearningSubsystem machineLearningSubsystem;
     private SwerveDriveSubsystem swerveDriveSubsystem;
     private BalltrackSubsystem balltrackSubsystem;
+    private LightsSubsystem lightsSubsystem;
 
     private Axis forward;
     private Axis strafe;
@@ -24,6 +26,8 @@ public class AimAssistIntakeCommand extends LoggingCommand {
     private static final double INTAKE_FACTOR = 0.85;
 
     private static final double INTAKE_DOWN_DISTANCE = 1.2;
+
+    private boolean sawBallSoFar;
 
     private ProfiledPIDController rotationControl = new ProfiledPIDController(
             1,
@@ -36,12 +40,14 @@ public class AimAssistIntakeCommand extends LoggingCommand {
             MachineLearningSubsystem machineLearningSubsystem,
             SwerveDriveSubsystem swerveDriveSubsystem,
             BalltrackSubsystem balltrackSubsystem,
+            LightsSubsystem lightsSubsystem,
             Axis forward,
             Axis strafe,
             Axis rotate) {
         this.machineLearningSubsystem = machineLearningSubsystem;
         this.swerveDriveSubsystem = swerveDriveSubsystem;
         this.balltrackSubsystem = balltrackSubsystem;
+        this.lightsSubsystem = lightsSubsystem;
 
         addRequirements(machineLearningSubsystem, swerveDriveSubsystem, balltrackSubsystem);
 
@@ -57,12 +63,17 @@ public class AimAssistIntakeCommand extends LoggingCommand {
     public void initialize() {
         speedModifier = 1;
         balltrackSubsystem.stopIntakeMode();
+        sawBallSoFar = false;
     }
 
     @Override
     public void execute() {
+        if (machineLearningSubsystem.hasTarget()) {
+            lightsSubsystem.solidPurple();
+            sawBallSoFar = true;
+        }
         double rotationAngle = machineLearningSubsystem.getHorizontalAngle();
-        if (isDriverGoingForBall()) {
+        if (isDriverGoingForBall() && sawBallSoFar) {
             swerveDriveSubsystem.drive(
                     new ChassisSpeeds(
                             -getDriverValueTowardsBall() * Math.cos(rotationAngle) * speedModifier,
@@ -70,12 +81,13 @@ public class AimAssistIntakeCommand extends LoggingCommand {
                             rotationControl.calculate(rotationAngle)),
                     false);
         } else {
-            swerveDriveSubsystem.drive(
-                    new ChassisSpeeds(
-                            forward.get(true) * speedModifier,
-                            strafe.get(true) * speedModifier,
-                            rotate.get(true) * speedModifier),
-                    true);
+            swerveDriveSubsystem.drive(new ChassisSpeeds(0, 0, rotate.get(true) * speedModifier), true);
+            /*swerveDriveSubsystem.drive(
+            new ChassisSpeeds(
+                    forward.get(true) * speedModifier,
+                    strafe.get(true) * speedModifier,
+                    rotate.get(true) * speedModifier),
+            true);*/
         }
         if (shouldIntake()) {
             balltrackSubsystem.intakeMode();

@@ -106,6 +106,7 @@ public class RobotContainer {
                         machineLearningSubsystem,
                         swerveDriveSubsystem,
                         balltrackSubsystem,
+                        lightsSubsystem,
                         getDriveForwardAxis(),
                         getDriveStrafeAxis(),
                         getDriveRotationAxis()));
