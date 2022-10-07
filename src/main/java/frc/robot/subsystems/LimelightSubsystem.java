@@ -63,6 +63,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private int ticksAimedTighter;
     private int ticksAimedLooser;
 
+    private boolean shouldUpdatePoseUsingLimelight = true;
+
     public LimelightSubsystem() {
         super("limelight");
 
@@ -173,6 +175,14 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
         return storedLimelightDistance;
     }
 
+    public void startUpdatingPoseUsingLimelight() {
+        shouldUpdatePoseUsingLimelight = true;
+    }
+
+    public void stopUpdatingPoseUsingLimelight() {
+        shouldUpdatePoseUsingLimelight = false;
+    }
+
     @Override
     public void update() {
         horizontalAngle = xEntry.getDouble(0) + xOffset;
@@ -209,7 +219,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
 
         Optional<Pose2d> limelightPoseEstimate = shootingSuperstructure.getLimelightPoseEstimate();
 
-        if (limelightPoseEstimate.isPresent()) {
+        if (limelightPoseEstimate.isPresent() && shouldUpdatePoseUsingLimelight) {
             if (getTicksAimedLooser() > 5) {
                 shootingSuperstructure.updatePoseEstimateWithVision(limelightPoseEstimate.get());
             }
