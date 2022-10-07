@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.loops.UpdateManager;
 import frc.robot.Constants.TimesliceConstants;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 
 public class Robot extends TimesliceRobot {

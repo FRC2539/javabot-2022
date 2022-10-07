@@ -63,7 +63,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private int ticksAimedTighter;
     private int ticksAimedLooser;
 
-    private boolean shouldUpdatePoseUsingLimelight = false;
+    private boolean shouldUpdatePoseUsingLimelight = true;
 
     public LimelightSubsystem() {
         super("limelight");
