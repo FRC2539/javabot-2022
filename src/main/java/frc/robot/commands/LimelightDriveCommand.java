@@ -18,7 +18,7 @@ public class LimelightDriveCommand extends CommandBase {
     private DoubleSupplier forward;
     private DoubleSupplier strafe;
 
-    private PIDController pidController = new PIDController(1, 0, 0.04, 0.02);
+    public static PIDController pidController = new PIDController(1.7, 0, 0.1, 0.02);
 
     private LimelightAimStrategy aimStrategy;
 
