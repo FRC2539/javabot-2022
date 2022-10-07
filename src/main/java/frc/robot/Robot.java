@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.loops.UpdateManager;
 import frc.robot.Constants.TimesliceConstants;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.LimelightSubsystem.LimelightPipeline;
 
 public class Robot extends TimesliceRobot {
@@ -46,6 +47,7 @@ public class Robot extends TimesliceRobot {
     @Override
     public void autonomousInit() {
         robotContainer.getAutonomousCommand().schedule();
+        robotContainer.getLimelightSubsystem().stopUpdatingPositionWithLimelight();
     }
 
     @Override
@@ -54,6 +56,7 @@ public class Robot extends TimesliceRobot {
     @Override
     public void teleopInit() {
         robotContainer.getLimelightSubsystem().setPipeline(LimelightPipeline.SHOOT);
+        robotContainer.getLimelightSubsystem().startUpdatingPositionWithLimelight();
     }
 
     @Override
