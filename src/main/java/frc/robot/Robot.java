@@ -46,6 +46,7 @@ public class Robot extends TimesliceRobot {
     @Override
     public void autonomousInit() {
         robotContainer.getAutonomousCommand().schedule();
+        robotContainer.getLimelightSubsystem().stopUpdatingPoseUsingLimelight();
     }
 
     @Override
@@ -54,6 +55,7 @@ public class Robot extends TimesliceRobot {
     @Override
     public void teleopInit() {
         robotContainer.getLimelightSubsystem().setPipeline(LimelightPipeline.SHOOT);
+        robotContainer.getLimelightSubsystem().startUpdatingPoseUsingLimelight();
     }
 
     @Override
