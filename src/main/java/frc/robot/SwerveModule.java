@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot;   
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -35,7 +35,7 @@ public class SwerveModule {
                 : new CANCoder(moduleConstants.cancoderID, moduleConstants.canivoreName.get());
         configAngleEncoder();
 
-        /* Angle Motor Config */
+        /* Angle Motor*/
         angleMotor = moduleConstants.canivoreName.isEmpty()
                 ? new TalonFX(moduleConstants.angleMotorID)
                 : new TalonFX(moduleConstants.angleMotorID, moduleConstants.canivoreName.get());
@@ -55,8 +55,6 @@ public class SwerveModule {
                 desiredState,
                 getState()
                         .angle); // Custom optimize command, since default WPILib optimize assumes continuous controller
-        // which CTRE is not
-
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
             driveMotor.set(ControlMode.PercentOutput, percentOutput);
