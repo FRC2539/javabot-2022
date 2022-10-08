@@ -48,12 +48,20 @@ public class AutonomousManager {
     public Command getTwoBallCommand() {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, trajectoryLoader.getTwoBall());
+        resetRobotPose(command, trajectoryLoader.getThreeBall());
 
-        followAndIntake(command, trajectoryLoader.getTwoBall());
+        followAndIntake(command, trajectoryLoader.getThreeBall());
         shootBallsAndAim(command, 2, true);
 
         return command;
+        // SequentialCommandGroup command = new SequentialCommandGroup();
+
+        // resetRobotPose(command, trajectoryLoader.getTwoBall());
+
+        // followAndIntake(command, trajectoryLoader.getTwoBall());
+        // shootBallsAndAim(command, 2, true);
+
+        // return command;
     }
 
     public Command getTwoBallFarCommand() {

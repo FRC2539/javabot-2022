@@ -112,7 +112,7 @@ public class RobotContainer {
                         getDriveRotationAxis()));
 
         {
-            PIDController pidController = new PIDController(1.7, 0, 0.1, 0.02);
+            PIDController pidController = new PIDController(1.75, 0, 0.2, 0.02);
             pidController.enableContinuousInput(-Math.PI, Math.PI);
             MovingAimStrategy movingAimStrategy = new MovingAimStrategy(shootingSuperstructure, pidController);
 

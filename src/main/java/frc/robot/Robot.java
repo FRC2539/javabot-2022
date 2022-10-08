@@ -63,7 +63,7 @@ public class Robot extends TimesliceRobot {
 
     @Override
     public void disabledInit() {
-        // robotContainer.getLimelightSubsystem().setPipeline(LimelightPipeline.DRIVE);
+        robotContainer.getLimelightSubsystem().setPipeline(LimelightPipeline.SHOOT);
     }
 
     @Override

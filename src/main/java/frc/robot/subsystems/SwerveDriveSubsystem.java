@@ -90,7 +90,7 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private Timer loggingTimer = new Timer();
 
     private static double TEMPERATURE_LOGGING_PERIOD = 5; // seconds
-    private boolean TEMPERATURE_LOGGING_ENABLED = false;
+    private boolean TEMPERATURE_LOGGING_ENABLED = true;
 
     public SwerveDriveSubsystem() {
         super("Swerve");
