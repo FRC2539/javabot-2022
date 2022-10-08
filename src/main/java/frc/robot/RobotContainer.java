@@ -13,11 +13,14 @@ import frc.lib.controller.Axis;
 import frc.lib.controller.LogitechController;
 import frc.lib.controller.ThrustmasterJoystick;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.TimesliceConstants;
 import frc.robot.commands.*;
 import frc.robot.strategies.MovingAimStrategy;
 import frc.robot.subsystems.*;
 import frc.robot.util.AutonomousManager;
 import frc.robot.util.TrajectoryLoader;
+import frc.lib.loops.UpdateManager;
+import edu.wpi.first.wpilibj.TimesliceRobot;
 
 public class RobotContainer {
     private final ThrustmasterJoystick leftDriveController =
@@ -40,8 +43,10 @@ public class RobotContainer {
 
     private ShootingSuperstructure shootingSuperstructure = new ShootingSuperstructure();
 
-    public RobotContainer() {
+    public RobotContainer(TimesliceRobot robot) {
         trajectoryLoader = new TrajectoryLoader();
+
+        UpdateManager updateManager = new UpdateManager(robot);
 
         autonomousManager = new AutonomousManager(trajectoryLoader, this);
 
@@ -50,13 +55,13 @@ public class RobotContainer {
         shootingSuperstructure.registerComponent(limelightSubsystem);
         shootingSuperstructure.registerComponent(balltrackSubsystem);
 
-        CommandScheduler.getInstance().registerSubsystem(swerveDriveSubsystem);
-        CommandScheduler.getInstance().registerSubsystem(shooterSubsystem);
-        CommandScheduler.getInstance().registerSubsystem(lightsSubsystem);
-        CommandScheduler.getInstance().registerSubsystem(balltrackSubsystem);
-        CommandScheduler.getInstance().registerSubsystem(climberSubsystem);
-        CommandScheduler.getInstance().registerSubsystem(limelightSubsystem);
-        CommandScheduler.getInstance().registerSubsystem(machineLearningSubsystem);
+        updateManager.schedule(swerveDriveSubsystem, TimesliceConstants.DRIVETRAIN_PERIOD);
+        updateManager.schedule(shooterSubsystem, TimesliceConstants.SHOOTER_PERIOD);
+        updateManager.schedule(limelightSubsystem, TimesliceConstants.LIMELIGHT_PERIOD);
+        updateManager.schedule(balltrackSubsystem, TimesliceConstants.BALLTRACK_PERIOD);
+        updateManager.schedule(lightsSubsystem);
+        updateManager.schedule(climberSubsystem);
+        updateManager.schedule(machineLearningSubsystem);
 
         CommandScheduler.getInstance()
                 .setDefaultCommand(
