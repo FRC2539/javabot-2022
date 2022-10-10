@@ -61,6 +61,10 @@ public class Regressions {
         return timingMap;
     }
 
+    /**
+     * @param shootingMap
+     * @return Map as a JSON String
+     */
     public static String stringifyMap(InterpolatingMap<ShooterState> shootingMap) {
         String mapAsString = shootingMap.keySet().stream()
                 .map(key -> stringifyShooterMapEntry(key, shootingMap.get(key)))

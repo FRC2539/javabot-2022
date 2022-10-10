@@ -33,7 +33,7 @@ public final class Constants {
                 new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
                 new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
-        /* Swerve Current Limiting */
+        // Swerve Current Limiting
         public static final int angleContinuousCurrentLimit = 25;
         public static final int anglePeakCurrentLimit = 40;
         public static final double anglePeakCurrentDuration = 0.1;
@@ -44,40 +44,39 @@ public final class Constants {
         public static final double drivePeakCurrentDuration = 0.1;
         public static final boolean driveEnableCurrentLimit = true;
 
-        /* Angle Motor PID Values */
+        // Angle Motor PID Values
         public static final double angleKP = 0.6;
         public static final double angleKI = 0.0;
         public static final double angleKD = 12.0;
         public static final double angleKF = 0.0;
 
-        /* Drive Motor PID Values */
+        // Drive Motor PID Values
         public static final double driveKP = 0.10;
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
-        /* Drive Motor Characterization Values */
+        // Drive Motor Characterization Values
         public static final double driveKS =
                 (0.667 / 12); // divide by 12 to convert from volts to percent output for CTRE
         public static final double driveKV = (2.44 / 12);
         public static final double driveKA = (0.27 / 12);
 
-        /* Swerve Profiling Values */
+        // Swerve Profiling Values
         public static final double maxSpeed = 4.968230454756032; // meters per second
         public static final double maxAngularVelocity = 11.771048567785275;
 
-        /* Neutral Modes */
+        // Neutral Modes
         public static final NeutralMode angleNeutralMode = NeutralMode.Brake;
         public static final NeutralMode driveNeutralMode = NeutralMode.Brake;
 
-        /* Motor Inverts */
+        // Motor Inverts
         public static final boolean angleMotorInvert = false;
 
-        /* Angle Encoder Invert */
+        // Angle Encoder Invert
         public static final boolean canCoderInvert = false;
 
-        /* Module Specific Constants */
-        /* Front Left Module - Module 0 */
+        // Front Left Module - Module 0
         public static final class Mod0 {
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 4;
@@ -88,7 +87,7 @@ public final class Constants {
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, canivoreName);
         }
 
-        /* Front Right Module - Module 1 */
+        // Front Right Module - Module 1
         public static final class Mod1 {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 6;
@@ -99,7 +98,7 @@ public final class Constants {
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, canivoreName);
         }
 
-        /* Back Left Module - Module 2 */
+        // Back Left Module - Module 2
         public static final class Mod2 {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 5;
@@ -110,7 +109,7 @@ public final class Constants {
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset, canivoreName);
         }
 
-        /* Back Right Module - Module 3 */
+        // Back Right Module - Module 3
         public static final class Mod3 {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 7;

@@ -29,19 +29,19 @@ public class SwerveModule {
 
         inverted = moduleConstants.inverted;
 
-        /* Angle Encoder Config */
+        // Angle Encoder Config
         angleEncoder = moduleConstants.canivoreName.isEmpty()
                 ? new CANCoder(moduleConstants.cancoderID)
                 : new CANCoder(moduleConstants.cancoderID, moduleConstants.canivoreName.get());
         configAngleEncoder();
 
-        /* Angle Motor*/
+        // Angle Motor Config
         angleMotor = moduleConstants.canivoreName.isEmpty()
                 ? new TalonFX(moduleConstants.angleMotorID)
                 : new TalonFX(moduleConstants.angleMotorID, moduleConstants.canivoreName.get());
         configAngleMotor();
 
-        /* Drive Motor Config */
+        // Drive Motor Config
         driveMotor = moduleConstants.canivoreName.isEmpty()
                 ? new TalonFX(moduleConstants.driveMotorID)
                 : new TalonFX(moduleConstants.driveMotorID, moduleConstants.canivoreName.get());
@@ -54,7 +54,7 @@ public class SwerveModule {
         desiredState = CTREModuleState.optimize(
                 desiredState,
                 getState()
-                        .angle); // Custom optimize command, since default WPILib optimize assumes continuous controller
+                        .angle);
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
             driveMotor.set(ControlMode.PercentOutput, percentOutput);
@@ -70,15 +70,21 @@ public class SwerveModule {
                     feedforward.calculate(desiredState.speedMetersPerSecond));
         }
 
+        // Prevent rotating module if speed is less then 1%. Prevents Jittering.
         double angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.maxSpeed * 0.01))
                 ? lastAngle
                 : desiredState.angle
-                        .getDegrees(); // Prevent rotating module if speed is less then 1%. Prevents Jittering.
+                        .getDegrees(); 
+
         angleMotor.set(
                 ControlMode.Position, Conversions.degreesToFalcon(angle, Constants.SwerveConstants.angleGearRatio));
         lastAngle = angle;
     }
 
+    /**
+     * Offset the angle motor encoder with the measurement from the CANCoder.
+     * (Orient the swerve modules)
+     */
     public void resetToAbsolute() {
         double absolutePosition = Conversions.degreesToFalcon(
                 getCanCoder().getDegrees() - angleOffset, Constants.SwerveConstants.angleGearRatio);
@@ -122,10 +128,16 @@ public class SwerveModule {
         return new SwerveModuleState(velocity, angle);
     }
 
+    /**
+     * @return The drive motor temperature in Celsius
+     */
     public double getDriveTemperature() {
         return driveMotor.getTemperature();
     }
 
+    /**
+     * @return The steer motor temperature in Celsius
+     */
     public double getSteerTemperature() {
         return angleMotor.getTemperature();
     }
