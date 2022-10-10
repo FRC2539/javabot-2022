@@ -66,11 +66,9 @@ public class Regressions {
      * @return Map as a JSON String
      */
     public static String stringifyMap(InterpolatingMap<ShooterState> shootingMap) {
-        String mapAsString = shootingMap.keySet().stream()
+        return shootingMap.keySet().stream()
                 .map(key -> stringifyShooterMapEntry(key, shootingMap.get(key)))
                 .collect(Collectors.joining(", ", "{", "}"));
-
-        return mapAsString;
     }
 
     private static String stringifyShooterMapEntry(Double key, ShooterState shooterState) {

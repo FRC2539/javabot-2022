@@ -1,11 +1,16 @@
 package frc.lib.controller;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ThrustmasterJoystick {
+    private int port;
+
     private final Joystick joystick;
 
     private final Button trigger;
@@ -36,6 +41,8 @@ public class ThrustmasterJoystick {
      * @param port The port the controller is on
      */
     public ThrustmasterJoystick(int port) {
+        this.port = port;
+        
         joystick = new Joystick(port);
 
         trigger = new JoystickButton(joystick, 1);
@@ -220,5 +227,22 @@ public class ThrustmasterJoystick {
 
     public void nameSliderAxis(String purpose) {
         buttonPurposeHashMap.put("sliderAxis", purpose);
+    }
+
+    public void sendButtonNamesToNT() {
+        NetworkTableInstance.getDefault().getTable("Controllers").getEntry(port + "").setString(toJSON());
+    }
+
+    /**
+     * @return Button names as a JSON String
+     */
+    public String toJSON() {
+        return buttonPurposeHashMap.entrySet().stream()
+                    .map((Map.Entry<String, String> buttonEntry) -> stringifyButtonName(buttonEntry))
+                    .collect(Collectors.joining(", ", "{", "}"));
+    }
+
+    private String stringifyButtonName(Map.Entry<String, String> buttonEntry) {
+        return "\"" + buttonEntry.getKey() + "\": " + "\"" + buttonEntry.getValue() + "\"";
     }
 }

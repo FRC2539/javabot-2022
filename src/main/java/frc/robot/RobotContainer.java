@@ -185,6 +185,10 @@ public class RobotContainer {
 
         operatorController.getStart().whenPressed(new EnableTemperatureLogging(swerveDriveSubsystem));
         operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));
+
+        rightDriveController.sendButtonNamesToNT();
+        leftDriveController.sendButtonNamesToNT();
+        operatorController.sendButtonNamesToNT();
     }
 
     public Command getAutonomousCommand() {

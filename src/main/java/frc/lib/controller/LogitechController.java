@@ -1,11 +1,17 @@
 package frc.lib.controller;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class LogitechController {
+    private int port;
+
     private final Joystick joystick;
 
     private final Button A;
@@ -38,6 +44,8 @@ public class LogitechController {
      * @param port The port the controller is on
      */
     public LogitechController(int port) {
+        this.port = port;
+
         joystick = new Joystick(port);
 
         A = new JoystickButton(joystick, 2);
@@ -220,27 +228,44 @@ public class LogitechController {
         buttonPurposeHashMap.put("dPadLeft", purpose);
     }
 
-    public void namLftXAxis(String purpose) {
+    public void nameLftXAxis(String purpose) {
         buttonPurposeHashMap.put("leftXAxis", purpose);
     }
 
-    public void namLftYAxis(String purpose) {
+    public void nameLftYAxis(String purpose) {
         buttonPurposeHashMap.put("leftYAxis", purpose);
     }
 
-    public void namRghtXAxis(String purpose) {
+    public void nameRghtXAxis(String purpose) {
         buttonPurposeHashMap.put("rightXAxis", purpose);
     }
 
-    public void namRghtYAxis(String purpose) {
+    public void nameRghtYAxis(String purpose) {
         buttonPurposeHashMap.put("rightYAxis", purpose);
     }
 
-    public void namDadXAxis(String purpose) {
+    public void nameDadXAxis(String purpose) {
         buttonPurposeHashMap.put("dPadXAxis", purpose);
     }
 
-    public void namDadYAxis(String purpose) {
+    public void nameDadYAxis(String purpose) {
         buttonPurposeHashMap.put("dPadYAxis", purpose);
+    }
+
+    public void sendButtonNamesToNT() {
+        NetworkTableInstance.getDefault().getTable("Controllers").getEntry(port + "").setString(toJSON());
+    }
+
+    /**
+     * @return Button names as a JSON String
+     */
+    public String toJSON() {
+        return buttonPurposeHashMap.entrySet().stream()
+                    .map((Map.Entry<String, String> buttonEntry) -> stringifyButtonName(buttonEntry))
+                    .collect(Collectors.joining(", ", "{", "}"));
+    }
+
+    private String stringifyButtonName(Map.Entry<String, String> buttonEntry) {
+        return "\"" + buttonEntry.getKey() + "\": " + "\"" + buttonEntry.getValue() + "\"";
     }
 }
