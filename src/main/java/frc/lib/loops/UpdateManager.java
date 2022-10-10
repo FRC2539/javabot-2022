@@ -11,13 +11,19 @@ public class UpdateManager {
         this.robot = robot;
     }
 
+    /**
+     * @param subsystem The subsystem getting registered.
+     */
     public void schedule(Subsystem subsystem) {
         CommandScheduler.getInstance().registerSubsystem(subsystem);
     }
 
+     /**
+     * @param subsystem The subsystem getting registered.
+     * @param updateTimeslice The corresponding timeslice of the subsystem.
+     */
     public void schedule(Subsystem subsystem, double updateTimeslice) {
-        CommandScheduler.getInstance().registerSubsystem(subsystem);
+        schedule(subsystem);
         robot.schedule(() -> ((Updatable)subsystem).update(), updateTimeslice);
     }
-
 }
