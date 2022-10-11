@@ -66,24 +66,17 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
     private final boolean LOG_TRAJECTORY_INFO = false;
 
     private NetworkTableEntry stationaryEntry;
-
     private NetworkTableEntry robotPoseEntry;
-
     private NetworkTableEntry enableGhostPose;
     private NetworkTableEntry ghostPoseEntry;
-
     private NetworkTableEntry calculatedDistanceEntry;
-
     private NetworkTableEntry trajectoryXEntry;
     private NetworkTableEntry trajectoryYEntry;
     private NetworkTableEntry trajectoryAngleEntry;
-
     private NetworkTableEntry driveTemperaturesEntry;
     private NetworkTableEntry steerTemperaturesEntry;
-
     private NetworkTableEntry vx;
     private NetworkTableEntry vy;
-
     private DoubleArrayLogEntry driveTemperaturesLogEntry;
     private DoubleArrayLogEntry steerTemperaturesLogEntry;
 
@@ -108,17 +101,13 @@ public class SwerveDriveSubsystem extends ShootingComponentSubsystem implements 
         }
 
         stationaryEntry = getEntry("stationary");
-
         robotPoseEntry = getEntry("robotPose");
-
         enableGhostPose = getEntry("enableGhostPose");
         enableGhostPose.setBoolean(false);
         ghostPoseEntry = getEntry("ghostPose");
-
         trajectoryXEntry = getEntry("Trajectory X");
         trajectoryYEntry = getEntry("Trajectory Y");
         trajectoryAngleEntry = getEntry("Trajectory Angle");
-
         calculatedDistanceEntry = getEntry("Swerve Based Target Distance");
 
         driveTemperaturesEntry = getEntry("Drive Temperatures");
