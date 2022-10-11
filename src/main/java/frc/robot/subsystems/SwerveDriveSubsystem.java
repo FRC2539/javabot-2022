@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
 import edu.wpi.first.wpilibj.Timer;
+import frc.lib.LoggingManager;
 import frc.lib.control.MovingAverageVelocity;
 import frc.lib.control.SwerveDriveSignal;
 import frc.lib.estimator.SwerveDrivePoseEstimator;
@@ -23,7 +24,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.GlobalConstants;
 import frc.robot.Constants.TimesliceConstants;
 import frc.robot.SwerveModule;
-import frc.robot.util.LoggingManager;
 import frc.robot.util.TrajectoryFollower;
 import java.util.Optional;
 

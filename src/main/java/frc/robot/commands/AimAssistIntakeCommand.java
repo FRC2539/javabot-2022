@@ -3,15 +3,15 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.lib.controller.Axis;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.BalltrackSubsystem;
 import frc.robot.subsystems.LightsSubsystem;
 import frc.robot.subsystems.MachineLearningSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.util.LoggingCommand;
 
-public class AimAssistIntakeCommand extends LoggingCommand {
+public class AimAssistIntakeCommand extends CommandBase {
     private MachineLearningSubsystem machineLearningSubsystem;
     private SwerveDriveSubsystem swerveDriveSubsystem;
     private BalltrackSubsystem balltrackSubsystem;
