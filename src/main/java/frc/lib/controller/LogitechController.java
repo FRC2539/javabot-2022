@@ -74,6 +74,8 @@ public class LogitechController {
         leftYAxis.setInverted(true);
         rightYAxis.setInverted(true);
         dPadYAxis.setInverted(true);
+
+        buttonPurposeHashMap.put("type", "LogitechController");
     }
 
     public Button getA() {

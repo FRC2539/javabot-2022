@@ -67,6 +67,8 @@ public class ThrustmasterJoystick {
         zAxis = new JoystickAxis(joystick, 2);
         sliderAxis = new JoystickAxis(joystick, 3);
         sliderAxis.setInverted(true);
+
+        buttonPurposeHashMap.put("type", "ThrustmasterJoystick");
     }
 
     public Button getTrigger() {
