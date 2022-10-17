@@ -51,7 +51,7 @@ public class AutonomousManager {
         resetRobotPose(command, trajectoryLoader.getThreeBall());
 
         followAndIntake(command, trajectoryLoader.getThreeBall());
-        shootBallsAndAim(command, 2, true);
+        shootBallsAndAim(command, 3, true);
 
         return command;
         // SequentialCommandGroup command = new SequentialCommandGroup();
@@ -70,7 +70,7 @@ public class AutonomousManager {
         resetRobotPose(command, trajectoryLoader.getTwoBallFar());
 
         followAndIntake(command, trajectoryLoader.getTwoBallFar());
-        shootBallsAndAim(command, 2, true);
+        shootBallsAndAim(command, 3, true);
 
         return command;
     }
@@ -81,7 +81,7 @@ public class AutonomousManager {
         resetRobotPose(command, trajectoryLoader.getThreeBall());
 
         followAndIntake(command, trajectoryLoader.getThreeBall());
-        shootBallsAndAim(command, 1.5, true);
+        shootBallsAndAim(command, 2.0, true);
 
         followAndIntake(command, trajectoryLoader.getThreeBall2());
         shootBallsAndAim(command, 2.0, true);
