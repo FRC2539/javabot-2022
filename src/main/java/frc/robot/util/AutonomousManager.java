@@ -1,6 +1,8 @@
 package frc.robot.util;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -205,12 +207,13 @@ public class AutonomousManager {
                         .withTimeout(intakeTimeout)));
     }
 
-    private void resetRobotPose(SequentialCommandGroup command, Trajectory trajectory) {
-        command.addCommands(new InstantCommand(() -> container
-                .getSwerveDriveSubsystem()
-                .resetGyroAngle(trajectory.getInitialPose().getRotation())));
+    private void resetRobotPose(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
+        PathPlannerState initialState = trajectory.getInitialState();
+
+        command.addCommands(new InstantCommand(
+                () -> container.getSwerveDriveSubsystem().resetGyroAngle(initialState.holonomicRotation))); // might need to reverse this angle
         command.addCommands(
-                new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(trajectory.getInitialPose())));
+                new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(initialState.poseMeters)));
     }
 
     public Command loadAutonomousCommand() {
