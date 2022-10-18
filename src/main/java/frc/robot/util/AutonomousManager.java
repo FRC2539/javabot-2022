@@ -95,7 +95,7 @@ public class AutonomousManager {
         SequentialCommandGroup command = (SequentialCommandGroup) getThreeBallCommand();
 
         followAndIntake(command, trajectoryLoader.getFiveBall1());
-        intakeInPlace(command, 0.7);
+        intakeInPlace(command, 2);
         followAndIntake(command, trajectoryLoader.getFiveBall2());
         shootBallsAndAim(command, 3.0, true);
 
@@ -211,7 +211,7 @@ public class AutonomousManager {
         PathPlannerState initialState = trajectory.getInitialState();
 
         command.addCommands(new InstantCommand(
-                () -> container.getSwerveDriveSubsystem().resetGyroAngle(initialState.holonomicRotation))); // might need to reverse this angle
+                () -> container.getSwerveDriveSubsystem().resetGyroAngle(initialState.holonomicRotation.times(-1)))); // might need to reverse this angle
         command.addCommands(
                 new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(initialState.poseMeters)));
     }
