@@ -139,16 +139,16 @@ public class RobotContainer {
 
         operatorController
                 .getY()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 100, 0));
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 50, 0));
         operatorController
                 .getA()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, -100, 0));
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, -50, 0));
         operatorController
                 .getX()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, 100));
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, 50));
         operatorController
                 .getB()
-                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, -100));
+                .whenPressed(new ModifyShooterStateCommand(shooterSubsystem, shootingSuperstructure, 0, -50));
 
         operatorController.getStart().whenPressed(new EnableTemperatureLogging(swerveDriveSubsystem));
         operatorController.getBack().whileHeld(new ReverseBalltrackCommand(balltrackSubsystem, shooterSubsystem));

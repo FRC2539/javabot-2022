@@ -28,7 +28,7 @@ public class AutonomousManager {
     private NetworkTableEntry selectedAuto;
 
     private final String[] autoStrings = {
-        "twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"
+        "twoballfar", "twoball","threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"
     };
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader, RobotContainer container) {
@@ -70,12 +70,27 @@ public class AutonomousManager {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, trajectoryLoader.getTwoBallFar());
+        
 
         followAndIntake(command, trajectoryLoader.getTwoBallFar());
         shootBallsAndAim(command, 3, true);
 
         return command;
     }
+
+    // public Command getTwoBallFarManualGyroCommand() {
+    //     SequentialCommandGroup command = new SequentialCommandGroup();
+    //     PathPlannerState initialState = trajectoryLoader.getTwoBallFar().getInitialState();
+
+    //     resetRobotPose(command, trajectoryLoader.getTwoBallFarManualGyro());
+
+    //     container.getSwerveDriveSubsystem().resetGyroAngle(initialState.holonomicRotation.times(-1));
+
+    //     followAndIntake(command, trajectoryLoader.getTwoBallFar());
+    //     shootBallsAndAim(command, 3, true);
+
+    //     return command;
+    // }
 
     public Command getThreeBallCommand() {
         SequentialCommandGroup command = new SequentialCommandGroup();
@@ -232,6 +247,8 @@ public class AutonomousManager {
                 return getTwoBallStealCommand();
             case "oneballsteal":
                 return getOneBallStealCommand();
+            // case "twoballfarmanual":
+            //     return getTwoBallFarManualGyroCommand();
         }
 
         // Return an empty command group if no auto is specified
