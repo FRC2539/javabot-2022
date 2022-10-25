@@ -15,6 +15,7 @@ import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LimelightDriveCommand;
 import frc.robot.commands.LimelightShootCommand;
+import frc.robot.commands.LimelightSpinUpCommand;
 import frc.robot.commands.PrepareToShootCommand;
 import frc.robot.commands.ReverseBalltrackCommand;
 import frc.robot.commands.SimpleShootCommand;
@@ -97,11 +98,11 @@ public class AutonomousManager {
 
         resetRobotPose(command, trajectoryLoader.getThreeBall());
 
-        followAndIntake(command, trajectoryLoader.getThreeBall());
-        shootBallsAndAim(command, 2.0, true);
+        followAndIntakeAndSpinUp(command, trajectoryLoader.getThreeBall());
+        shootBallsAndAim(command, 1.8, true);
 
-        followAndIntake(command, trajectoryLoader.getThreeBall2());
-        shootBallsAndAim(command, 2.0, true);
+        followAndIntakeAndSpinUp(command, trajectoryLoader.getThreeBall2());
+        shootBallsAndAim(command, 1.8, true);
 
         return command;
     }
@@ -110,8 +111,9 @@ public class AutonomousManager {
         SequentialCommandGroup command = (SequentialCommandGroup) getThreeBallCommand();
 
         followAndIntake(command, trajectoryLoader.getFiveBall1());
-        intakeInPlace(command, 2);
-        followAndIntake(command, trajectoryLoader.getFiveBall2());
+        followAndIntake(command, trajectoryLoader.getFiveBallSweep());
+        // intakeInPlace(command, 2);
+        followAndIntakeAndSpinUp(command, trajectoryLoader.getFiveBall2());
         shootBallsAndAim(command, 3.0, true);
 
         return command;
@@ -208,6 +210,11 @@ public class AutonomousManager {
     private void followAndIntake(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
                 .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem())));
+    }
+
+    private void followAndIntakeAndSpinUp(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
+        command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
+                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()), new LimelightSpinUpCommand(container.getShootingSuperstructure())));
     }
 
     private void intakeInPlace(SequentialCommandGroup command, double timeout) {
