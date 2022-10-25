@@ -130,7 +130,7 @@ public class RobotContainer {
         }
 
         operatorController.getRightTrigger().whileHeld(defaultShootCommand);
-        operatorController.getRightBumper().whileHeld(new PrepareToShootCommand(shootingSuperstructure));
+        operatorController.getRightBumper().whileHeld(new LimelightSpinUpCommand(shootingSuperstructure));
 
         operatorController.getLeftTrigger().whileHeld(new CustomShootCommand(shootingSuperstructure));
         operatorController

@@ -2,8 +2,6 @@ package frc.robot.util;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -29,7 +27,7 @@ public class AutonomousManager {
     private NetworkTableEntry selectedAuto;
 
     private final String[] autoStrings = {
-        "twoballfar", "twoball","threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"
+        "twoballfar", "twoball", "threeball", "fiveball", "fourball", "twoballsteal", "oneballsteal"
     };
 
     public AutonomousManager(TrajectoryLoader trajectoryLoader, RobotContainer container) {
@@ -71,7 +69,6 @@ public class AutonomousManager {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, trajectoryLoader.getTwoBallFar());
-        
 
         followAndIntake(command, trajectoryLoader.getTwoBallFar());
         shootBallsAndAim(command, 3, true);
@@ -214,7 +211,9 @@ public class AutonomousManager {
 
     private void followAndIntakeAndSpinUp(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getSwerveDriveSubsystem(), trajectory)
-                .deadlineWith(new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()), new LimelightSpinUpCommand(container.getShootingSuperstructure())));
+                .deadlineWith(
+                        new IntakeCommand(container.getBalltrackSubsystem(), container.getLightsSubsystem()),
+                        new LimelightSpinUpCommand(container.getShootingSuperstructure())));
     }
 
     private void intakeInPlace(SequentialCommandGroup command, double timeout) {
@@ -232,8 +231,9 @@ public class AutonomousManager {
     private void resetRobotPose(SequentialCommandGroup command, PathPlannerTrajectory trajectory) {
         PathPlannerState initialState = trajectory.getInitialState();
 
-        command.addCommands(new InstantCommand(
-                () -> container.getSwerveDriveSubsystem().resetGyroAngle(initialState.holonomicRotation.times(-1)))); // might need to reverse this angle
+        command.addCommands(new InstantCommand(() -> container
+                .getSwerveDriveSubsystem()
+                .resetGyroAngle(initialState.holonomicRotation.times(-1)))); // might need to reverse this angle
         command.addCommands(
                 new InstantCommand(() -> container.getSwerveDriveSubsystem().resetPose(initialState.poseMeters)));
     }
@@ -254,8 +254,8 @@ public class AutonomousManager {
                 return getTwoBallStealCommand();
             case "oneballsteal":
                 return getOneBallStealCommand();
-            // case "twoballfarmanual":
-            //     return getTwoBallFarManualGyroCommand();
+                // case "twoballfarmanual":
+                //     return getTwoBallFarManualGyroCommand();
         }
 
         // Return an empty command group if no auto is specified

@@ -8,6 +8,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -245,9 +246,18 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
             stopIntakeMotor();
             // retractIntake();
         } else if (chamberBallIsPresent) {
-            intakeWithConveyorMotor();
-            stopChamberMotor();
-            runIntakeMotor();
+            //TODO: Add button to disable rejection
+            if (getChamberBallColor() != DriverStation.getAlliance()) {
+                shootingSuperstructure.getShooterSubsystem().setFenderLowGoalShot();
+                intakeWithChamberMotor();
+                intakeWithConveyorMotor();
+                runIntakeMotor();
+            }
+            else {
+                intakeWithConveyorMotor();
+                stopChamberMotor();
+                runIntakeMotor();
+            }
         } else {
             intakeWithConveyorMotor();
             intakeWithChamberMotor();
