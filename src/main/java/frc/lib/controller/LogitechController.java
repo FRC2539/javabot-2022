@@ -1,6 +1,5 @@
 package frc.lib.controller;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -255,7 +254,10 @@ public class LogitechController {
     }
 
     public void sendButtonNamesToNT() {
-        NetworkTableInstance.getDefault().getTable("Controllers").getEntry(port + "").setString(toJSON());
+        NetworkTableInstance.getDefault()
+                .getTable("Controllers")
+                .getEntry(port + "")
+                .setString(toJSON());
     }
 
     /**
@@ -263,8 +265,8 @@ public class LogitechController {
      */
     public String toJSON() {
         return buttonPurposeHashMap.entrySet().stream()
-                    .map((Map.Entry<String, String> buttonEntry) -> stringifyButtonName(buttonEntry))
-                    .collect(Collectors.joining(", ", "{", "}"));
+                .map((Map.Entry<String, String> buttonEntry) -> stringifyButtonName(buttonEntry))
+                .collect(Collectors.joining(", ", "{", "}"));
     }
 
     private String stringifyButtonName(Map.Entry<String, String> buttonEntry) {

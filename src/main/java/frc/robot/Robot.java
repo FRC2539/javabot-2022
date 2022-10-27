@@ -26,9 +26,7 @@ public class Robot extends TimesliceRobot {
     }
 
     @Override
-    public void robotInit() {
-
-    }
+    public void robotInit() {}
 
     @Override
     public void robotPeriodic() {

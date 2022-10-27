@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import frc.lib.loops.Updatable;
 import frc.lib.math.MathUtils;
-
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;

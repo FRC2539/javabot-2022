@@ -42,7 +42,7 @@ public class ThrustmasterJoystick {
      */
     public ThrustmasterJoystick(int port) {
         this.port = port;
-        
+
         joystick = new Joystick(port);
 
         trigger = new JoystickButton(joystick, 1);
@@ -232,7 +232,10 @@ public class ThrustmasterJoystick {
     }
 
     public void sendButtonNamesToNT() {
-        NetworkTableInstance.getDefault().getTable("Controllers").getEntry(port + "").setString(toJSON());
+        NetworkTableInstance.getDefault()
+                .getTable("Controllers")
+                .getEntry(port + "")
+                .setString(toJSON());
     }
 
     /**
@@ -240,8 +243,8 @@ public class ThrustmasterJoystick {
      */
     public String toJSON() {
         return buttonPurposeHashMap.entrySet().stream()
-                    .map((Map.Entry<String, String> buttonEntry) -> stringifyButtonName(buttonEntry))
-                    .collect(Collectors.joining(", ", "{", "}"));
+                .map((Map.Entry<String, String> buttonEntry) -> stringifyButtonName(buttonEntry))
+                .collect(Collectors.joining(", ", "{", "}"));
     }
 
     private String stringifyButtonName(Map.Entry<String, String> buttonEntry) {

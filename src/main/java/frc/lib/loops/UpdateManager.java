@@ -18,12 +18,12 @@ public class UpdateManager {
         CommandScheduler.getInstance().registerSubsystem(subsystem);
     }
 
-     /**
+    /**
      * @param subsystem The subsystem getting registered.
      * @param updateTimeslice The corresponding timeslice of the subsystem.
      */
     public void schedule(Subsystem subsystem, double updateTimeslice) {
         schedule(subsystem);
-        robot.schedule(() -> ((Updatable)subsystem).update(), updateTimeslice);
+        robot.schedule(() -> ((Updatable) subsystem).update(), updateTimeslice);
     }
 }

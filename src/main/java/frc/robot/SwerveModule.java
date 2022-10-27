@@ -1,4 +1,4 @@
-package frc.robot;   
+package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
@@ -51,10 +51,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        desiredState = CTREModuleState.optimize(
-                desiredState,
-                getState()
-                        .angle);
+        desiredState = CTREModuleState.optimize(desiredState, getState().angle);
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
             driveMotor.set(ControlMode.PercentOutput, percentOutput);
@@ -73,8 +70,7 @@ public class SwerveModule {
         // Prevent rotating module if speed is less then 1%. Prevents Jittering.
         double angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.maxSpeed * 0.01))
                 ? lastAngle
-                : desiredState.angle
-                        .getDegrees(); 
+                : desiredState.angle.getDegrees();
 
         angleMotor.set(
                 ControlMode.Position, Conversions.degreesToFalcon(angle, Constants.SwerveConstants.angleGearRatio));

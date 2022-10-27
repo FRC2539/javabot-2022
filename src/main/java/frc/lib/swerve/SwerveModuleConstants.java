@@ -25,7 +25,7 @@ public class SwerveModuleConstants {
     }
 
     public SwerveModuleConstants(
-        int driveMotorID, int angleMotorID, int canCoderID, double angleOffset, String canivoreName) {
+            int driveMotorID, int angleMotorID, int canCoderID, double angleOffset, String canivoreName) {
         this(driveMotorID, angleMotorID, canCoderID, angleOffset);
         this.canivoreName = Optional.of(canivoreName);
     }
