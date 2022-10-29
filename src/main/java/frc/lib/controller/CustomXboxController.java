@@ -52,6 +52,8 @@ public class CustomXboxController {
         rightTrigger = new JoystickAxis(joystick, 3);
         rightXAxis = new JoystickAxis(joystick, 4);
         rightYAxis = new JoystickAxis(joystick, 5);
+
+        buttonPurposeHashMap.put("type", "CustomXboxController");
     }
 
     public Button getButtonA() {
