@@ -48,6 +48,8 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
     private NetworkTableEntry conveyorBallPresentEntry;
     private NetworkTableEntry chamberBallPresentEntry;
 
+    private NetworkTableEntry autoBallRejectEntry;
+
     private NetworkTableEntry pressureEntry;
 
     private BalltrackMode balltrackMode = BalltrackMode.DISABLED;
@@ -73,6 +75,9 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
 
         conveyorBallPresentEntry = getEntry("Conveyor Ball");
         chamberBallPresentEntry = getEntry("Chamber Ball");
+        
+        autoBallRejectEntry = getEntry("Auto Ball Reject");
+        autoBallRejectEntry.setBoolean(true);
 
         pressureEntry = getEntry("pressure");
     }
@@ -208,11 +213,16 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
                 intakeBalls();
                 break;
             case SHOOT:
-                retractIntake();
-                stopIntakeMotor();
+                if (((getChamberBallColor() != DriverStation.getAlliance()) && autoBallRejectEntry.getBoolean(true)) && chamberBallIsPresent) {
+                    stopChamberMotor();
+                }
+                else {
+                    retractIntake();
+                    stopIntakeMotor();
 
-                shootWithConveyorMotor();
-                shootWithChamberMotor();
+                    shootWithConveyorMotor();
+                    shootWithChamberMotor();
+                }
                 break;
             case INTAKE_AND_SHOOT:
                 extendIntake();
@@ -245,9 +255,10 @@ public class BalltrackSubsystem extends ShootingComponentSubsystem implements Up
             stopChamberAndConveyor();
             stopIntakeMotor();
             // retractIntake();
+
         } else if (chamberBallIsPresent) {
-            //TODO: Add button to disable rejection
-            if (getChamberBallColor() != DriverStation.getAlliance()) {
+
+            if ((getChamberBallColor() != DriverStation.getAlliance()) && autoBallRejectEntry.getBoolean(true)) {
                 shootingSuperstructure.getShooterSubsystem().setFenderLowGoalShot();
                 intakeWithChamberMotor();
                 intakeWithConveyorMotor();

@@ -31,6 +31,8 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     private static double X_OFFSET_STEP = 0.2;
     private static double Y_OFFSET_STEP = 0.2;
 
+    private static double DEFAULT_SHOOTING_DISTANCE = 2.6;
+
     private OptionalDouble storedLimelightDistance = OptionalDouble.empty();
 
     private double xOffset = 0.2;
@@ -136,7 +138,7 @@ public class LimelightSubsystem extends ShootingComponentSubsystem implements Up
     }
 
     public DoubleSupplier getMeasuredDistanceSupplier() {
-        return () -> getDistanceToTarget().orElse(0);
+        return () -> getDistanceToTarget().orElse(DEFAULT_SHOOTING_DISTANCE);
     }
 
     public void setPipeline(LimelightPipeline pipeline) {

@@ -84,7 +84,7 @@ public class AutonomousManager {
 
     //     container.getSwerveDriveSubsystem().resetGyroAngle(initialState.holonomicRotation.times(-1));
 
-    //     followAndIntake(command, trajectoryLoader.getTwoBallFar());
+    //     followAndIntake(command, trajectoryLoader.getTwoBall());
     //     shootBallsAndAim(command, 3, true);
 
     //     return command;
@@ -254,8 +254,8 @@ public class AutonomousManager {
                 return getTwoBallStealCommand();
             case "oneballsteal":
                 return getOneBallStealCommand();
-                // case "twoballfarmanual":
-                //     return getTwoBallFarManualGyroCommand();
+            // case "twoballfarmanual":
+            //     return getTwoBallFarManualGyroCommand();
         }
 
         // Return an empty command group if no auto is specified
