@@ -40,9 +40,9 @@ public class LogitechController {
     public LogitechController(int port) {
         joystick = new Joystick(port);
 
-        A = new JoystickButton(joystick, 1);
-        B = new JoystickButton(joystick, 2);
-        X = new JoystickButton(joystick, 3);
+        A = new JoystickButton(joystick, 2);
+        B = new JoystickButton(joystick, 3);
+        X = new JoystickButton(joystick, 1);
         Y = new JoystickButton(joystick, 4);
         leftBumper = new JoystickButton(joystick, 5);
         rightBumper = new JoystickButton(joystick, 6);
